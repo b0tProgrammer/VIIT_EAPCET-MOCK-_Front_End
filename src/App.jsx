@@ -1,15 +1,14 @@
-import NavBar from "./components/NavBarMain"
 import NavBarMain from "./components/NavBarMain";
-import Footer from "./components/Footer"
+import Footer from "./components/Footer";
+import SideBar from "./components/SideBar";
+
 export default function App() {
   return (
     <>
       <NavBarMain />
+      <SideBar/>
       <br />
-      <br />
-      <br />
-      <br />  
       <Footer />
     </>
-  )
+  );
 }
