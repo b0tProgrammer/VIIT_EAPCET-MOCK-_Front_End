@@ -2,7 +2,7 @@ import Logo from "../assets/LogoV1.svg";
 import { MapPin, Mail, Phone } from "lucide-react";
 function Footer() {
     return (
-        <footer className="bg-[#003973] text-white font-poppins fixed bottom-0 left-0 w-full z-50">
+    <footer className="bg-[#003973] text-white font-poppins">
             <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                 <div className="flex items-center space-x-3 mb-3">
