@@ -9,7 +9,7 @@ import {
 function Sidebar({ isSidebarOpen }) {
   return (
     <aside
-      className={`absolute inset-y-0 left-0 w-64 bg-white shadow-lg p-4 z-30 transition-transform duration-300 ease-in-out 
+      className={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg p-4 z-30 transition-transform duration-300 ease-in-out 
       ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
       lg:translate-x-0 lg:static lg:h-auto`}
     >
