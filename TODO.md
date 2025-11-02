@@ -1,0 +1,2 @@
+- [x] Edit App.jsx to make sidebar and FAQ side by side: change content div to 'flex', remove 'ml-64' from main.
+- [x] Run dev server to verify layout.

@@ -6,14 +6,10 @@ import {
   CircleHelp as HelpIcon,
 } from "lucide-react";
 
-function Sidebar({ isSidebarOpen }) {
+function Sidebar() {
   return (
-    <aside
-      className={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg p-4 z-30 transition-transform duration-300 ease-in-out 
-      ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
-      lg:translate-x-0 lg:static lg:h-auto`}
-    >
-      <nav className="space-y-2 mt-12 lg:mt-0">
+    <aside className="w-64 bg-white shadow-sm p-4">
+      <nav className="space-y-3 mt-4">
         <SidebarItem icon={HomeIcon} label="Dashboard" isActive />
         <SidebarItem icon={CalendarIcon} label="Upcoming tests" />
         <SidebarItem icon={ClipboardIcon} label="Results" />
@@ -24,10 +20,8 @@ function Sidebar({ isSidebarOpen }) {
 }
 
 function SidebarItem({ icon: Icon, label, isActive }) {
-  const activeClasses =
-    "bg-blue-100 bg-opacity-80 text-blue-800 font-semibold shadow-sm";
-  const inactiveClasses =
-    "text-gray-600 hover:bg-gray-50 hover:text-gray-800";
+  const activeClasses = "bg-blue-100 bg-opacity-80 text-blue-800 font-semibold shadow-sm";
+  const inactiveClasses = "text-gray-600 hover:bg-gray-50 hover:text-gray-800";
 
   return (
     <a
