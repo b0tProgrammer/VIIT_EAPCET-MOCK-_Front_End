@@ -1,9 +1,10 @@
-import NavBar from "./components/NavBar"
+import NavBar from "./components/NavBarMain"
+import NavBarMain from "./components/NavBarMain";
 import Footer from "./components/Footer"
 export default function App() {
   return (
     <>
-      <NavBar />
+      <NavBarMain />
       <br />
       <br />
       <br />
