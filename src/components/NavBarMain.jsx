@@ -8,8 +8,6 @@ function NavBarMain() {
         <div className="grid grid-cols-3 items-center">
           {/* left: thin red accent + logo + wordmark */}
           <div className="flex items-center gap-3">
-            <div className="w-1 h-12 bg-[#e74c3c] rounded-sm mr-3" />
-
             <div className="flex items-center gap-3">
               <img src={logo} alt="VIGNAN logo" className="h-10 w-10 object-contain" />
               <div className="leading-tight">

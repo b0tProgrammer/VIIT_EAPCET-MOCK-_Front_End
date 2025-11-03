@@ -1,5 +1,8 @@
 // components/Results.jsx
 import React from 'react';
+import NavBar from './NavBarMain';
+import Footer from './Footer';
+
 import { 
   // We ONLY need the icons for the *content*
   CheckCircle,
@@ -107,6 +110,7 @@ function Results() {
   return (
     // --- ALL LAYOUT (flex, overlay, sidebar, header) IS REMOVED ---
     <>
+      <NavBar />
       <h1 className="text-4xl font-semibold text-gray-800 mb-6">
         Results For {currentExamData.examName}
       </h1>
@@ -186,6 +190,7 @@ function Results() {
           ))}
         </div>
       </div>
+      <Footer />
     </>
   );
 }

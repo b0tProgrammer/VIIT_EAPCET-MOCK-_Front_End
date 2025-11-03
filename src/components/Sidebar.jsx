@@ -1,5 +1,4 @@
 // components/Sidebar.jsx
-import React from "react";
 import {
   Home as HomeIcon,
   CalendarDays as CalendarIcon,
@@ -27,10 +26,10 @@ function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
       {/* Use onClick to close sidebar on mobile after navigation */}
       <nav className="space-y-2 mt-12 lg:mt-0">
-        <SidebarItem icon={HomeIcon} label="Dashboard" to="/dashboard" onClick={() => setIsSidebarOpen(false)} />
-        <SidebarItem icon={CalendarIcon} label="Upcoming Tests" to="/dashboard/upcoming-tests" onClick={() => setIsSidebarOpen(false)} />
-        <SidebarItem icon={ClipboardIcon} label="Results" to="/dashboard/results" onClick={() => setIsSidebarOpen(false)} />
-        <SidebarItem icon={HelpIcon} label="FAQ's" to="/dashboard/faqs" onClick={() => setIsSidebarOpen(false)} />
+        <SidebarItem icon={HomeIcon} label="Dashboard" to="/student_dashboard" onClick={() => setIsSidebarOpen(false)} />
+        <SidebarItem icon={CalendarIcon} label="Upcoming Tests" to="/upcoming_tests" onClick={() => setIsSidebarOpen(false)} />
+        <SidebarItem icon={ClipboardIcon} label="Results" to="/results" onClick={() => setIsSidebarOpen(false)} />
+        <SidebarItem icon={HelpIcon} label="FAQ's" to="/faq" onClick={() => setIsSidebarOpen(false)} />
       </nav>
     </aside>
   );

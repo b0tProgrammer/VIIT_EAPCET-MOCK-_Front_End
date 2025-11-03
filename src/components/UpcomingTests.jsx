@@ -1,6 +1,6 @@
 // components/UpcomingTests.jsx
-import React from "react";
-
+import NavBar from "./NavBarMain";
+import Footer from "./Footer";
 // --- Mock Data ---
 // In a real app, this data would come from props or an API
 const upcomingTestData = [
@@ -15,6 +15,7 @@ const upcomingTestData = [
 export default function UpcomingTests() {
   return (
     <>
+      <NavBar />
       {/* Page Header */}
       <h1 className="text-4xl font-semibold text-gray-800 mb-2">
         Upcoming Tests
@@ -33,6 +34,7 @@ export default function UpcomingTests() {
           />
         ))}
       </div>
+      <Footer />
     </>
   );
 }
@@ -58,7 +60,6 @@ function TestCard({ examName, time }) {
           Starts in
         </div>
       </div>
-
     </div>
   );
 }

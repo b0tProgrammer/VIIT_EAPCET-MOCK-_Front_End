@@ -1,7 +1,7 @@
 // components/DashboardLayout.jsx
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import Sidebar from "./components/Sidebar";
 import { Menu as MenuIcon } from "lucide-react";
 
 export default function DashboardLayout() {

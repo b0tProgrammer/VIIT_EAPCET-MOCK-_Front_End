@@ -1,5 +1,8 @@
 // components/Student_Dashboard.jsx
-import React from "react";
+
+import NavBar from "./NavBarMain";
+import Footer from "./Footer";
+import Sidebar from "./SideBar";
 
 function StudentDashboard() {
   const username = "User_95";
@@ -8,7 +11,8 @@ function StudentDashboard() {
   const passPercentage = "78.2%";
 
   return (
-    <>
+    <> 
+      <NavBar />
       {/* Dashboard Content */}
       <h1 className="text-4xl font-semibold text-gray-800 mb-2">
         Hello {username}
@@ -18,7 +22,7 @@ function StudentDashboard() {
       </p>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+      <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 flex-1 flex relative">
         <div className="bg-blue-50 bg-opacity-80 p-6 rounded-xl shadow-md border border-blue-200">
           <p className="text-gray-600 text-sm mb-2">Next Mock Test In</p>
           <div className="flex justify-between items-center mb-3">
@@ -116,6 +120,7 @@ function StudentDashboard() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
