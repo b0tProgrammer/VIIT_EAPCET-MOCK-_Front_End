@@ -7,6 +7,7 @@ import StudentDashboard from "./components/Student_Dashboard"
 import UpcomingTests from "./components/UpcomingTests"
 import Results from "./components/Results"
 import Faq from "./components/FaqPage"
+import Register from "./components/Register"
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/upcoming_tests" element={<UpcomingTests/>} />
           <Route path="/results" element={ <Results/> }/>
           <Route path="/faq" element={ <Faq/> } />
+          <Route path="/register" element = {<Register/>} />
         </Routes>
       </BrowserRouter>
     </>

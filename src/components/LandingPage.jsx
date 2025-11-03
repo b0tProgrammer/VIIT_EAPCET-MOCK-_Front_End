@@ -30,7 +30,10 @@ function LandingPage() {
       {/* Pass the toggle function to NavBar */}
       <NavBar onMenuToggle={() => setIsSidebarOpen(true)} />
       {/* Render the SideBar component */}
-      <MobileSideBar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <MobileSideBar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
       {/* Global Container */}
       {/* Adjusted base padding for mobile */}
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12">
@@ -221,7 +224,6 @@ function LandingPage() {
           </div>
         </motion.section>
 
-        {/* PROGRAMS SECTION */}
         <motion.section
           id="programs"
           initial="hidden"
@@ -230,18 +232,19 @@ function LandingPage() {
           variants={fadeInUp}
           className="py-10 mb-8 md:mb-12"
         >
+          {/* Heading */}
           <div className="flex justify-center mb-6">
-            {/* Reduced heading size and underline width for mobile */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">
               Programs
             </h2>
           </div>
+
           <p className="text-gray-600 text-center max-w-2xl mx-auto mt-3 text-sm md:text-base mb-10">
             Explore our diverse range of undergraduate and postgraduate programs
             designed for future leaders and innovators.
           </p>
 
-          {/* Reduced gap and card width for mobile */}
+          {/* Program Cards */}
           <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-10 md:mb-12">
             {["Engineering", "Pharmacy"].map((title, i) => (
               <motion.div
@@ -262,12 +265,11 @@ function LandingPage() {
             ))}
           </div>
 
-          {/* Reduced gap and padding for mobile */}
-          <div className="flex flex-col md:flex-row justify-center gap-10 md:gap-16">
-            {/* Left Column */}
-            <div className="relative md:w-1/2">
-              <div className="absolute left-2 sm:left-4 top-0 bottom-0 w-[2px] bg-gray-300" />
-              <ul className="space-y-4 pl-8 sm:pl-12">
+          {/* Programs List with Divider */}
+          <div className="flex flex-col md:flex-row justify-center items-stretch gap-10 md:gap-0 relative">
+            {/* Left Column — Engineering */}
+            <div className="md:w-1/2 md:pr-10">
+              <ul className="space-y-4 pl-4 sm:pl-8">
                 {[
                   "Computer Science and Engineering",
                   "Civil Engineering",
@@ -291,16 +293,27 @@ function LandingPage() {
               </ul>
             </div>
 
-            {/* Right Column */}
-            <div className="relative md:w-1/2">
-              <div className="absolute left-2 sm:left-4 top-0 bottom-0 w-[2px] bg-gray-300" />
-              <ul className="space-y-4 pl-8 sm:pl-12">
-                <li className="flex items-start">
-                  <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gray-400 rounded-full mt-2 sm:mt-1 mr-3 sm:mr-4 flex-shrink-0" />
-                  <span className="text-gray-800 text-sm md:text-base font-medium">
-                    Pharmacy
-                  </span>
-                </li>
+            {/* Divider Line */}
+            <div className="hidden md:block w-[1px] bg-gray-300 mx-8" />
+
+            {/* Right Column — Pharmacy */}
+            <div className="md:w-1/2 md:pl-10">
+              <ul className="space-y-4 pl-4 sm:pl-8">
+                {[
+                  "Bachelor of Pharmacy (B.Pharm)",
+                  "Master of Pharmacy (M.Pharm)",
+                  "Pharmaceutical Analysis",
+                  "Pharmaceutics",
+                  "Pharmacology",
+                  "Pharmacognosy",
+                ].map((pharma, idx) => (
+                  <li key={idx} className="flex items-start">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gray-400 rounded-full mt-2 sm:mt-1 mr-3 sm:mr-4 flex-shrink-0" />
+                    <span className="text-gray-800 text-sm md:text-base font-medium">
+                      {pharma}
+                    </span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
