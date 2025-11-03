@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../assets/LogoV1.svg";
 import OurRecruiters from "./OurRecruiters";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import MobileSideBar from "./MobileSideBar";
 
 const fadeInUp = {
@@ -22,9 +22,65 @@ const fadeInUp = {
   }),
 };
 
+const StatsFade = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+};
+
+const Counter = ({ value, trigger }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!trigger) return; // start only when section is visible
+
+    const end = parseInt(value.replace(/\D/g, ""));
+    let start = 0;
+    const duration = 1000; // total duration (1s)
+    const steps = 60; // smooth 60 FPS
+    const increment = end / steps;
+
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= end) {
+        clearInterval(timer);
+        setCount(end);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, duration / steps);
+
+    return () => clearInterval(timer);
+  }, [value, trigger]);
+
+  return (
+    <>
+      {count.toLocaleString()}
+      {value.includes("+") && "+"}
+    </>
+  );
+};
+
 function LandingPage() {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // <-- Add state
+
+
+const [visible, setVisible] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+
+
+
   return (
     <div className="font-poppins text-gray-900">
       {/* Pass the toggle function to NavBar */}
@@ -184,45 +240,44 @@ function LandingPage() {
 
         {/* OUR ACHIEVEMENTS */}
         <motion.section
-          id="stats"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeInUp}
-          className="py-10 rounded-xl px-4 sm:px-8 mb-8 md:mb-12 shadow-sm hover:shadow-md transition-shadow duration-300"
-        >
-          <div className="flex justify-center mb-6">
-            {/* Reduced heading size and underline width for mobile */}
-            <h2 className="text-2xl sm:text-3xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">
-              Our Achievements
-            </h2>
-          </div>
-          <p className="text-gray-600 text-center text-sm md:text-base mb-8">
-            A snapshot of our achievements and community
-          </p>
+      ref={sectionRef}
+      id="stats"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={fadeInUp}
+      className="py-10 rounded-xl px-4 sm:px-8 mb-8 md:mb-12 shadow-sm hover:shadow-md transition-shadow duration-300"
+    >
+      <div className="flex justify-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">
+          Our Achievements
+        </h2>
+      </div>
+      <p className="text-gray-600 text-center text-sm md:text-base mb-8">
+        A snapshot of our achievements and community
+      </p>
 
-          <div className="flex flex-wrap justify-center gap-6 mt-6">
-            {[
-              ["15,000+", "New Student Registrations Every Month"],
-              ["400+", "Faculty Members (30% PhDs)"],
-              ["150+", "Recruiting Companies"],
-              ["7000+", "Students from 4+ Countries"],
-            ].map(([num, text], i) => (
-              <motion.div
-                key={i}
-                whileHover={{ scale: 1.06 }}
-                transition={{ type: "spring", stiffness: 200 }}
-                // Responsive card width
-                className="bg-[#f9fbff] shadow-md p-6 rounded-xl text-center w-full max-w-xs sm:w-64"
-              >
-                <h3 className="text-xl sm:text-2xl font-bold text-[#003973]">
-                  {num}
-                </h3>
-                <p className="text-gray-600 text-sm mt-1">{text}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+      <div className="flex flex-wrap justify-center gap-6 mt-6">
+        {[
+          ["15,000+", "New Student Registrations Every Month"],
+          ["400+", "Faculty Members (30% PhDs)"],
+          ["150+", "Recruiting Companies"],
+          ["7000+", "Students from 4+ Countries"],
+        ].map(([num, text], i) => (
+          <motion.div
+            key={i}
+            whileHover={{ scale: 1.06 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="bg-[#f9fbff] shadow-md p-6 rounded-xl text-center w-full max-w-xs sm:w-64"
+          >
+            <h3 className="text-xl sm:text-2xl font-bold text-[#003973]">
+              <Counter value={num} trigger={visible} />
+            </h3>
+            <p className="text-gray-600 text-sm mt-1">{text}</p>
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
 
         <motion.section
           id="programs"
