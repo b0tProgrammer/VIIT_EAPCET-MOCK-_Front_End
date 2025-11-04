@@ -10,8 +10,9 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../assets/LogoV1.svg";
 import OurRecruiters from "./OurRecruiters";
 import { motion } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import MobileSideBar from "./MobileSideBar";
+import AnimatedBackground from "./AnimatedBackground";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
@@ -64,8 +65,7 @@ function LandingPage() {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // <-- Add state
 
-
-const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -78,11 +78,49 @@ const [visible, setVisible] = useState(false);
     return () => observer.disconnect();
   }, []);
 
+  const bubbles = useMemo(() => [
+    { top: 'top-[5%]', left: 'left-[10%]', size: 'w-4 h-4', color: 'bg-blue-200', delay: '0s', opacity: 0.6 },
+    { top: 'top-[15%]', right: 'right-[15%]', size: 'w-6 h-6', color: 'bg-purple-200', delay: '1s', opacity: 0.5 },
+    { top: 'top-[25%]', left: 'left-[25%]', size: 'w-3 h-3', color: 'bg-green-200', delay: '2s', opacity: 0.7 },
+    { top: 'top-[35%]', right: 'right-[30%]', size: 'w-5 h-5', color: 'bg-pink-200', delay: '0.5s', opacity: 0.4 },
+    { top: 'top-[45%]', left: 'left-[50%]', size: 'w-4 h-4', color: 'bg-cyan-200', delay: '1.5s', opacity: 0.5 },
+    { top: 'top-[55%]', right: 'right-[25%]', size: 'w-3 h-3', color: 'bg-orange-200', delay: '2.5s', opacity: 0.6 },
+    { top: 'top-[65%]', left: 'left-[30%]', size: 'w-5 h-5', color: 'bg-teal-200', delay: '0.8s', opacity: 0.45 },
+    { top: 'top-[75%]', right: 'right-[50%]', size: 'w-4 h-4', color: 'bg-lime-200', delay: '1.2s', opacity: 0.55 },
+    { bottom: 'bottom-[10%]', left: 'left-[10%]', size: 'w-6 h-6', color: 'bg-indigo-200', delay: '0.3s', opacity: 0.5 },
+    { bottom: 'bottom-[20%]', right: 'right-[5%]', size: 'w-3 h-3', color: 'bg-rose-200', delay: '1.8s', opacity: 0.65 },
+    { bottom: 'bottom-[30%]', left: 'left-[25%]', size: 'w-4 h-4', color: 'bg-violet-200', delay: '2.2s', opacity: 0.5 },
+    { bottom: 'bottom-[40%]', right: 'right-[30%]', size: 'w-5 h-5', color: 'bg-emerald-200', delay: '0.7s', opacity: 0.4 },
+    { bottom: 'bottom-[50%]', left: 'left-[50%]', size: 'w-3 h-3', color: 'bg-amber-200', delay: '1.4s', opacity: 0.6 },
+    { bottom: 'bottom-[60%]', right: 'right-[25%]', size: 'w-4 h-4', color: 'bg-sky-200', delay: '2.1s', opacity: 0.55 },
+    { bottom: 'bottom-[70%]', left: 'left-[30%]', size: 'w-5 h-5', color: 'bg-fuchsia-200', delay: '0.9s', opacity: 0.45 },
+    { bottom: 'bottom-[80%]', right: 'right-[50%]', size: 'w-3 h-3', color: 'bg-slate-200', delay: '1.6s', opacity: 0.5 },
+  ], []);
+
+  const stars = useMemo(() => [
+    { top: 'top-5', left: 'left-1/5', size: 'w-2 h-2', delay: '0.5s', opacity: 0.8 },
+    { top: 'top-15', right: 'right-1/5', size: 'w-3 h-3', delay: '1.2s', opacity: 0.6 },
+    { top: 'top-25', left: 'left-2/5', size: 'w-2 h-2', delay: '0.8s', opacity: 0.7 },
+    { top: 'top-35', right: 'right-2/5', size: 'w-3 h-3', delay: '1.8s', opacity: 0.5 },
+    { top: 'top-45', left: 'left-3/5', size: 'w-2 h-2', delay: '0.3s', opacity: 0.75 },
+    { top: 'top-55', right: 'right-3/5', size: 'w-3 h-3', delay: '1.5s', opacity: 0.55 },
+    { top: 'top-65', left: 'left-4/5', size: 'w-2 h-2', delay: '0.6s', opacity: 0.65 },
+    { top: 'top-75', right: 'right-4/5', size: 'w-3 h-3', delay: '1.9s', opacity: 0.45 },
+    { bottom: 'bottom-5', left: 'left-1/5', size: 'w-2 h-2', delay: '0.4s', opacity: 0.7 },
+    { bottom: 'bottom-15', right: 'right-1/5', size: 'w-3 h-3', delay: '1.1s', opacity: 0.6 },
+    { bottom: 'bottom-25', left: 'left-2/5', size: 'w-2 h-2', delay: '0.7s', opacity: 0.75 },
+    { bottom: 'bottom-35', right: 'right-2/5', size: 'w-3 h-3', delay: '1.7s', opacity: 0.5 },
+    { bottom: 'bottom-45', left: 'left-3/5', size: 'w-2 h-2', delay: '0.2s', opacity: 0.65 },
+    { bottom: 'bottom-55', right: 'right-3/5', size: 'w-3 h-3', delay: '1.4s', opacity: 0.55 },
+    { bottom: 'bottom-65', left: 'left-4/5', size: 'w-2 h-2', delay: '0.9s', opacity: 0.7 },
+    { bottom: 'bottom-75', right: 'right-4/5', size: 'w-3 h-3', delay: '1.6s', opacity: 0.45 },
+  ], []);
+
 
 
 
   return (
-    <div className="font-poppins text-gray-900">
+    <div className="font-poppins text-gray-900 relative overflow-hidden">
       {/* Pass the toggle function to NavBar */}
       <NavBar onMenuToggle={() => setIsSidebarOpen(true)} />
       {/* Render the SideBar component */}
@@ -92,7 +130,7 @@ const [visible, setVisible] = useState(false);
       />
       {/* Global Container */}
       {/* Adjusted base padding for mobile */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         {/* HERO SECTION */}
         <motion.div
           initial="hidden"
@@ -140,8 +178,9 @@ const [visible, setVisible] = useState(false);
           whileInView="visible"
           viewport={{ once: true, amount: 0.25 }}
           variants={fadeInUp}
-          className="mb-8 md:mb-12" // Reduced margin
+          className="mb-8 md:mb-12 relative" // Reduced margin
         >
+          <AnimatedBackground />
           <div className="flex justify-center">
             {/* Reduced heading size and underline width for mobile */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2 mb-8 md:mb-10">
@@ -246,8 +285,9 @@ const [visible, setVisible] = useState(false);
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeInUp}
-      className="py-10 rounded-xl px-4 sm:px-8 mb-8 md:mb-12 shadow-sm hover:shadow-md transition-shadow duration-300"
+      className="py-10 rounded-xl px-4 sm:px-8 mb-8 md:mb-12 shadow-sm hover:shadow-md transition-shadow duration-300 relative"
     >
+      <AnimatedBackground />
       <div className="flex justify-center mb-6">
         <h2 className="text-2xl sm:text-3xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">
           Our Achievements
@@ -285,8 +325,28 @@ const [visible, setVisible] = useState(false);
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUp}
-          className="py-10 mb-8 md:mb-12"
+          className="py-10 mb-8 md:mb-12 relative"
         >
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            {/* Floating Bubbles */}
+            {bubbles.map((bubble, index) => (
+              <div
+                key={`bubble-${index}`}
+                className={`absolute ${bubble.top || ''} ${bubble.left || ''} ${bubble.right || ''} ${bubble.bottom || ''} ${bubble.size} ${bubble.color} rounded-full animate-bounce`}
+                style={{ animationDelay: bubble.delay, opacity: bubble.opacity || 0.5 }}
+              />
+            ))}
+
+            {/* Floating Stars */}
+            {stars.map((star, index) => (
+              <div
+                key={`star-${index}`}
+                className={`absolute ${star.top || ''} ${star.left || ''} ${star.right || ''} ${star.bottom || ''} ${star.size} bg-yellow-400 rounded-full animate-pulse`}
+                style={{ animationDelay: star.delay, opacity: star.opacity || 0.5 }}
+              />
+            ))}
+          </div>
           {/* Heading */}
           <div className="flex justify-center mb-6">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">
@@ -381,8 +441,28 @@ const [visible, setVisible] = useState(false);
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUp}
-          className="py-10 mb-12 md:mb-20 text-center"
+          className="py-10 mb-12 md:mb-20 text-center relative"
         >
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            {/* Floating Bubbles */}
+            {bubbles.map((bubble, index) => (
+              <div
+                key={`bubble-${index}`}
+                className={`absolute ${bubble.top || ''} ${bubble.left || ''} ${bubble.right || ''} ${bubble.bottom || ''} ${bubble.size} ${bubble.color} rounded-full animate-bounce`}
+                style={{ animationDelay: bubble.delay, opacity: bubble.opacity || 0.5 }}
+              />
+            ))}
+
+            {/* Floating Stars */}
+            {stars.map((star, index) => (
+              <div
+                key={`star-${index}`}
+                className={`absolute ${star.top || ''} ${star.left || ''} ${star.right || ''} ${star.bottom || ''} ${star.size} bg-yellow-400 rounded-full animate-pulse`}
+                style={{ animationDelay: star.delay, opacity: star.opacity || 0.5 }}
+              />
+            ))}
+          </div>
           <div className="flex justify-center mb-4">
             {/* Reduced heading size and underline width for mobile */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">

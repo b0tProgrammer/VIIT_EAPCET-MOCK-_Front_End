@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useEffect } from "react";
+import AnimatedBackground from "./AnimatedBackground";
 
 function Student_Login({ onLoginSuccess }) {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ function Student_Login({ onLoginSuccess }) {
       <NavBar/>
 
       <div className="relative flex items-center justify-center min-h-screen bg-white overflow-hidden">
-      
+        <AnimatedBackground />
         {/* Login Form */}
         <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] relative z-10 font-[Poppins]">
           <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center">
@@ -84,6 +85,16 @@ function Student_Login({ onLoginSuccess }) {
               >
                 SUBMIT
               </button>
+            </div>
+
+            {/* Back to Home */}
+            <div className="flex justify-center mt-4">
+              <span
+                onClick={() => navigate("/")}
+                className="text-[#003973] font-medium cursor-pointer hover:text-[#002952] transition-colors duration-300 underline-offset-2 hover:underline"
+              >
+                Back to Home
+              </span>
             </div>
           </form>
         </div>

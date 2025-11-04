@@ -3,6 +3,7 @@ import React, { useState } from 'react'; // <-- 1. Import useState
 import NavBar from './NavBarMain';
 import Footer from './Footer';
 import Sidebar from './SideBar'; // <-- 2. Import Sidebar
+import AnimatedBackground from './AnimatedBackground';
 
 import { 
   CheckCircle,
@@ -62,7 +63,8 @@ function Results() {
         />
 
         {/* 7. Wrap all page content in <main> */}
-        <main className="flex-1 p-6 bg-gray-50">
+        <main className="flex-1 p-6 bg-gray-50 relative">
+          <AnimatedBackground />
 
           {/* 8. Add mobile menu button */}
           <button

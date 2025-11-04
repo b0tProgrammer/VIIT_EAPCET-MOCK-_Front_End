@@ -130,7 +130,7 @@ function Exampage() {
   }, [selectedAnswer]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 relative">
       <Header
         examTitle={mockUser.examTitle}
         userName={mockUser.name}

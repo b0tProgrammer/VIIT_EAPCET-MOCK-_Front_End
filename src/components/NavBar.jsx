@@ -10,7 +10,7 @@ function NavBar({ onMenuToggle }) {
     <nav className="bg-[#003973] text-white font-poppins">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
         {/* Logo Section */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate("/")}>
           <img
             src={logo}
             alt="VCET Logo"

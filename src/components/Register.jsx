@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
+import AnimatedBackground from "./AnimatedBackground";
 
 function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -148,7 +149,8 @@ function RegistrationForm() {
   return (
     <>
       <NavBar />
-      <section className="min-h-screen flex flex-col items-center justify-center bg-white px-4 sm:px-6 py-12 font-[Poppins]">
+      <section className="min-h-screen flex flex-col items-center justify-center bg-white px-4 sm:px-6 py-12 font-[Poppins] relative">
+        <AnimatedBackground />
         <h1 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center">
           VIIT's (Mock EAPCET) Registration Form
         </h1>
@@ -236,12 +238,18 @@ function RegistrationForm() {
             </div>
 
             {/* Already have account */}
-            <div className="flex justify-center mt-6">
+            <div className="flex flex-col items-center mt-6 space-y-2">
               <span
                 onClick={() => navigate("/student_login")}
                 className="text-[#003973] font-medium cursor-pointer hover:text-[#002952] transition-colors duration-300 underline-offset-2 hover:underline"
               >
                 Already have an account?
+              </span>
+              <span
+                onClick={() => navigate("/")}
+                className="text-[#003973] font-medium cursor-pointer hover:text-[#002952] transition-colors duration-300 underline-offset-2 hover:underline"
+              >
+                Back to Home
               </span>
             </div>
           </div>

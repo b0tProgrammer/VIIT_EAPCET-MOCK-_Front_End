@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import Sidebar from "./SideBar";
 import { Menu as MenuIcon } from "lucide-react"; // <-- 2. Import Menu icon
 import { useNavigate } from "react-router-dom";
+import AnimatedBackground from "./AnimatedBackground";
 
 function StudentDashboard() {
   const username = "User_95";
@@ -31,8 +32,8 @@ function StudentDashboard() {
         />
 
         {/* 6. Wrap ALL your dashboard content in a 'main' tag */}
-        <main className="flex-1 p-6 bg-gray-50"> {/* Added padding and bg */}
-          
+        <main className="flex-1 p-6 bg-gray-50 relative"> {/* Added padding and bg */}
+          <AnimatedBackground />
           {/* 7. Add a mobile menu button (visible only on small screens) */}
           <button
             onClick={() => setIsSidebarOpen(true)}

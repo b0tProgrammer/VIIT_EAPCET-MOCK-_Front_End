@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
+import AnimatedBackground from "./AnimatedBackground";
 
 export default function InstructionPage() {
   const navigate = useNavigate();
@@ -26,7 +27,8 @@ export default function InstructionPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <NavBarMain />
 
-      <main className="flex-1 bg-gray-50 py-8">
+      <main className="flex-1 bg-gray-50 py-8 relative">
+        <AnimatedBackground />
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-center text-3xl font-semibold text-gray-900 mb-6">
             Instructions To be Followed
