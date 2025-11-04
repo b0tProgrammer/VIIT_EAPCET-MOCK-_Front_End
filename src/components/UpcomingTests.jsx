@@ -89,9 +89,7 @@ function TestCard({ examName, time }) {
       <div className="flex flex-col items-start sm:items-end">
         <div className="text-3xl font-bold text-gray-800 mb-2">{time}</div>
         <div className="bg-green-200 text-white-700 px-4 py-1 rounded-md text-sm font-medium">
-            <button onClick={() => navigate('/exam')}>
-          Start
-            </button>
+          Starts in
         </div>
       </div>
     </div>

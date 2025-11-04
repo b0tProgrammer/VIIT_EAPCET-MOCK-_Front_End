@@ -1,13 +1,25 @@
 import React, { useState } from "react";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
+import { useNavigate } from 'react-router-dom';
 
 export default function InstructionPage() {
+  const navigate = useNavigate();
   const [agree, setAgree] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleStart = () => {
     if (!agree) return;
-    alert("Starting the test...");
+    setShowConfirmModal(true);
+  };
+
+  const confirmStart = () => {
+    setShowConfirmModal(false);
+    navigate('/exam');
+  };
+
+  const cancelStart = () => {
+    setShowConfirmModal(false);
   };
 
   return (
@@ -167,6 +179,32 @@ export default function InstructionPage() {
       </main>
 
       <Footer />
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h2 className="text-xl font-bold mb-4 text-center">Confirm Start Test</h2>
+            <p className="text-gray-700 mb-6 text-center">
+              Are you sure you want to start the test? The timer will begin immediately and cannot be paused.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={confirmStart}
+                className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-200"
+              >
+                Yes, Start Test
+              </button>
+              <button
+                onClick={cancelStart}
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition duration-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
