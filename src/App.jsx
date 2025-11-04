@@ -8,6 +8,7 @@ import UpcomingTests from "./components/UpcomingTests"
 import Results from "./components/Results"
 import Faq from "./components/FaqPage"
 import Register from "./components/Register"
+import Exampage from "./components/Exampage"
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/exam" element={<Exampage />} />
           <Route path="/instructions" element={<InstructionPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/Student_Login" element={<StudentLogin/>} />

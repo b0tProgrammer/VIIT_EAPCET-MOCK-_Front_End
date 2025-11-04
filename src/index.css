@@ -8,3 +8,8 @@
 html {
   scroll-behavior: smooth;
 }
+@layer base {
+  body {
+    @apply antialiased text-gray-900;
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import NavBar from "./NavBarMain";
+import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
@@ -36,7 +36,7 @@ function Student_Login({ onLoginSuccess }) {
 
   return (
     <>
-      <NavBar />
+      <NavBar/>
 
       <div className="relative flex items-center justify-center min-h-screen bg-white overflow-hidden">
       

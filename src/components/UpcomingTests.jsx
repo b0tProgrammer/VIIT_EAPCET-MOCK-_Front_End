@@ -4,7 +4,7 @@ import NavBar from "./NavBarMain";
 import Footer from "./Footer";
 import Sidebar from './SideBar'; // <-- 2. Import Sidebar
 import { Menu as MenuIcon } from 'lucide-react'; // <-- 3. Import MenuIcon
-
+import { useNavigate } from 'react-router-dom';
 // --- Mock Data ---
 const upcomingTestData = [
   { id: 1, name: "Mock_Exam_22", time: "01:00:00" },
@@ -13,6 +13,7 @@ const upcomingTestData = [
   { id: 4, name: "Mock_Exam_25", time: "04:00:00" },
   { id: 5, name: "Mock_Exam_26", time: "05:00:00" },
 ];
+
 
 
 export default function UpcomingTests() {
@@ -73,20 +74,24 @@ export default function UpcomingTests() {
 
 // ... (TestCard component is unchanged)
 function TestCard({ examName, time }) {
-  return (
-    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 
-                    flex flex-col sm:flex-row justify-between sm:items-center 
+  const navigate = useNavigate();
+
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200
+                    flex flex-col sm:flex-row justify-between sm:items-center
                     space-y-4 sm:space-y-0 sm:space-x-4">
-      
+
       <div>
         <p className="text-sm text-gray-500 mb-1">Next Mock Test in</p>
         <h3 className="text-2xl font-bold text-gray-800">{examName}</h3>
       </div>
-      
+
       <div className="flex flex-col items-start sm:items-end">
         <div className="text-3xl font-bold text-gray-800 mb-2">{time}</div>
-        <div className="bg-gray-200 text-gray-700 px-4 py-1 rounded-md text-sm font-medium">
-          Starts in
+        <div className="bg-green-200 text-white-700 px-4 py-1 rounded-md text-sm font-medium">
+            <button onClick={() => navigate('/exam')}>
+          Start
+            </button>
         </div>
       </div>
     </div>
