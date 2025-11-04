@@ -21,6 +21,8 @@ function Exampage() {
     }), {})
   );
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [fullscreenWarnings, setFullscreenWarnings] = useState(0);
+  const [showFullscreenWarning, setShowFullscreenWarning] = useState(false);
 
   const handleAnswerSelect = (optionIndex) => {
     setAnswers(prev => ({
@@ -129,6 +131,49 @@ function Exampage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAnswer]);
 
+  // Request full screen on mount
+  useEffect(() => {
+    const enterFullscreen = async () => {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch (error) {
+        console.error('Failed to enter full screen:', error);
+      }
+    };
+    enterFullscreen();
+  }, []);
+
+  // Listen for full screen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        // Full screen exited
+        const newWarnings = fullscreenWarnings + 1;
+        setFullscreenWarnings(newWarnings);
+        setShowFullscreenWarning(true);
+
+        if (newWarnings >= 3) {
+          // Auto-submit after 3 warnings
+          handleSubmit();
+        }
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, [fullscreenWarnings]);
+
+  const reenterFullscreen = async () => {
+    try {
+      await document.documentElement.requestFullscreen();
+      setShowFullscreenWarning(false);
+    } catch (error) {
+      console.error('Failed to re-enter full screen:', error);
+      // Still hide the modal even if failed, as user acknowledged
+      setShowFullscreenWarning(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 relative">
       <Header
@@ -209,6 +254,35 @@ function Exampage() {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Warning Modal */}
+      {showFullscreenWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h2 className="text-xl font-bold mb-4 text-center text-red-600">Warning!</h2>
+            <p className="text-gray-700 mb-6 text-center">
+              You have exited full screen mode. This is warning {fullscreenWarnings} of 3.
+              {fullscreenWarnings >= 3 ? ' The test will now be submitted automatically.' : ' Please return to full screen mode to continue the test.'}
+            </p>
+            {fullscreenWarnings < 3 && (
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={reenterFullscreen}
+                  className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-200"
+                >
+                  Return to Full Screen
+                </button>
+                <button
+                  onClick={confirmSubmit}
+                  className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition duration-200"
+                >
+                  Continue Anyway
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

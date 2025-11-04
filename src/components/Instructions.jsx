@@ -14,6 +14,10 @@ export default function InstructionPage() {
   };
 
   const confirmStart = () => {
+    if (!document.fullscreenEnabled) {
+      alert('Full screen mode is not supported in your browser. Please use a compatible browser to take the test.');
+      return;
+    }
     setShowConfirmModal(false);
     navigate('/exam');
   };
