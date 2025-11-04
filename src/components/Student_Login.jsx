@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useEffect } from "react";
-import AnimatedBackground from "./AnimatedBackground";
 
 function Student_Login({ onLoginSuccess }) {
   const navigate = useNavigate();
@@ -38,7 +37,6 @@ function Student_Login({ onLoginSuccess }) {
   return (
     <>
       <div className="relative flex items-center justify-center min-h-screen bg-white overflow-hidden">
-        <AnimatedBackground />
         {/* Login Form */}
         <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] relative z-10 font-[Poppins]">
           <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center">

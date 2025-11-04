@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
-import AnimatedBackground from "./AnimatedBackground";
 
 function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -149,7 +148,6 @@ function RegistrationForm() {
   return (
     <>
       <section className="min-h-screen flex flex-col items-center justify-center bg-white px-4 sm:px-6 py-12 font-[Poppins] relative">
-        <AnimatedBackground />
         <h1 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center">
           VIIT's (Mock EAPCET) Registration Form
         </h1>

@@ -5,7 +5,6 @@ import Footer from "./Footer";
 import Sidebar from './SideBar'; // <-- 2. Import Sidebar
 import { Menu as MenuIcon } from 'lucide-react'; // <-- 3. Import MenuIcon
 import { useNavigate } from 'react-router-dom';
-import AnimatedBackground from './AnimatedBackground';
 // --- Mock Data ---
 const upcomingTestData = [
   { id: 1, name: "Mock_Exam_22", time: "01:00:00" },
@@ -25,7 +24,6 @@ export default function UpcomingTests() {
   return (
     <>
       <NavBar />
-      <AnimatedBackground />
       {/* 5. Add a main flex container */}
       <div className="flex min-h-screen">
 
