@@ -37,8 +37,6 @@ function Student_Login({ onLoginSuccess }) {
 
   return (
     <>
-      <NavBar/>
-
       <div className="relative flex items-center justify-center min-h-screen bg-white overflow-hidden">
         <AnimatedBackground />
         {/* Login Form */}
