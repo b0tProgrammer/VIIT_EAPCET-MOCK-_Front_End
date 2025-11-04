@@ -5,12 +5,14 @@ import NavBar from "./NavBarMain";
 import Footer from "./Footer";
 import Sidebar from "./SideBar";
 import { Menu as MenuIcon } from "lucide-react"; // <-- 2. Import Menu icon
+import { useNavigate } from "react-router-dom";
 
 function StudentDashboard() {
   const username = "User_95";
   const nextMockTest = "Mock_Exam_21";
   const examsWritten = 20;
   const passPercentage = "78.2%";
+  const navigate = useNavigate();
 
   // <-- 3. Add the state for the sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -55,7 +57,7 @@ function StudentDashboard() {
                 <span className="text-3xl font-bold text-gray-800">
                   00:00:00
                 </span>
-                <button className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-150 ease-in-out">
+                <button className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-150 ease-in-out" onClick={() => navigate("/instructions")}>
                   Start
                 </button>
               </div>

@@ -1,7 +1,11 @@
 import logo from "../assets/Logov1.svg";
 import { Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function NavBar({ onMenuToggle }) {
+
+  const navigate = useNavigate();
+
   return (
     <nav className="bg-[#003973] text-white font-poppins">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
@@ -22,7 +26,7 @@ function NavBar({ onMenuToggle }) {
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#stats" className="hover:text-gray-200 cursor-pointer">Stats</a> </li>
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#programs" className="hover:text-gray-200 cursor-pointer">Programs</a> </li>
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#placements" className="hover:text-gray-200 cursor-pointer">Placements</a> </li>
-          <li className="hover:text-gray-200 cursor-pointer">Register</li>
+          <li className="hover:text-gray-200 cursor-pointer" onClick={() => navigate("/register")} >Register</li>
         </ul>
 
         {/* Mobile Menu Button (visible only on small screens) */}
