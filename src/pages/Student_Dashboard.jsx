@@ -1,9 +1,9 @@
 // components/Student_Dashboard.jsx
 
 import { useState } from "react"; // <-- 1. Import useState
-import NavBar from "./NavBarMain";
-import Footer from "./Footer";
-import Sidebar from "./SideBar";
+import NavBar from "../components/NavBarMain";
+import Footer from "../components/Footer";
+import Sidebar from "../components/SideBar";
 import { Menu as MenuIcon } from "lucide-react"; // <-- 2. Import Menu icon
 import { useNavigate } from "react-router-dom";
 

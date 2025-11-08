@@ -1,8 +1,8 @@
 // components/UpcomingTests.jsx
 import { useState } from 'react'; // <-- 1. Import useState
-import NavBar from "./NavBarMain";
-import Footer from "./Footer";
-import Sidebar from './SideBar'; // <-- 2. Import Sidebar
+import NavBar from "../components/NavBarMain";
+import Footer from "../components/Footer";
+import Sidebar from '../components/SideBar'; // <-- 2. Import Sidebar
 import { Menu as MenuIcon } from 'lucide-react'; // <-- 3. Import MenuIcon
 import { useNavigate } from 'react-router-dom';
 // --- Mock Data ---

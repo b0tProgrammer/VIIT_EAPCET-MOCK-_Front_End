@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import Header from './Header';
-import SubjectTabs from './SubjectTabs';
-import QuestionPanel from './QuestionPanel';
-import Questionnavigation from './Questionsnavigation';
-import ActionBar from './ActionBar';
+import Header from '../components/Header';
+import SubjectTabs from '../components/SubjectTabs';
+import QuestionPanel from '../components/QuestionPanel';
+import Questionnavigation from '../components/Questionsnavigation';
+import ActionBar from '../components/ActionBar';
 import mockQuestions, { mockUser } from '../data/mockData';
-import { QuestionStatus } from './Questionsnavigation';
+import { QuestionStatus } from '../components/Questionsnavigation';
 import { useNavigate } from 'react-router-dom';
 
 function Exampage() {

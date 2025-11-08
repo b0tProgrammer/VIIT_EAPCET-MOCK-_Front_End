@@ -1,5 +1,5 @@
-import NavBar from "./NavBar";
-import Footer from "./Footer";
+import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
 import MockExam from "../assets/MockExam.jpg";
 import NBA from "../assets/NBA.png";
 import NAAC from "../assets/NAAC.png";
@@ -8,10 +8,10 @@ import UGC from "../assets/UGC.png";
 import PencilPaper from "../assets/PencilPaper.jpg";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/LogoV1.svg";
-import OurRecruiters from "./OurRecruiters";
+import OurRecruiters from "../components/OurRecruiters";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef, useMemo } from "react";
-import MobileSideBar from "./MobileSideBar";
+import MobileSideBar from "../components/MobileSideBar";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
