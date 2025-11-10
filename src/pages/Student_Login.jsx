@@ -9,6 +9,7 @@ function Student_Login({ onLoginSuccess }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState(""); // ✅ Added role state
   const [error, setError] = useState("");
   const [init, setInit] = useState(false);
 
@@ -22,8 +23,8 @@ function Student_Login({ onLoginSuccess }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!username || !password) {
-      setError("⚠️ Please fill in both username and password.");
+    if (!username || !password || !role) {
+      setError("⚠️ Please fill in all fields including role.");
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
@@ -71,6 +72,23 @@ function Student_Login({ onLoginSuccess }) {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-[#EFF7FF] border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-[#003973] outline-none shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
               />
+            </div>
+
+            {/* ✅ Added Role Dropdown */}
+            <div>
+              <label className="block font-medium mb-1 text-black">
+                Role:
+              </label>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full bg-[#EFF7FF] border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-[#003973] outline-none shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
+              >
+                <option value="">Select Role</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+              </select>
             </div>
 
             <div className="flex justify-center mt-6">
