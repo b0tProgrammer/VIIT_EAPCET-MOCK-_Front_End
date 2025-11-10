@@ -1,1 +1,6 @@
-    
+The teacher dashboard can contain the name like it but it will be opening both for the admin and the teacher and also the path added is "admin-pages/xx" and these are the important changes and some of the sidebar options should hide for the teacher role 
+
+- Rahul 10-11-2025 22:09
+-----------------------------------------------------------------------------------
+
+//leave notes here, updates and all

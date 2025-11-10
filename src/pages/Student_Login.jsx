@@ -30,8 +30,8 @@ function Student_Login({ onLoginSuccess }) {
     setError("");
 
     // ✅ Role-based navigation
-    if (role === "teacher") {
-      navigate("/teacher_dashboard");
+    if (role === "teacher" || role === "admin") {
+      navigate("/admin-pages/teacherdashboard");
     } else {
       navigate("/student_dashboard");
     }

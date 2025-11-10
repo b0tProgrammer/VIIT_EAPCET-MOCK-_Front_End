@@ -1,4 +1,3 @@
-// components/AdminSideBar.jsx
 import {
   Home as HomeIcon,
   Pen as PenIcon,
@@ -26,40 +25,51 @@ function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
       </button>
 
       <nav className="space-y-2 mt-12">
+        {/* Teacher Dashboard */}
         <AdminSideBarItem
           icon={HomeIcon}
           label="Dashboard"
-          to="/dashboard"
+          to="/admin-pages/teacherdashboard"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
+
+        {/* Questions Page */}
         <AdminSideBarItem
           icon={PenIcon}
           label="Questions"
-          to="/questions"
+          to="/admin-pages/questions"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
+
+        {/* Exams Page */}
         <AdminSideBarItem
           icon={LoveIcon}
           label="Exams"
-          to="/exams"
+          to="/admin-pages/exams"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
+
+        {/* Students Page */}
         <AdminSideBarItem
           icon={UserIcon}
           label="Students"
-          to="/students"
+          to="/admin-pages/students"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
+
+        {/* Reports Page */}
         <AdminSideBarItem
           icon={ReportIcon}
           label="Reports"
-          to="/reports"
+          to="/admin-pages/reports"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
+
+        {/* Settings Page */}
         <AdminSideBarItem
           icon={SettingsIcon}
           label="Settings"
-          to="/settings"
+          to="/admin-pages/settings"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
       </nav>

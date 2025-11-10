@@ -1,6 +1,7 @@
 import NavBarMain from "../components/NavBarMain";
 import AdminSideBar from "../components/AdminSiderBar";
 import { useState } from "react";
+import Footer from "../components/Footer";
 
 export default function TeacherDashboard() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(true);
@@ -75,6 +76,7 @@ export default function TeacherDashboard() {
           </section>
         </main>
       </div>
+      <Footer />
     </>
   );
 }
