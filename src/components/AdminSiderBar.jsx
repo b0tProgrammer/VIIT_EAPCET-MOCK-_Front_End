@@ -13,7 +13,7 @@ import { NavLink } from "react-router-dom";
 function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
   return (
     <aside
-      className={`fixed inset-y-0 left-0 w-64 bg-white p-4 shadow-sm z-30 transition-transform duration-300 ease-in-out 
+      className={`fixed inset-y-0 left-0 w-64 bg-white p-4 py-0 shadow-sm z-30 transition-transform duration-300 ease-in-out 
       ${isAdminSideBarOpen ? "translate-x-0" : "-translate-x-full"} 
       lg:translate-x-0 lg:static lg:h-auto`}
     >
