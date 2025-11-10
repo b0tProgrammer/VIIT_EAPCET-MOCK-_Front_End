@@ -8,6 +8,7 @@ import UpcomingTests from "./pages/UpcomingTests"
 import Results from "./pages/Results"
 import Register from "./pages/Register"
 import Exampage from "./pages/Exampage"
+import AdminSideBar from "./components/AdminSiderBar"
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/results" element={ <Results/> }/>
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/register" element = {<Register/>} />
+          <Route path="/AdminBar" element = {<AdminSideBar/>} />
         </Routes>
       </BrowserRouter>
     </>
