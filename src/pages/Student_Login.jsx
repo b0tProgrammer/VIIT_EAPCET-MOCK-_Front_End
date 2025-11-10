@@ -1,19 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
-import { useEffect } from "react";
 
 function Student_Login({ onLoginSuccess }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState(""); // ✅ Added role state
+  const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const [init, setInit] = useState(false);
 
-  // Initialize particles engine
   useEffect(() => {
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
@@ -30,14 +28,20 @@ function Student_Login({ onLoginSuccess }) {
     }
 
     setError("");
-    navigate("/student_dashboard");
-    onLoginSuccess();
+
+    // ✅ Role-based navigation
+    if (role === "teacher") {
+      navigate("/teacher_dashboard");
+    } else {
+      navigate("/student_dashboard");
+    }
+
+    if (onLoginSuccess) onLoginSuccess();
   };
 
   return (
-    <> 
+    <>
       <div className="relative flex items-center justify-center min-h-screen bg-white overflow-hidden">
-        {/* Login Form */}
         <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] relative z-10 font-[Poppins]">
           <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center">
             VIIT's (Mock EAPCET) Login Form
@@ -74,7 +78,7 @@ function Student_Login({ onLoginSuccess }) {
               />
             </div>
 
-            {/* ✅ Added Role Dropdown */}
+            {/* Role Dropdown */}
             <div>
               <label className="block font-medium mb-1 text-black">
                 Role:
@@ -100,7 +104,6 @@ function Student_Login({ onLoginSuccess }) {
               </button>
             </div>
 
-            {/* Back to Home */}
             <div className="flex justify-center mt-4">
               <span
                 onClick={() => navigate("/")}
@@ -112,7 +115,6 @@ function Student_Login({ onLoginSuccess }) {
           </form>
         </div>
       </div>
-
       <Footer />
     </>
   );
