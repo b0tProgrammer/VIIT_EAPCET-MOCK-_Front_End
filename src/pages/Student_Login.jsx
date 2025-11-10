@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import NavBar from "../components/NavBar";
+import { useState } from "react";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
@@ -35,12 +34,12 @@ function Student_Login({ onLoginSuccess }) {
   };
 
   return (
-    <>
+    <> 
       <div className="relative flex items-center justify-center min-h-screen bg-white overflow-hidden">
         {/* Login Form */}
         <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] relative z-10 font-[Poppins]">
           <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center">
-            VCET(Mock Test) Login Form
+            VIIT's (Mock EAPCET) Login Form
           </h2>
 
           {error && (

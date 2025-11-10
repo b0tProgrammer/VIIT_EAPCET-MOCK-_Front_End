@@ -28,7 +28,7 @@ function StudentDashboard() {
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
-        />
+        />  
 
         {/* 6. Wrap ALL your dashboard content in a 'main' tag */}
         <main className="flex-1 p-6 bg-gray-50 relative"> {/* Added padding and bg */}
