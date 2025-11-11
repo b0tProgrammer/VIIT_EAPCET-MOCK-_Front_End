@@ -13,7 +13,7 @@ import TeacherDashboard from "./Admin-Pages/TeacherDashboard"; // ✅ path fixed
 import Questions from "./Admin-Pages/Questions"; // ✅ added
 // import Exams from "./admin-pages/Exams"; // ✅ added
 import Students from "./Admin-Pages/Students"; // ✅ added
-// import Reports from "./admin-pages/Reports"; // ✅ added
+import Reports from "./Admin-Pages/Reports"; // ✅ added
 // import Settings from "./admin-pages/Settings"; // ✅ added
 
 export default function App() {
@@ -35,9 +35,10 @@ export default function App() {
         <Route path="/Admin-Pages/teacherdashboard" element={<TeacherDashboard />} />
         <Route path="/Admin-Pages/questions" element={<Questions />} />
          <Route path="/admin-pages/students" element={<Students />} />
+         <Route path="/admin-pages/reports" element={<Reports />} />
         {/* <Route path="/admin-pages/exams" element={<Exams />} />
        
-        <Route path="/admin-pages/reports" element={<Reports />} />
+        
         <Route path="/admin-pages/settings" element={<Settings />} /> */}
 
         {/* Sidebar Standalone (for testing) */}
