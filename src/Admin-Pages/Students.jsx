@@ -1,17 +1,32 @@
-import React from "react";
+import { useState } from "react";
 import AdminSideBar from "../components/AdminSiderBar";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
+import { Menu as MenuIcon } from "lucide-react";
 
 export default function Students() {
+
+  const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false); // initially hidden on mobile
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <NavBarMain />
 
       <div className="flex flex-1 overflow-hidden">
-        <AdminSideBar />
-
+        <AdminSideBar
+          isAdminSideBarOpen={isAdminSideBarOpen}
+          setIsAdminSideBarOpen={setIsAdminSideBarOpen}
+         />
         <main className="flex-1 overflow-y-auto px-6 py-8">
+
+          {/* Mobile toggle button */}
+          <button
+            className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium"
+            onClick={() => setIsAdminSideBarOpen(!isAdminSideBarOpen)}
+          >
+            <MenuIcon size={24} />
+          </button>
+
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
               Active Participants

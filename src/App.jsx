@@ -11,9 +11,10 @@ import Exampage from "./pages/Exampage";
 import AdminSideBar from "./components/AdminSiderBar"; // ✅ fixed filename spelling
 import TeacherDashboard from "./Admin-Pages/TeacherDashboard"; // ✅ path fixed (lowercase)
 import Questions from "./Admin-Pages/Questions"; // ✅ added
-// import Exams from "./admin-pages/Exams"; // ✅ added
+import Exams from "./Admin-Pages/Exams"; // ✅ added
 import Students from "./Admin-Pages/Students"; // ✅ added
 import Reports from "./Admin-Pages/Reports"; // ✅ added
+import IndependentLevels from "./Admin-Pages/IndependentLevels"; // ✅ added
 // import Settings from "./admin-pages/Settings"; // ✅ added
 
 export default function App() {
@@ -34,12 +35,12 @@ export default function App() {
         {/* --- Admin Section (Teacher) --- */}
         <Route path="/Admin-Pages/teacherdashboard" element={<TeacherDashboard />} />
         <Route path="/Admin-Pages/questions" element={<Questions />} />
-         <Route path="/admin-pages/students" element={<Students />} />
-         <Route path="/admin-pages/reports" element={<Reports />} />
-        {/* <Route path="/admin-pages/exams" element={<Exams />} />
-       
+        <Route path="/admin-pages/students" element={<Students />} />
+        <Route path="/admin-pages/reports" element={<Reports />} />
+        <Route path="/admin-pages/exams" element={<Exams />} />
+        <Route path="/independentLevels" element={<IndependentLevels />} />
         
-        <Route path="/admin-pages/settings" element={<Settings />} /> */}
+        {/* <Route path="/admin-pages/settings" element={<Settings />} />  */}
 
         {/* Sidebar Standalone (for testing) */}
         {/* <Route path="/adminbar" element={<AdminSideBar />} /> */}
