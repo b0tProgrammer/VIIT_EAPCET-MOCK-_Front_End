@@ -5,22 +5,35 @@ import Footer from "../components/Footer";
 import { Menu as MenuIcon } from "lucide-react";
 
 export default function Reports() {
-  const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false); // initially hidden on mobile
+  const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col font-poppins">
       <NavBarMain />
+
       <div className="flex flex-1 overflow-hidden">
-        <AdminSideBar
-          isAdminSideBarOpen={isAdminSideBarOpen}
-          setIsAdminSideBarOpen={setIsAdminSideBarOpen}
-        />
+        {/* ✅ Sidebar inside <aside> and fixed font */}
+        {/* Sidebar */}
+        <aside
+          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white 
+    transform transition-transform duration-300 ease-in-out z-50
+    ${
+      isAdminSideBarOpen
+        ? "translate-x-0"
+        : "-translate-x-full lg:translate-x-0"
+    }`}
+        >
+          <AdminSideBar
+            isAdminSideBarOpen={isAdminSideBarOpen}
+            setIsAdminSideBarOpen={setIsAdminSideBarOpen}
+          />
+        </aside>
 
+        {/* ✅ Main content area */}
         <main className="flex-1 overflow-y-auto px-6 py-8">
-
           {/* Mobile toggle button */}
           <button
-            className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium"
+            className="lg:hidden mb-4 text-[#003973] flex items-center gap-2"
             onClick={() => setIsAdminSideBarOpen(!isAdminSideBarOpen)}
           >
             <MenuIcon size={24} />
@@ -30,13 +43,13 @@ export default function Reports() {
             <h2 className="text-3xl font-semibold text-gray-800 mb-6">
               Reports
             </h2>
-            {/* Main report card (light-blue) */}
+
+            {/* Main report card */}
             <div className="bg-[#eaf6ff] rounded-xl shadow-md p-6 border border-blue-100 mb-6">
               <h3 className="text-3xl font-bold text-gray-800 mb-6">
                 Mock_Exam_20
               </h3>
 
-              {/* First: Feedback, Start Date, etc. */}
               <div className="text-base text-gray-700 space-y-1 mb-6">
                 <div>
                   Feedback: <span className="font-medium">8.9 of 10</span>
@@ -55,7 +68,6 @@ export default function Reports() {
                 </div>
               </div>
 
-              {/* Centered big table */}
               <div className="flex justify-center mb-6">
                 <div className="bg-[#eaf6ff] rounded-xl border border-gray-800 shadow-sm p-6 w-full max-w-4xl overflow-hidden">
                   <div className="text-lg font-medium text-gray-700 mb-4">
@@ -116,7 +128,6 @@ export default function Reports() {
                 </div>
               </div>
 
-              {/* Below that: Registered, Attempted, Attempt */}
               <div className="text-base text-gray-700 space-y-1 mb-4">
                 <div>
                   Registered: <span className="font-medium">400</span>

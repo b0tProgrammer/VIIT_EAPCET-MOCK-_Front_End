@@ -4,7 +4,6 @@ import {
   Heart as LoveIcon,
   User as UserIcon,
   FileText as ReportIcon,
-  Settings as SettingsIcon,
   X as XIcon,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -66,14 +65,6 @@ function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
             to="/admin-pages/reports"
             onClick={() => setIsAdminSideBarOpen(false)}
           />
-
-          {/* Settings Page */}
-          <AdminSideBarItem
-            icon={SettingsIcon}
-            label="Settings"
-            to="/admin-pages/settings"
-            onClick={() => setIsAdminSideBarOpen(false)}
-          />
         </nav>
       </aside>
     </>
@@ -88,13 +79,13 @@ function AdminSideBarItem({ icon: Icon, label, to, onClick }) {
       className={({ isActive }) =>
         `flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
           isActive
-            ? "bg-blue-100 text-blue-700 font-semibold"
+            ? "bg-blue-100 text-blue-700 font-semibold font-[poppins]"
             : "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
         }`
       }
     >
       <Icon className="w-5 h-5 mr-3" />
-      <span className="text-base">{label}</span>
+      <span className="text-base font-[poppins]">{label}</span>
     </NavLink>
   );
 }

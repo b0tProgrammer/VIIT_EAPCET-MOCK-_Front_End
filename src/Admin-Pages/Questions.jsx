@@ -6,16 +6,13 @@ import { Menu as MenuIcon } from "lucide-react";
 
 function Questions() {
   const fileInputRef = useRef(null);
+  const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
 
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
-  };
+  const handleUploadClick = () => fileInputRef.current.click();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      alert(`Uploaded file: ${file.name}`);
-    }
+    if (file) alert(`Uploaded file: ${file.name}`);
   };
 
   const handleDownloadTemplate = () => {
@@ -27,20 +24,32 @@ function Questions() {
     link.click();
   };
 
-  const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
-
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-[#f9fcff] font-[Poppins] text-gray-800">
+      {/* === Header === */}
       <NavBarMain />
-      <div className="flex min-h-screen bg-gray-50 font-[Poppins]">
-        {/* Sidebar */}
-        <AdminSideBar
-          isAdminSideBarOpen={isAdminSideBarOpen}
-          setIsAdminSideBarOpen={setIsAdminSideBarOpen}
-        />
 
-        {/* Main content */}
-        <div className="flex-1 p-8">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar (Desktop) */}
+        {/* Sidebar */}
+        <aside
+          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white 
+    transform transition-transform duration-300 ease-in-out z-50
+    ${
+      isAdminSideBarOpen
+        ? "translate-x-0"
+        : "-translate-x-full lg:translate-x-0"
+    }`}
+        >
+          <AdminSideBar
+            isAdminSideBarOpen={isAdminSideBarOpen}
+            setIsAdminSideBarOpen={setIsAdminSideBarOpen}
+          />
+        </aside>
+
+        {/* === Main Content === */}
+        <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 py-8">
+          {/* Mobile Sidebar Toggle */}
           <button
             className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium"
             onClick={() => setIsAdminSideBarOpen(!isAdminSideBarOpen)}
@@ -98,10 +107,24 @@ function Questions() {
               Preview Added Questions
             </button>
           </div>
-        </div>
+        </main>
       </div>
+
       <Footer />
-    </>
+
+      {/* Mobile Sidebar Drawer */}
+      {isAdminSideBarOpen && (
+        <div className="fixed inset-0 z-40 flex">
+          <aside className="bg-white w-64 p-4 shadow-xl border-r border-blue-100">
+            <AdminSideBar />
+          </aside>
+          <div
+            className="flex-1 bg-black/40"
+            onClick={() => setIsAdminSideBarOpen(false)}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
