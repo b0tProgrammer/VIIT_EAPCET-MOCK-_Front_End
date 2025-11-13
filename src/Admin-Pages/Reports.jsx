@@ -11,11 +11,11 @@ export default function Reports() {
     <div className="min-h-screen bg-gray-50 flex flex-col font-poppins">
       <NavBarMain />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1">
         {/* ✅ Sidebar inside <aside> and fixed font */}
         {/* Sidebar */}
         <aside
-          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white 
+          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
     transform transition-transform duration-300 ease-in-out z-50
     ${
       isAdminSideBarOpen

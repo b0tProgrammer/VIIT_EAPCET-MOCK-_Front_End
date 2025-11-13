@@ -49,11 +49,10 @@ export default function IndependentLevels() {
   return (
     <>
       <NavBarMain />
-
-      <div className="flex min-h-screen bg-[#f9fcff] font-[Poppins] text-gray-800 relative">
+      <div className="flex flex-1 bg-[#f9fcff] font-poppins text-gray-800 relative">
         {/* Sidebar */}
         <aside
-          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white border-r border-gray-200 
+          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white border-r border-gray-200
             transform transition-transform duration-300 ease-in-out z-50
             ${
               isAdminSideBarOpen
@@ -76,7 +75,7 @@ export default function IndependentLevels() {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col py-10 px-4 sm:px-6 lg:px-10">
+        <main className="flex-1 flex flex-col py-10 px-4 sm:px-6 lg:px-10 overflow-y-auto">
           {/* Mobile Sidebar Toggle */}
           <button
             className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium self-start"

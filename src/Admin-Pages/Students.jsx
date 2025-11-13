@@ -43,16 +43,16 @@ export default function Students() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f9fcff] font-[Poppins] text-gray-800">
+    <div className="min-h-screen flex flex-col bg-[#f9fcff] font-poppins text-gray-800">
       {/* === Navbar === */}
       <NavBarMain />
 
       {/* === Page Layout === */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1">
         {/* Sidebar (Desktop) */}
         {/* Sidebar */}
         <aside
-          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white 
+          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
     transform transition-transform duration-300 ease-in-out z-50
     ${
       isAdminSideBarOpen

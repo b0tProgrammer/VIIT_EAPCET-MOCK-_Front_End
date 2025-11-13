@@ -21,10 +21,10 @@ export default function CreateQuestionPaper() {
   return (
     <>
       <NavBarMain />
-      <div className="flex min-h-screen bg-[#f9fcff] font-[Poppins] text-gray-800">
+      <div className="flex flex-1 bg-[#f9fcff] font-poppins text-gray-800">
         {/* Sidebar */}
         <aside
-          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white 
+          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
     transform transition-transform duration-300 ease-in-out z-50
     ${
       isAdminSideBarOpen
@@ -38,7 +38,7 @@ export default function CreateQuestionPaper() {
           />
         </aside>
         {/* Main Content */}
-        <main className="flex-1 py-10 px-4 sm:px-8 lg:px-12 flex flex-col items-center">
+        <main className="flex-1 py-10 px-4 sm:px-8 lg:px-12 flex flex-col items-center overflow-y-auto">
           {/* Mobile Sidebar Toggle */}
           <button
             className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium self-start"

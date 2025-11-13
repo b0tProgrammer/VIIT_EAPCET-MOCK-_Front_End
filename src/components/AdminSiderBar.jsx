@@ -10,63 +10,56 @@ import { NavLink } from "react-router-dom";
 
 function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
   return (
-
-    <>  
-      <aside
-        className={`fixed inset-y-0 left-0 w-64 bg-white p-4 py-0 shadow-sm z-30 transition-transform duration-300 ease-in-out 
-        ${isAdminSideBarOpen ? "translate-x-0" : "-translate-x-full"} 
-        lg:translate-x-0 lg:static lg:h-auto`}
+    <>
+      {/* --- Mobile close button --- */}
+      <button
+        onClick={() => setIsAdminSideBarOpen(false)}
+        className="lg:hidden absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-800 focus:outline-none z-40"
       >
-        {/* --- Mobile close button --- */}
-        <button
+        <XIcon size={24} />
+      </button>
+
+      <nav className="space-y-2 mt-12 p-4">
+        {/* Teacher Dashboard */}
+        <AdminSideBarItem
+          icon={HomeIcon}
+          label="Dashboard"
+          to="/admin-pages/teacherdashboard"
           onClick={() => setIsAdminSideBarOpen(false)}
-          className="lg:hidden absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-800 focus:outline-none"
-        >
-          <XIcon size={24} />
-        </button>
+        />
 
-        <nav className="space-y-2 mt-12">
-          {/* Teacher Dashboard */}
-          <AdminSideBarItem
-            icon={HomeIcon}
-            label="Dashboard"
-            to="/admin-pages/teacherdashboard"
-            onClick={() => setIsAdminSideBarOpen(false)}
-          />
+        {/* Questions Page */}
+        <AdminSideBarItem
+          icon={PenIcon}
+          label="Questions"
+          to="/admin-pages/questions"
+          onClick={() => setIsAdminSideBarOpen(false)}
+        />
 
-          {/* Questions Page */}
-          <AdminSideBarItem
-            icon={PenIcon}
-            label="Questions"
-            to="/admin-pages/questions"
-            onClick={() => setIsAdminSideBarOpen(false)}
-          />
+        {/* Exams Page */}
+        <AdminSideBarItem
+          icon={LoveIcon}
+          label="Exams"
+          to="/admin-pages/exams"
+          onClick={() => setIsAdminSideBarOpen(false)}
+        />
 
-          {/* Exams Page */}
-          <AdminSideBarItem
-            icon={LoveIcon}
-            label="Exams"
-            to="/admin-pages/exams"
-            onClick={() => setIsAdminSideBarOpen(false)}
-          />
+        {/* Students Page */}
+        <AdminSideBarItem
+          icon={UserIcon}
+          label="Students"
+          to="/admin-pages/students"
+          onClick={() => setIsAdminSideBarOpen(false)}
+        />
 
-          {/* Students Page */}
-          <AdminSideBarItem
-            icon={UserIcon}
-            label="Students"
-            to="/admin-pages/students"
-            onClick={() => setIsAdminSideBarOpen(false)}
-          />
-
-          {/* Reports Page */}
-          <AdminSideBarItem
-            icon={ReportIcon}
-            label="Reports"
-            to="/admin-pages/reports"
-            onClick={() => setIsAdminSideBarOpen(false)}
-          />
-        </nav>
-      </aside>
+        {/* Reports Page */}
+        <AdminSideBarItem
+          icon={ReportIcon}
+          label="Reports"
+          to="/admin-pages/reports"
+          onClick={() => setIsAdminSideBarOpen(false)}
+        />
+      </nav>
     </>
   );
 }

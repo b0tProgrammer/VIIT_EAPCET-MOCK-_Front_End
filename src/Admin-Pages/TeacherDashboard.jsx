@@ -11,12 +11,22 @@ export default function TeacherDashboard() {
     <>
       <NavBarMain />
 
-      <div className="flex min-h-screen bg-[#f9fcff] font-[Poppins] relative">
+      <div className="flex flex-1 bg-[#f9fcff] font-poppins relative">
         {/* Sidebar */}
-        <AdminSideBar
-          isAdminSideBarOpen={isAdminSideBarOpen}
-          setIsAdminSideBarOpen={setIsAdminSideBarOpen}
-        />
+        <aside
+          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
+    transform transition-transform duration-300 ease-in-out z-50
+    ${
+      isAdminSideBarOpen
+        ? "translate-x-0"
+        : "-translate-x-full lg:translate-x-0"
+    }`}
+        >
+          <AdminSideBar
+            isAdminSideBarOpen={isAdminSideBarOpen}
+            setIsAdminSideBarOpen={setIsAdminSideBarOpen}
+          />
+        </aside>
 
         {/* Main Content */}
         <main className="flex-1 p-6 lg:p-10 overflow-y-auto transition-all duration-300">
