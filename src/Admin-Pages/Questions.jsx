@@ -16,7 +16,7 @@ function Questions() {
   };
 
   const handleDownloadTemplate = () => {
-    const csvContent = "Question,Option A,Option B,Option C,Option D,Answer\n";
+    const csvContent = "Question,Option A,Option B,Option C,Option D,Answer,Subject,Topic\n";
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);

@@ -36,6 +36,7 @@ function RegistrationForm() {
   const formRef = useRef(null);
 
   const handleChange = (e) => {
+    console.log(e.target);
     const { name, value, type, checked, files } = e.target;
     setFormData({
       ...formData,
@@ -89,13 +90,10 @@ function RegistrationForm() {
     setLoading(true);
 
     try {
-      // ✅ Create FormData for file upload
       const dataToSend = new FormData();
       for (const key in formData) {
         dataToSend.append(key, formData[key]);
       }
-
-      // ✅ Replace with your backend API endpoint
       const response = await fetch("http://localhost:8080/api/register", {
         method: "POST",
         body: dataToSend,
@@ -108,7 +106,6 @@ function RegistrationForm() {
       const result = await response.json();
       alert("✅ Registration successful: " + result.message);
 
-      // ✅ Redirect or reset
       setFormData({
         fullName: "",
         fatherName: "",
