@@ -1,10 +1,8 @@
-// components/Student_Dashboard.jsx
-
-import { useState } from "react"; // <-- 1. Import useState
+import { useState } from "react"; 
 import NavBar from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import Sidebar from "../components/SideBar";
-import { Menu as MenuIcon } from "lucide-react"; // <-- 2. Import Menu icon
+import { Menu as MenuIcon } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
 
 function StudentDashboard() {
@@ -13,8 +11,7 @@ function StudentDashboard() {
   const examsWritten = 20;
   const passPercentage = "78.2%";
   const navigate = useNavigate();
-
-  // <-- 3. Add the state for the sidebar
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -83,7 +80,6 @@ function StudentDashboard() {
               </p>
             </div>
           </div>
-
           {/* Performance Graph */}
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
@@ -94,10 +90,8 @@ function StudentDashboard() {
                 {/* ...svg content... */}
             </div>
           </div>
-
         </main> 
       </div> 
-
       <Footer />
     </>
   );
