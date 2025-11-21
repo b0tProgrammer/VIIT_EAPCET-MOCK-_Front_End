@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 
@@ -182,7 +181,7 @@ function RegistrationForm() {
 
             {/* Academic Information */}
             <Section title="Academic Information">
-              <Select label="Stream" name="stream" value={formData.stream} onChange={handleChange} options={["Engineering & Pharmacy", "Agriculture", "Pharmacy"]} />
+              <Select label="Stream" name="stream" value={formData.stream} onChange={handleChange} options={["Engineering", "Pharmacy"]} />
               <Select label="Qualifying Exam" name="qualifyingExam" value={formData.qualifyingExam} onChange={handleChange} options={["Intermediate (Regular)", "Intermediate (Vocational)", "Bridge Course"]} />
               <Select label="Year of Passing" name="yearOfPassing" value={formData.yearOfPassing} onChange={handleChange} options={["2024", "2023", "2022"]} />
               <Select label="Medium of Instruction" name="medium" value={formData.medium} onChange={handleChange} options={["English", "Telugu"]} />
@@ -227,7 +226,7 @@ function RegistrationForm() {
                 type="submit"
                 disabled={loading}
                 className={`px-6 py-2 rounded-md text-white shadow-md transition duration-300 ${
-                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#003973] hover:bg-[#002952]"
+                  (loading || formData.agree === false) ? "bg-gray-400 cursor-not-allowed" : "bg-[#003973] hover:bg-[#002952]"
                 }`}
               >
                 {loading ? "Submitting..." : "SUBMIT"}
