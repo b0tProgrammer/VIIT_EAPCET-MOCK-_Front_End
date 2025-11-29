@@ -44,6 +44,21 @@ function RegistrationForm() {
     });
   };
 
+  const handleQualifyingExams = (value) => {
+    var v = value === "Intermediate (Regular)" ? "INTERMEDIATE_REGULAR" : value === "Intermediate (Vocational)" ? "INTERMEDIATE_VOCATIONAL" : "BRIDGE_COURSE";
+    setFormData({
+      ...formData,
+      qualifyingExam: v,
+    });
+  }
+
+  const getSelectedQualifyingExam = () => {
+    if (formData.qualifyingExam === "INTERMEDIATE_REGULAR") return "Intermediate (Regular)";
+    if (formData.qualifyingExam === "INTERMEDIATE_VOCATIONAL") return "Intermediate (Vocational)";
+    if (formData.qualifyingExam === "BRIDGE_COURSE") return "Bridge Course";
+    return "";
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -178,8 +193,8 @@ function RegistrationForm() {
 
             {/* Academic Information */}
             <Section title="Academic Information">
-              <Select label="Stream" name="stream" value={formData.stream} onChange={handleChange} options={["Engineering", "Pharmacy"]} />
-              <Select label="Qualifying Exam" name="qualifyingExam" value={formData.qualifyingExam} onChange={handleChange} options={["Intermediate (Regular)", "Intermediate (Vocational)", "Bridge Course"]} />
+              <Select label="Stream" name="stream" value={formData.stream} onChange={handleChange} options={["ENGINEERING", "PHARMACY"]} />
+              <Select label="Qualifying Exam" name="qualifyingExam" value={getSelectedQualifyingExam()} onChange={(e) => handleQualifyingExams(e.target.value)} options={["Intermediate (Regular)", "Intermediate (Vocational)", "Bridge Course"]} />
               <Select label="Year of Passing" name="yearOfPassing" value={formData.yearOfPassing} onChange={handleChange} options={["2024", "2023", "2022"]} />
               <Select label="Medium of Instruction" name="medium" value={formData.medium} onChange={handleChange} options={["English", "Telugu"]} />
               <Select label="Place of Study" name="placeOfStudy" value={formData.placeOfStudy} onChange={handleChange} options={["Urban", "Rural"]} />
@@ -253,7 +268,6 @@ function RegistrationForm() {
   );
 }
 
-/* 🔹 Helper Components */
 function Section({ title, children }) {
   return (
     <section>
