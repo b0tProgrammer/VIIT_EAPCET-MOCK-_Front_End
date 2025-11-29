@@ -141,6 +141,13 @@ function Exampage() {
       }
     };
     enterFullscreen();
+
+    // Cleanup function to exit full screen on unmount
+    return () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(console.error);
+      }
+    };
   }, []);
 
   // Listen for full screen changes
