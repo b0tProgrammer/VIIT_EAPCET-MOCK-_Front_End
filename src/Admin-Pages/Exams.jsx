@@ -1,214 +1,454 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AdminSideBar from "../components/AdminSiderBar"; // adjust path if needed
-import { Menu as MenuIcon } from "lucide-react";
+import { Menu as MenuIcon, X, Eye, FileText } from "lucide-react";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
-import {  useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
+
+// --- Constants ---
+const API_BASE_URL = 'http://localhost:3000'; // Ensure this matches your Express port
+const SUBJECT_TOTALS = { // Total questions required for a standard paper
+    Mathematics: 80,
+    Physics: 40,
+    Chemistry: 40,
+};
+
+// --- Helper Component: Modal for Paper Preview ---
+const PaperPreviewModal = ({ questions, paperTitle, onClose }) => {
+    return (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[999] p-4">
+            <div className="bg-white w-full max-w-4xl h-[90vh] rounded-xl shadow-2xl flex flex-col relative overflow-hidden">
+                <div className="bg-gray-50 border-b px-6 py-4 flex justify-between items-center">
+                    <h3 className="text-xl font-bold text-[#003973]">Preview: {paperTitle} ({questions.length} Qs)</h3>
+                    <button
+                        className="text-gray-500 hover:text-red-500 transition-colors"
+                        onClick={onClose}
+                    >
+                        <X size={24} />
+                    </button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50 space-y-4">
+                    {questions.map((q, index) => (
+                        <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <p className="font-bold text-gray-900">Q{index + 1}: {q.text} </p>
+                            <p className="text-xs text-gray-500 mt-1 mb-2">({q.subject} | {q.difficulty} | Answer: {q.correctAnswer})</p>
+                            <ul className="list-disc list-inside ml-4 text-sm text-gray-700">
+                                {q.options.map((opt, i) => (
+                                    <li key={i} dangerouslySetInnerHTML={{__html: `**Option ${String.fromCharCode(65 + i)}:** ${opt}`}} />
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+                <div className="bg-white border-t p-4 flex justify-end">
+                    <button
+                        className="px-5 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors font-medium"
+                        onClick={onClose}
+                    >
+                        Close Preview
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export default function CreateQuestionPaper() {
-  const [difficulty, setDifficulty] = useState({
-    Mathematics: 10,
-    Physics: 10,
-    Chemistry: 10,
-  });
-  const navigate = useNavigate();
-  const [stream, setStream] = useState("Engineering");
-  const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
+    const [form, setForm] = useState({
+        title: '',
+        date: '',
+        duration: '3 hours', // Keep as string for display
+    });
+    const [difficultyPercentage, setDifficultyPercentage] = useState({
+        Mathematics: 50, // Default to 50% Medium
+        Physics: 50,
+        Chemistry: 50,
+    });
+    const [stream, setStream] = useState("Engineering");
+    const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
 
-  const handleChange = (subject, value) => {
-    setDifficulty((prev) => ({ ...prev, [subject]: Number(value) }));
-  };
+    const [paperId, setPaperId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [status, setStatus] = useState(null); // {type: 'success'/'error', message: ''}
+    const [previewQuestions, setPreviewQuestions] = useState(null);
+    const navigate = useNavigate();
 
-  return (
-    <>
-      <NavBarMain />
-      <div className="flex flex-1 bg-[#f9fcff] font-poppins text-gray-800">
-        {/* Sidebar */}
-        <aside
-          className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
-    transform transition-transform duration-300 ease-in-out z-50
-    ${
-      isAdminSideBarOpen
-        ? "translate-x-0"
-        : "-translate-x-full lg:translate-x-0"
-    }`}
-        >
-          <AdminSideBar
-            isAdminSideBarOpen={isAdminSideBarOpen}
-            setIsAdminSideBarOpen={setIsAdminSideBarOpen}
-          />
-        </aside>
-        {/* Main Content */}
-        <main className="flex-1 py-10 px-4 sm:px-8 lg:px-12 flex flex-col items-center overflow-y-auto">
-          {/* Mobile Sidebar Toggle */}
-          <button
-            className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium self-start"
-            onClick={() => {
-              setIsAdminSideBarOpen(!isAdminSideBarOpen);
-            }}
-          >
-            <MenuIcon size={24} />
-          </button>
+    // --- Handlers ---
+    const handleFormChange = (e) => {
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
 
-          {/* Form Container */}
-          <div className="w-full max-w-3xl bg-white rounded-2xl shadow-md border border-gray-200 p-8 mx-auto">
-            <h2 className="text-2xl font-semibold text-[#003973] mb-8 text-center">
-              Create Question Paper
-            </h2>
+    const handleDifficultyChange = (subject, value) => {
+        setDifficultyPercentage((prev) => ({ ...prev, [subject]: Number(value) }));
+    };
 
-            {/* Input Fields */}
-            <div className="grid grid-cols-1 gap-5 mb-8">
-              {/* Exam Name */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Exam Name
-                </label>
-                <input
-                  type="text"
-                  className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
-                />
-              </div>
+    // Derived State: Calculate actual question counts based on percentages
+    const calculatedCounts = useMemo(() => {
+        let counts = {};
+        let totalQuestions = 0;
 
-              {/* Date */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Date</label>
-                <input
-                  type="date"
-                  className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
-                />
-              </div>
+        for (const subject in SUBJECT_TOTALS) {
+            const total = SUBJECT_TOTALS[subject];
+            const mediumPercentage = difficultyPercentage[subject];
+            const mediumCount = Math.round(total * (mediumPercentage / 100));
 
-              {/* Duration */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Duration
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g., 3 hours"
-                  className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
-                />
-              </div>
+            // Simplified distribution: Split remaining between EASY and HARD
+            const remaining = total - mediumCount;
+            const easyCount = Math.floor(remaining / 2);
+            const hardCount = remaining - easyCount;
 
-              {/* Stream Dropdown */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Stream</label>
-                <select
-                  value={stream}
-                  onChange={(e) => setStream(e.target.value)}
-                  className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
+            counts[subject] = {
+                MEDIUM: mediumCount,
+                EASY: easyCount,
+                HARD: hardCount,
+                TOTAL: total,
+            };
+            totalQuestions += total;
+        }
+
+        return { counts, totalQuestions };
+    }, [difficultyPercentage]);
+
+    // --- API Calls ---
+
+    const handleGeneratePaper = async () => {
+        if (!form.title.trim()) {
+            setStatus({ type: 'error', message: 'Exam Name is required.' });
+            return;
+        }
+        
+        setIsLoading(true);
+        setStatus(null);
+        setPreviewQuestions(null); // Clear any old preview
+
+        // Construct the payload for the backend (using the calculated counts)
+        const distributionPayload = {};
+        for (const subject in calculatedCounts.counts) {
+            // Note: Mapping 'Mathematics' to 'MATHS', 'Physics' to 'PHYSICS' etc.
+            const subjectKey = subject.toUpperCase(); 
+            distributionPayload[subjectKey] = {
+                EASY: calculatedCounts.counts[subject].EASY,
+                MEDIUM: calculatedCounts.counts[subject].MEDIUM,
+                HARD: calculatedCounts.counts[subject].HARD,
+            };
+        }
+        
+        // ⚠️ Admin ID should come from context/auth
+        const adminId = 1; 
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/create-paper-custom`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    adminId: adminId,
+                    title: form.title.trim(),
+                    durationHours: parseInt(form.duration) || 3,
+                    distribution: distributionPayload,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to generate question paper.');
+            }
+
+            setPaperId(data.paperId);
+            setStatus({ 
+                type: 'success', 
+                message: `✅ Paper created successfully! Total questions: ${data.totalQuestions}. ID: ${data.paperId}` 
+            });
+
+        } catch (error) {
+            console.error('Generation Error:', error);
+            setStatus({ type: 'error', message: error.message || 'Error creating paper.' });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    const handlePreviewPaper = async () => {
+        if (!paperId) {
+            setStatus({ type: 'error', message: 'Generate a paper first using the "Generate Question Paper" button.' });
+            return;
+        }
+        
+        setIsLoading(true);
+        setStatus(null);
+
+        try {
+            // Use the paperId saved from the generation step
+            const response = await fetch(`${API_BASE_URL}/api/admin/preview-paper/${paperId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to fetch paper questions.');
+            }
+
+            setPreviewQuestions(data.questions);
+            setStatus({ type: 'success', message: `Fetched ${data.questions.length} questions for preview.` });
+            
+        } catch (error) {
+            console.error('Preview Error:', error);
+            setStatus({ type: 'error', message: error.message || 'Error fetching preview.' });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    const isFormValid = form.title.trim() !== '';
+    const totalQuestions = calculatedCounts.totalQuestions;
+    const totalMarks = totalQuestions * 4; // Assuming 4 marks per question
+
+    return (
+        <>
+            <NavBarMain />
+            <div className="flex flex-1 min-h-screen bg-[#f9fcff] font-poppins text-gray-800">
+                {/* Sidebar */}
+                <aside
+                    className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
+                        transform transition-transform duration-300 ease-in-out z-50
+                        ${
+                            isAdminSideBarOpen
+                                ? "translate-x-0"
+                                : "-translate-x-full lg:translate-x-0"
+                        }`}
                 >
-                  <option value="Engineering">Engineering</option>
-                  <option value="Agricultural">Agricultural</option>
-                </select>
-              </div>
-            </div>
+                    <AdminSideBar
+                        isAdminSideBarOpen={isAdminSideBarOpen}
+                        setIsAdminSideBarOpen={setIsAdminSideBarOpen}
+                    />
+                </aside>
+                {/* Main Content */}
+                <main className="flex-1 py-10 px-4 sm:px-8 lg:px-12 flex flex-col items-center overflow-y-auto">
+                    {/* Mobile Sidebar Toggle */}
+                    <button
+                        className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium self-start"
+                        onClick={() => {
+                            setIsAdminSideBarOpen(!isAdminSideBarOpen);
+                        }}
+                        disabled={isLoading}
+                    >
+                        <MenuIcon size={24} />
+                    </button>
 
-            {/* Difficulty Cards */}
-            <h3 className="text-md font-semibold mb-2 text-[#003973]">
-              Difficulty
-            </h3>
-            <div className="flex flex-col sm:flex-row gap-6 mb-4">
-              <div className="flex-1 bg-[#F0FEFF] border border-[#0080FF] rounded-[30px] shadow py-4 text-center cursor-pointer hover:scale-105 transition">
-                <p className="text-lg font-semibold text-[#003973]">
-                  Percentage
-                </p>
-                <p className="text-sm text-gray-600">
-                  Set the overall difficulty with few clicks
-                </p>
-              </div>
-              <div className="flex-1 bg-[#F0FEFF] border border-[#0080FF] rounded-[30px] shadow py-4 text-center cursor-pointer hover:scale-105 transition"
-                onClick={() => navigate("/independentLevels")}
-              >
-                <p className="text-lg font-semibold text-[#003973]">Custom</p>
-                <p className="text-sm text-gray-600">
-                  Set each question’s difficulty
-                </p>
-              </div>
-            </div>
+                    {/* Form Container */}
+                    <div className="w-full max-w-3xl bg-white rounded-2xl shadow-md border border-gray-200 p-8 mx-auto">
+                        <h2 className="text-2xl font-semibold text-[#003973] mb-8 text-center">
+                            Create Question Paper
+                        </h2>
 
-            <p className="text-xs text-gray-500 mb-6">
-              *Default Percentage is chosen
-            </p>
+                        {/* Status Message */}
+                        {status && (
+                            <div className={`p-4 rounded-lg mb-6 text-sm font-medium ${
+                                status.type === 'error' ? 'bg-red-100 text-red-800 border border-red-300' : 'bg-green-100 text-green-800 border border-green-300'
+                            }`}>
+                                {status.message}
+                            </div>
+                        )}
+                        {paperId && (
+                            <p className="text-center text-sm font-medium text-blue-600 mb-6">
+                                Paper ID: **{paperId}** is ready. Click Preview or Generate.
+                            </p>
+                        )}
+                        {/* Input Fields */}
+                        <div className="grid grid-cols-1 gap-5 mb-8">
+                            {/* Exam Name */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2" htmlFor="title">
+                                    Exam Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    value={form.title}
+                                    onChange={handleFormChange}
+                                    className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
+                                    disabled={isLoading}
+                                />
+                            </div>
 
-            {/* Difficulty Table */}
-            <div className="overflow-x-auto mb-6">
-              <table className="w-full border border-gray-300 rounded-xl text-sm">
-                <thead className="bg-[#F0FEFF] border-b border-[#0080FF] text-gray-700">
-                  <tr>
-                    <th className="px-4 py-2 text-left">Subject</th>
-                    <th className="px-4 py-2 text-left">Difficulty</th>
-                    <th className="px-4 py-2 text-left">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { subject: "Mathematics", total: 80 },
-                    { subject: "Physics", total: 40 },
-                    { subject: "Chemistry", total: 40 },
-                  ].map(({ subject, total }) => (
-                    <tr key={subject} className="border-t border-gray-200">
-                      <td className="px-4 py-2">{subject}</td>
-                      <td className="px-4 py-2">
-                        <select
-                          value={difficulty[subject]}
-                          onChange={(e) =>
-                            handleChange(subject, e.target.value)
-                          }
-                          className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-3 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
-                        >
-                          {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(
-                            (val) => (
-                              <option key={val} value={val}>
-                                {val}%
-                              </option>
-                            )
-                          )}
-                        </select>
-                      </td>
-                      <td className="px-4 py-2">{total}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                            {/* Date */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2" htmlFor="date">Date</label>
+                                <input
+                                    type="date"
+                                    id="date"
+                                    name="date"
+                                    value={form.date}
+                                    onChange={handleFormChange}
+                                    className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
+                                    disabled={isLoading}
+                                />
+                            </div>
 
-            {/* Summary */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-[#003973] mb-2">Summary</h3>
-              <p>Total Marks: 160</p>
-              <p>Total Questions: 160</p>
-              <p>
-                Difficulty Mix:{" "}
-                <span className="text-[#0080FF] font-medium">
-                  Math {difficulty.Mathematics}%, Physics {difficulty.Physics}%,
-                  Chemistry {difficulty.Chemistry}%
-                </span>
-              </p>
-              <p>
-                Stream:{" "}
-                <span className="text-[#0080FF] font-medium">{stream}</span>
-              </p>
-            </div>
+                            {/* Duration */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2" htmlFor="duration">
+                                    Duration (e.g., 3 hours)
+                                </label>
+                                <input
+                                    type="text"
+                                    id="duration"
+                                    name="duration"
+                                    value={form.duration}
+                                    onChange={handleFormChange}
+                                    placeholder="e.g., 3 hours"
+                                    className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
+                                    disabled={isLoading}
+                                />
+                            </div>
 
-            {/* Buttons */}
-            <div className="flex flex-wrap gap-4 justify-center">
-              <button className="bg-[#003973] text-white px-5 py-2 rounded-lg hover:bg-[#004c99] transition">
-                Preview Paper
-              </button>
-              <button className="bg-gray-200 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-300 transition">
-                Save as Draft
-              </button>
-            </div>
+                            {/* Stream Dropdown */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2" htmlFor="stream">Stream</label>
+                                <select
+                                    id="stream"
+                                    value={stream}
+                                    onChange={(e) => setStream(e.target.value)}
+                                    className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
+                                    disabled={isLoading}
+                                >
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Agricultural">Agricultural</option>
+                                </select>
+                            </div>
+                        </div>
 
-            <div className="flex justify-center mt-6">
-              <button className="border-2 border-[#003973] text-[#003973] px-5 py-2 rounded-lg hover:bg-[#003973] hover:text-white transition">
-                + Generate Question Paper
-              </button>
+                        {/* Difficulty Cards */}
+                        <h3 className="text-md font-semibold mb-2 text-[#003973]">
+                            Difficulty
+                        </h3>
+                        <div className="flex flex-col sm:flex-row gap-6 mb-4">
+                            <div className="flex-1 bg-[#F0FEFF] border border-[#0080FF] rounded-[30px] shadow py-4 text-center cursor-pointer transition">
+                                <p className="text-lg font-semibold text-[#003973]">
+                                    Percentage
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                    Set the overall difficulty mix
+                                </p>
+                            </div>
+                            <div className="flex-1 bg-[#F0FEFF] border border-[#0080FF] rounded-[30px] shadow py-4 text-center cursor-pointer hover:scale-105 transition"
+                                onClick={() => navigate("/independentLevels")}
+                            >
+                                <p className="text-lg font-semibold text-[#003973]">Custom</p>
+                                <p className="text-sm text-gray-600">
+                                    Set each question’s difficulty
+                                </p>
+                            </div>
+                        </div>
+
+                        <p className="text-xs text-gray-500 mb-6">
+                            *The percentage below represents the target mix of **MEDIUM** questions. EASY and HARD questions will share the remaining percentage.
+                        </p>
+
+                        {/* Difficulty Table */}
+                        <div className="overflow-x-auto mb-6">
+                            <table className="w-full border border-gray-300 rounded-xl text-sm">
+                                <thead className="bg-[#F0FEFF] border-b border-[#0080FF] text-gray-700">
+                                    <tr>
+                                        <th className="px-4 py-2 text-left">Subject</th>
+                                        <th className="px-4 py-2 text-left">Difficulty (Medium %)</th>
+                                        <th className="px-4 py-2 text-left">Total Qs</th>
+                                        <th className="px-4 py-2 text-left">E:M:H Qs</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Object.entries(SUBJECT_TOTALS).map(([subject, total]) => (
+                                        <tr key={subject} className="border-t border-gray-200">
+                                            <td className="px-4 py-2">{subject}</td>
+                                            <td className="px-4 py-2">
+                                                <select
+                                                    value={difficultyPercentage[subject]}
+                                                    onChange={(e) =>
+                                                        handleDifficultyChange(subject, e.target.value)
+                                                    }
+                                                    className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-3 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
+                                                    disabled={isLoading}
+                                                >
+                                                    {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(
+                                                        (val) => (
+                                                            <option key={val} value={val}>
+                                                                {val}%
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </td>
+                                            <td className="px-4 py-2 font-medium">{total}</td>
+                                            <td className="px-4 py-2 text-xs">
+                                                {calculatedCounts.counts[subject].EASY} : 
+                                                <span className="font-bold text-blue-600"> {calculatedCounts.counts[subject].MEDIUM} </span> : 
+                                                {calculatedCounts.counts[subject].HARD}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Summary */}
+                        <div className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                            <h3 className="font-semibold text-[#003973] mb-2">Summary</h3>
+                            <p>Total Marks: **{totalMarks}**</p>
+                            <p>Total Questions: **{totalQuestions}**</p>
+                            <p>
+                                Stream:{" "}
+                                <span className="text-[#0080FF] font-medium">{stream}</span>
+                            </p>
+                            {paperId && (
+                                <p className="mt-2 text-sm font-semibold text-green-600">
+                                    Paper Generated (ID: {paperId})
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Buttons */}
+                        <div className="flex flex-wrap gap-4 justify-center">
+                            <button 
+                                className="bg-[#003973] text-white px-5 py-2 rounded-lg hover:bg-[#004c99] transition flex items-center gap-2 disabled:opacity-50"
+                                onClick={handlePreviewPaper}
+                                disabled={isLoading || !paperId}
+                            >
+                                <Eye size={18} />
+                                Preview Paper
+                            </button>
+                            <button className="bg-gray-200 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-300 transition"
+                            disabled={isLoading}
+                            >
+                                Save as Draft
+                            </button>
+                        </div>
+
+                        <div className="flex justify-center mt-6">
+                            <button 
+                                className="border-2 border-[#003973] text-[#003973] px-5 py-2 rounded-lg hover:bg-[#003973] hover:text-white transition flex items-center gap-2 disabled:opacity-50"
+                                onClick={handleGeneratePaper}
+                                disabled={isLoading || !isFormValid}
+                            >
+                                {isLoading ? <FileText size={18} /> : null}
+                                {isLoading ? 'Generating...' : '+ Generate Question Paper'}
+                            </button>
+                        </div>
+                    </div>
+                </main>
             </div>
-          </div>
-        </main>
-      </div>
-      <Footer />
-    </>
-  );
+            <Footer />
+            {previewQuestions && (
+                <PaperPreviewModal 
+                    questions={previewQuestions} 
+                    paperTitle={form.title} 
+                    onClose={() => setPreviewQuestions(null)} 
+                />
+            )}
+        </>
+    );
 }
