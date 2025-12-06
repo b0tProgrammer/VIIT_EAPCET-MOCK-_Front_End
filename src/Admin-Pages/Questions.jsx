@@ -3,6 +3,8 @@ import JoditEditor from "jodit-react";
 import AdminSideBar from "../components/AdminSiderBar";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
+import Loader from "../components/Loader";
+
 import {
   Menu as MenuIcon,
   X,
@@ -97,6 +99,7 @@ function Questions() {
   const [showPreview, setShowPreview] = useState(false);
   const [fileName, setFileName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleUploadClick = () => fileInputRef.current.click();
 
@@ -110,9 +113,7 @@ function Questions() {
     reader.onload = (event) => {
       const text = event.target.result;
       const parsed = simpleCSVParse(text); // Use the custom parser
-      
       setQuestions(parsed);
-      setShowPreview(true); // Automatically open preview after upload
     };
     reader.readAsText(file);
     e.target.value = ""; // Reset input
@@ -146,8 +147,23 @@ function Questions() {
           optionCImage: null, optionCImagePreview: null,
           optionDImage: null, optionDImagePreview: null,
       };
-      setQuestions((prev) => [...prev, newQuestion]);
+
+      // Show loader briefly while the UI readies the new question
+      setLoading(true);
+      setTimeout(() => {
+        setQuestions((prev) => [...prev, newQuestion]);
+        setShowPreview(true);
+        setLoading(false);
+      }, 250);
+  };
+
+  const handleOpenPreview = () => {
+    // Show loader briefly while opening preview
+    setLoading(true);
+    setTimeout(() => {
       setShowPreview(true);
+      setLoading(false);
+    }, 200);
   };
   
   const handleTextChange = (id, field, value) => {
@@ -292,9 +308,11 @@ function Questions() {
   };
 
   return (
+
+
     <div className="min-h-screen flex flex-col bg-[#f9fcff] font-poppins text-gray-800">
       <NavBarMain />
-
+      {loading && <Loader />}
       <div className="flex flex-1">
         <aside
           className={`fixed lg:static top-0 left-0 h-full w-64 bg-white transform transition-transform duration-300 ease-in-out z-50 ${
@@ -316,7 +334,7 @@ function Questions() {
           </button>
 
           <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6">Add Question</h2>
-
+          
           {/* Upload Section */}
           <div className="flex flex-col space-y-3 mb-8">
             <div className="flex flex-wrap gap-4">
@@ -328,7 +346,7 @@ function Questions() {
                 Upload CSV
                 </button>
                 <button
-                    onClick={handleAddQuestion}
+                    onClick={() => {handleAddQuestion();}}
                     className="px-5 py-2 rounded-md border border-green-300 text-green-700 bg-white shadow-sm hover:bg-green-50 transition-all duration-300 w-fit flex items-center gap-2"
                 >
                 <PlusCircle size={18} />
@@ -367,34 +385,12 @@ function Questions() {
           <div className="flex flex-wrap gap-4">
             {questions.length > 0 && (
                 <button
-                    onClick={() => setShowPreview(true)}
-                    className="px-5 py-2 border border-gray-300 rounded-md hover:bg-blue-50 transition duration-200 bg-white text-gray-700 font-medium"
+                  onClick={handleOpenPreview}
+                  className="px-5 py-2 border border-gray-300 rounded-md hover:bg-blue-50 transition duration-200 bg-white text-gray-700 font-medium"
                 >
-                    Preview & Edit Questions ({questions.length})
+                  Preview & Edit Questions ({questions.length})
                 </button>
             )}
-             {questions.length > 0 && (
-                 <button
-                    onClick={handleSaveToBackend}
-                    disabled={isUploading}
-                    className="px-6 py-2 rounded-md bg-[#003973] text-white hover:bg-blue-800 transition-colors font-medium shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <FileText size={18} />
-                    {isUploading ? "Uploading..." : "Quick Save & Upload"}
-                </button>
-             )}
-          </div>
-          <div className="flex flex-wrap gap-4">
-            {/* Show Preview button only if questions are loaded/edited */}
-            {questions.length > 0 && (
-                <button
-                    onClick={() => setShowPreview(true)}
-                    className="px-5 py-2 border border-gray-300 rounded-md hover:bg-blue-50 transition duration-200 bg-white text-gray-700 font-medium"
-                >
-                    Preview & Edit Questions ({questions.length})
-                </button>
-            )}
-             {/* Show Quick Save button only if questions are loaded */}
              {questions.length > 0 && (
                  <button
                     onClick={handleSaveToBackend}
