@@ -3,6 +3,8 @@ import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 
 function RegistrationForm() {
+
+  const API = "http://localhost:3000"
   const [formData, setFormData] = useState({
     fullName: "",
     fatherName: "",
@@ -109,7 +111,7 @@ function RegistrationForm() {
       for (const key in formData) {
         dataToSend.append(key, formData[key]);
       }
-      const response = await fetch("http://localhost:8080/api/register", {
+      const response = await fetch(`${API}/api/auth/register`, {
         method: "POST",
         body: dataToSend,
       });
@@ -202,7 +204,7 @@ function RegistrationForm() {
 
             {/* Category Information */}
             <Section title="Category Information">
-              <Select label="Category" name="category" value={formData.category} onChange={handleChange} options={["OC", "BC-A", "BC-B", "BC-C", "BC-D", "BC-E", "SC", "ST", "EWS"]} />
+              <Select label="Category" name="category" value={formData.category} onChange={handleChange} options={["OC", "BC_A", "BC_B", "BC_C", "BC_D", "BC_E", "SC", "ST", "EWS"]} />
               <RadioGroup
                 label="Minority Status"
                 name="minorityStatus"
