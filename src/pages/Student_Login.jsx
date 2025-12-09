@@ -10,6 +10,7 @@ function Student_Login({ onLoginSuccess }) {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [init, setInit] = useState(false);
 
   useEffect(() => {
@@ -18,25 +19,51 @@ function Student_Login({ onLoginSuccess }) {
     }).then(() => setInit(true));
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const API_BASE_URL = "http://localhost:3000/api/auth/login"; 
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!username || !password || !role) {
       setError("⚠️ Please fill in all fields including role.");
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-
     setError("");
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password}),
+      });
 
-    // ✅ Role-based navigation
-    if (role === "teacher" || role === "admin") {
-      navigate("/admin-pages/teacherdashboard");
-    } else {
-      navigate("/student_dashboard");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data?.message || "Login failed. Please check your credentials.");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      // Success: optionally store token, call callback, and navigate
+      if (data.token) {
+        try { localStorage.setItem("authToken", data.token); } catch (err) { console.error("LocalStorage error:", err); }
+      }
+      if (onLoginSuccess) onLoginSuccess(data);
+
+      if (role === "teacher" || role === "admin") {
+        navigate("/admin-pages/teacherdashboard");
+      } else {
+        navigate("/student_dashboard");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Network error. Please try again later.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (onLoginSuccess) onLoginSuccess();
   };
 
   return (
@@ -98,9 +125,10 @@ function Student_Login({ onLoginSuccess }) {
             <div className="flex justify-center mt-6">
               <button
                 type="submit"
-                className="bg-[#003973] text-white px-6 py-2 rounded-md shadow-md hover:bg-[#002952] transition duration-300"
+                className="bg-[#003973] text-white px-6 py-2 rounded-md shadow-md hover:bg-[#002952] transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
               >
-                SUBMIT
+                {isSubmitting ? "Submitting..." : "SUBMIT"}
               </button>
             </div>
 

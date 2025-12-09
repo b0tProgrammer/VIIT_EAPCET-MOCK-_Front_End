@@ -117,10 +117,7 @@ function RegistrationForm() {
       if (!response.ok) {
         throw new Error("Something went wrong. Please try again.");
       }
-
-      const result = await response.json();
-      alert("✅ Registration successful: " + result.message);
-
+      
       setFormData({
         fullName: "",
         fatherName: "",
