@@ -12,10 +12,9 @@ function Student_Login({ onLoginSuccess }) {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // New loading state
+  const [loading, setLoading] = useState(false); 
   const [init, setInit] = useState(false);
 
-  // Particle engine initialization (Keep this for the UI effect)
   useEffect(() => {
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
@@ -47,35 +46,38 @@ function Student_Login({ onLoginSuccess }) {
       const result = await response.json();
 
       if (!response.ok) {
-        // Handle failed login (e.g., Invalid credentials)
-        throw new Error(result.message || "Login failed. Please check your credentials.");
+        // Handle login failure (400, 401 errors from backend)
+        throw new Error(result.message || "Login failed. Invalid credentials or server error.");
       }
 
       // 2. Successful Login Response
-      const loggedInUser = result.user; // Contains { id, identifier, fullName, role }
+      const loggedInUser = result.user; 
+      
+      // *** FIX FOR: Cannot read properties of undefined (reading 'role') ***
+      // We safely check for the role property using optional chaining
+      const actualRole = loggedInUser?.role || 'UNKNOWN';
+
 
       // 3. Role Verification and Navigation
       
-      // Enforce that 'user' role is only used by students (or the generic login endpoint)
-      if (role === 'user' && loggedInUser.role === 'STUDENT') {
-          // Logged in as a Student
+      // Student Login (User role on frontend must match STUDENT role from backend)
+      if (role === 'user' && actualRole === 'STUDENT') {
           alert(`Welcome, ${loggedInUser.fullName}!`);
           if (onLoginSuccess) onLoginSuccess(loggedInUser);
           navigate("/student_dashboard");
       } 
-      else if ((role === 'admin' || role === 'teacher') && loggedInUser.role !== 'STUDENT') {
-          // Logged in as Admin/Teacher (assuming the backend's login route handles these)
-          alert(`Welcome, ${loggedInUser.fullName}! You are logged in as ${loggedInUser.role}.`);
+      // Admin/Teacher Login (Check against the backend's returned role)
+      else if ((role === 'admin' || role === 'teacher') && actualRole !== 'STUDENT') {
+          alert(`Welcome, ${loggedInUser.fullName}! You are logged in as ${actualRole}.`);
           if (onLoginSuccess) onLoginSuccess(loggedInUser);
           navigate("/admin-pages/teacherdashboard");
       } 
       else {
-          // Handle role mismatch (e.g., student selects 'admin' role)
-          throw new Error(`Role mismatch: You logged in as ${loggedInUser.role}, but selected ${role}.`);
+          // Role Mismatch or unexpected role returned
+          throw new Error(`Role mismatch. You logged in as ${actualRole}, but selected ${role} in the dropdown.`);
       }
 
     } catch (err) {
-      // Display the error from the backend or custom mismatch error
       setError(err.message);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
@@ -85,8 +87,6 @@ function Student_Login({ onLoginSuccess }) {
 
   return (
     <>
-      {/* ... Particle Background JSX (Assuming it's correct) ... */}
-      
       <div className="relative flex items-center justify-center min-h-screen bg-white overflow-hidden">
         <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] relative z-10 font-poppins">
           <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center">
@@ -135,7 +135,7 @@ function Student_Login({ onLoginSuccess }) {
                 className="w-full bg-[#EFF7FF] border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-[#003973] outline-none shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
               >
                 <option value="">Select Role</option>
-                <option value="user">User (Student)</option> {/* Updated text */}
+                <option value="user">User (Student)</option>
                 <option value="admin">Admin</option>
                 <option value="teacher">Teacher</option>
               </select>
@@ -144,7 +144,7 @@ function Student_Login({ onLoginSuccess }) {
             <div className="flex justify-center mt-6">
               <button
                 type="submit"
-                disabled={loading} // Disable while loading
+                disabled={loading}
                 className={`text-white px-6 py-2 rounded-md shadow-md transition duration-300 ${
                   loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#003973] hover:bg-[#002952]"
                 }`}
