@@ -10,43 +10,68 @@ const API_BASE_URL = 'http://localhost:3000'; // Ensure this matches your Expres
 
 export default function UpcomingTests() {
     const navigate = useNavigate();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    
-    // State for fetched test data
-    const [upcomingTests, setUpcomingTests] = useState([]); 
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    
+    // State for fetched test data
+    const [upcomingTests, setUpcomingTests] = useState([]); 
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Fetch data from the backend on component mount
-    useEffect(() => {
-        const fetchExams = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/student/exams`);
-                const data = await response.json();
+    // Fetch data from the backend on component mount
+    useEffect(() => {
+        const fetchExams = async () => {
+            // 🚨 STEP 1: Get the token from local storage
+            const token = localStorage.getItem('userToken');
 
-                if (!response.ok) {
-                    throw new Error(data.message || "Failed to fetch exams.");
-                }
-
-                setUpcomingTests(data.exams.map(exam => ({
-                    id: exam.id,
-                    name: exam.title,
-                    // Format duration nicely
-                    duration: `${exam.durationHours} ${exam.durationHours > 1 ? 'Hrs' : 'Hr'}`, 
-                    totalMarks: exam.totalMarks
-                })));
-                setError(null);
-            } catch (err) {
-                console.error("Exam Fetch Error:", err);
-                setError(err.message);
-                setUpcomingTests([]);
-            } finally {
+            if (!token) {
+                // Handle case where user is not logged in (though protected by higher-level route likely)
+                setError("Authentication required. Please log in again.");
                 setIsLoading(false);
+                return;
             }
-        };
 
-        fetchExams();
-    }, []);
+            try {
+                // 🚨 STEP 2: Include the Authorization header in the fetch call
+                const response = await fetch(`${API_BASE_URL}/api/student/exams`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // <-- CRITICAL FIX
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Check for the unauthorized error and redirect them
+                    if (response.status === 401 || response.status === 403) {
+                        localStorage.clear();
+                        navigate('/student_login'); // Redirect to login on failed auth
+                        return;
+                    }
+                    throw new Error(data.message || "Failed to fetch exams.");
+                }
+                
+                // Map and set upcoming tests (UNCHANGED)
+                setUpcomingTests(data.exams.map(exam => ({
+                    id: exam.id,
+                    name: exam.title,
+                    duration: `${exam.durationHours} ${exam.durationHours > 1 ? 'Hrs' : 'Hr'}`, 
+                    totalMarks: exam.totalMarks
+                })));
+
+                setError(null);
+            } catch (err) {
+                console.error("Exam Fetch Error:", err);
+                setError(err.message);
+                setUpcomingTests([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchExams();
+    }, [navigate]);
 
     // Handler for starting the exam: navigates to instructions with Paper ID
     const handleStartExam = (paperId) => {
