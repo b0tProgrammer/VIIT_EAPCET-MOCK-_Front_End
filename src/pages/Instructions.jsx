@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import { useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
@@ -16,11 +16,11 @@ export default function InstructionPage() {
     }, [location.search]);
 
     const handleStart = () => {
-        if (!paperId) {
-             alert('Error: Paper ID not found. Please select a test from the list.');
-             return;
-        }
-        if (!agree) return;
+        // if (!paperId) {
+        //      alert('Error: Paper ID not found. Please select a test from the list.');
+        //      return;
+        // }
+        // if (!agree) return;
         setShowConfirmModal(true);
     };
 
@@ -179,10 +179,10 @@ export default function InstructionPage() {
                             <div className="flex-shrink-0">
                                 <button
                                     onClick={handleStart}
-                                    disabled={!agree || !paperId}
+                                    disabled={agree}
                                     className={`px-5 py-2 rounded-md text-white font-semibold shadow-sm transition-colors duration-150 ${
-                                        agree && paperId
-                                            ? "bg-[#003973] hover:bg-blue-800"
+                                        agree   
+                                            ? "bg-[#003973] hover:bg-blue-800 cursor-pointer"
                                             : "bg-blue-400 cursor-not-allowed"
                                     }`}
                                 >

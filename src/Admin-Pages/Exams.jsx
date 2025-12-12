@@ -34,7 +34,7 @@ const PaperPreviewModal = ({ questions, paperTitle, onClose }) => {
                             <p className="text-xs text-gray-500 mt-1 mb-2">({q.subject} | {q.difficulty} | Answer: {q.correctAnswer})</p>
                             <ul className="list-disc list-inside ml-4 text-sm text-gray-700">
                                 {q.options.map((opt, i) => (
-                                    <li key={i} dangerouslySetInnerHTML={{__html: `**Option ${String.fromCharCode(65 + i)}:** ${opt}`}} />
+                                    <li key={i} dangerouslySetInnerHTML={{__html: `Option ${String.fromCharCode(65 + i)}: ${opt}`}} />
                                 ))}
                             </ul>
                         </div>
@@ -57,7 +57,7 @@ export default function CreateQuestionPaper() {
     const [form, setForm] = useState({
         title: '',
         date: '',
-        duration: '3 hours', // Keep as string for display
+        duration: '3 hours',
     });
     const [difficultyPercentage, setDifficultyPercentage] = useState({
         Mathematics: 50, // Default to 50% Medium
@@ -116,11 +116,9 @@ export default function CreateQuestionPaper() {
             setStatus({ type: 'error', message: 'Exam Name is required.' });
             return;
         }
-        
         setIsLoading(true);
         setStatus(null);
         setPreviewQuestions(null); // Clear any old preview
-
         // Construct the payload for the backend (using the calculated counts)
         const distributionPayload = {};
         for (const subject in calculatedCounts.counts) {
@@ -132,10 +130,8 @@ export default function CreateQuestionPaper() {
                 HARD: calculatedCounts.counts[subject].HARD,
             };
         }
-        
         // ⚠️ Admin ID should come from context/auth
         const adminId = 1; 
-
         try {
             const response = await fetch(`${API_BASE_URL}/api/admin/create-paper-custom`, {
                 method: 'POST',
@@ -149,11 +145,9 @@ export default function CreateQuestionPaper() {
             });
 
             const data = await response.json();
-
             if (!response.ok) {
                 throw new Error(data.message || 'Failed to generate question paper.');
             }
-
             setPaperId(data.paperId);
             setStatus({ 
                 type: 'success', 
@@ -171,6 +165,7 @@ export default function CreateQuestionPaper() {
 
     const handlePreviewPaper = async () => {
         if (!paperId) {
+            alert('Please generate a paper first to preview.');
             setStatus({ type: 'error', message: 'Generate a paper first using the "Generate Question Paper" button.' });
             return;
         }
@@ -186,14 +181,12 @@ export default function CreateQuestionPaper() {
             });
             
             const data = await response.json();
-
+            console.log('Preview Data:', data);
             if (!response.ok) {
                 throw new Error(data.message || 'Failed to fetch paper questions.');
             }
-
             setPreviewQuestions(data.questions);
             setStatus({ type: 'success', message: `Fetched ${data.questions.length} questions for preview.` });
-            
         } catch (error) {
             console.error('Preview Error:', error);
             setStatus({ type: 'error', message: error.message || 'Error fetching preview.' });
@@ -201,12 +194,9 @@ export default function CreateQuestionPaper() {
             setIsLoading(false);
         }
     };
-
-
     const isFormValid = form.title.trim() !== '';
     const totalQuestions = calculatedCounts.totalQuestions;
-    const totalMarks = totalQuestions * 4; // Assuming 4 marks per question
-
+    const totalMarks = totalQuestions; // Assuming 4 marks per question
     return (
         <>
             <NavBarMain />
@@ -398,8 +388,8 @@ export default function CreateQuestionPaper() {
                         {/* Summary */}
                         <div className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
                             <h3 className="font-semibold text-[#003973] mb-2">Summary</h3>
-                            <p>Total Marks: **{totalMarks}**</p>
-                            <p>Total Questions: **{totalQuestions}**</p>
+                            <p>Total Marks: {totalMarks}</p>
+                            <p>Total Questions: {totalQuestions}</p>
                             <p>
                                 Stream:{" "}
                                 <span className="text-[#0080FF] font-medium">{stream}</span>

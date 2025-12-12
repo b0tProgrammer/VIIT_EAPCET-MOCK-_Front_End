@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim";
 
 function Student_Login({ onLoginSuccess }) {
   const navigate = useNavigate();
@@ -15,68 +13,46 @@ function Student_Login({ onLoginSuccess }) {
   const [loading, setLoading] = useState(false); 
   const [init, setInit] = useState(false);
 
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => setInit(true));
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!username || !password || !role) {
       setError("⚠️ Please fill in all fields including role.");
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-
     setError("");
     setLoading(true);
-
     try {
       // 1. Send credentials to the backend login endpoint
       const response = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({ studentId: username, password }),
+        body: JSON.stringify({ username, password }),
       });
-
-      const result = await response.json();
-
       if (!response.ok) {
         // Handle login failure (400, 401 errors from backend)
         throw new Error(result.message || "Login failed. Invalid credentials or server error.");
       }
 
-      // 2. Successful Login Response
-      const loggedInUser = result.user; 
-      
-      // *** FIX FOR: Cannot read properties of undefined (reading 'role') ***
-      // We safely check for the role property using optional chaining
-      const actualRole = loggedInUser?.role || 'UNKNOWN';
+      const result = await response.json();
 
-
-      // 3. Role Verification and Navigation
-      
-      // Student Login (User role on frontend must match STUDENT role from backend)
-      if (role === 'user' && actualRole === 'STUDENT') {
-          alert(`Welcome, ${loggedInUser.fullName}!`);
-          if (onLoginSuccess) onLoginSuccess(loggedInUser);
-          navigate("/student_dashboard");
+      if (role === 'user') {
+        localStorage.setItem("studentToken", result.student.accessToken);
+        if (onLoginSuccess) onLoginSuccess(loggedInUser);
+        navigate("/student_dashboard");
       } 
+
       // Admin/Teacher Login (Check against the backend's returned role)
-      else if ((role === 'admin' || role === 'teacher') && actualRole !== 'STUDENT') {
-          alert(`Welcome, ${loggedInUser.fullName}! You are logged in as ${actualRole}.`);
-          if (onLoginSuccess) onLoginSuccess(loggedInUser);
-          navigate("/admin-pages/teacherdashboard");
-      } 
-      else {
-          // Role Mismatch or unexpected role returned
-          throw new Error(`Role mismatch. You logged in as ${actualRole}, but selected ${role} in the dropdown.`);
+      else if ((role === 'admin' || role === 'teacher')) {
+        if(onLoginSuccess) onLoginSuccess(loggedInUser);
+        navigate("/admin-pages/teacherdashboard");
       }
-
+      else {
+        throw new Error(`Role mismatch. You logged in as ${actualRole}, but selected ${role} in the dropdown.`);
+      }
+      localStorage.setItem("role", role);
     } catch (err) {
       setError(err.message);
       window.scrollTo({ top: 0, behavior: "smooth" });

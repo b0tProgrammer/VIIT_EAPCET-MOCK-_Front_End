@@ -1,9 +1,5 @@
 import vignanLogo from "../assets/LogoV1.svg";
-
 function Loader() {
-
-    console.log("Loader component rendered");
-
   return (
     <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/40 z-[99999]">
       <img
