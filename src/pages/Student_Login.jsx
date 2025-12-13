@@ -15,12 +15,6 @@ function Student_Login({ onLoginSuccess }) {
   const [loading, setLoading] = useState(false); 
   const [init, setInit] = useState(false);
 
-<<<<<<< HEAD
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => setInit(true));
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,55 +72,8 @@ function Student_Login({ onLoginSuccess }) {
       setLoading(false);
     }
   };
-=======
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!username || !password || !role) {
-      setError("⚠️ Please fill in all fields including role.");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-    setError("");
-    setLoading(true);
-    try {
-      // 1. Send credentials to the backend login endpoint
-      const response = await fetch(`${API}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!response.ok) {
-        // Handle login failure (400, 401 errors from backend)
-        throw new Error(result.message || "Login failed. Invalid credentials or server error.");
-      }
 
-      const result = await response.json();
 
-      if (role === 'user') {
-        localStorage.setItem("studentToken", result.student.accessToken);
-        if (onLoginSuccess) onLoginSuccess(loggedInUser);
-        navigate("/student_dashboard");
-      } 
-
-      // Admin/Teacher Login (Check against the backend's returned role)
-      else if ((role === 'admin' || role === 'teacher')) {
-        if(onLoginSuccess) onLoginSuccess(loggedInUser);
-        navigate("/admin-pages/teacherdashboard");
-      }
-      else {
-        throw new Error(`Role mismatch. You logged in as ${actualRole}, but selected ${role} in the dropdown.`);
-      }
-      localStorage.setItem("role", role);
-    } catch (err) {
-      setError(err.message);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } finally {
-      setLoading(false);
-    }
-  };
->>>>>>> d256d73122971dba033ae8891d50506def519cea
 
   // ... return JSX unchanged ...
   return (
