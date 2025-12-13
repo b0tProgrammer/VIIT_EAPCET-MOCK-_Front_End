@@ -38,7 +38,6 @@ function RegistrationForm() {
   const formRef = useRef(null);
 
   const handleChange = (e) => {
-    console.log(e.target);
     const { name, value, type, checked, files } = e.target;
     setFormData({
       ...formData,

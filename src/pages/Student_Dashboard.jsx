@@ -6,6 +6,7 @@ import { Menu as MenuIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function StudentDashboard() {
+  // TODO: API call to fetch real data
   const username = "User_95";
   const nextMockTest = "Mock_Exam_21";
   const examsWritten = 20;
