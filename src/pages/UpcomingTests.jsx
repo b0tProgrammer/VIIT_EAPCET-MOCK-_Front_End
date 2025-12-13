@@ -78,6 +78,14 @@ export default function UpcomingTests() {
         navigate(`/instructions?paperId=${paperId}`);
     };
 
+    // Create simulated start times (in seconds from now) for display purposes
+    const simulateStartSeconds = (index) => {
+        if (index === 0) return 3 * 3600; // 3 hours
+        if (index === 1) return 24 * 3600; // 1 day
+        if (index === 2) return 4 * 24 * 3600; // 4 days
+        return (index + 2) * 24 * 3600; // later tests
+    };
+
 
     // --- JSX Rendering ---
     return (
@@ -114,7 +122,7 @@ export default function UpcomingTests() {
 
                     {/* List of Test Cards */}
                     <div className="space-y-6">
-                        {!isLoading && upcomingTests.map((test) => (
+                        {!isLoading && upcomingTests.map((test, idx) => (
                             <TestCard 
                                 key={test.id} 
                                 examId={test.id}
@@ -122,6 +130,7 @@ export default function UpcomingTests() {
                                 duration={test.duration} 
                                 totalMarks={test.totalMarks}
                                 onStart={handleStartExam}
+                                startSeconds={simulateStartSeconds(idx)}
                             />
                         ))}
                     </div>
@@ -134,8 +143,15 @@ export default function UpcomingTests() {
 }
 
 // --- TestCard Component (Styling is kept) ---
-function TestCard({ examId, examName, duration, totalMarks, onStart }) {
-    
+function TestCard({ examId, examName, duration, totalMarks, onStart, startSeconds }) {
+    const humanize = (secs) => {
+        if (secs <= 0) return 'Starting now';
+        if (secs < 60) return `in ${secs} sec`;
+        if (secs < 3600) return `in ${Math.ceil(secs/60)} min`;
+        if (secs < 86400) return `in ${Math.ceil(secs/3600)} hrs`;
+        return `in ${Math.ceil(secs/86400)} days`;
+    };
+
     return (
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200
                         flex flex-col sm:flex-row justify-between sm:items-center
@@ -147,7 +163,7 @@ function TestCard({ examId, examName, duration, totalMarks, onStart }) {
             </div>
 
             <div className="flex flex-col items-start sm:items-end">
-                <div className="text-3xl font-bold text-gray-800 mb-2">3 days</div> {/* Placeholder for countdown */}
+                <div className="text-3xl font-bold text-gray-800 mb-2">{humanize(startSeconds)}</div>
                 <button
                     onClick={() => onStart(examId)}
                     className="bg-[#003973] text-white px-5 py-2 rounded-lg hover:bg-[#004c99] transition font-medium"

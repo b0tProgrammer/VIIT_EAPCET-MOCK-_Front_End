@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'; // 🚨 Added useRef, useCallback
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Header from '../components/Header';
 import SubjectTabs from '../components/SubjectTabs';
 import QuestionPanel from '../components/QuestionPanel';
@@ -8,7 +8,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const API_BASE_URL = 'http://localhost:3000'; 
 
-// 🚨 FIX 1: Define the QuestionStatus Enum
 export const QuestionStatus = {
     NOT_VISITED: 'not-visited', 
     NOT_ANSWERED: 'not-answered', 
@@ -40,8 +39,11 @@ function Exampage() {
     const [loadError, setLoadError] = useState(null);
     const [attemptId, setAttemptId] = useState(null); 
     
-    // 🚨 FIX 2: Ref for preventing multiple submissions
     const submittingRef = useRef(false);
+    const autoSubmitTimerRef = useRef(null);
+    const autoSubmitIntervalRef = useRef(null);
+    const [autoSubmitCountdown, setAutoSubmitCountdown] = useState(null);
+    const attemptIdRef = useRef(null);
 
     // Get paperId from URL
     const paperId = useMemo(() => {
@@ -69,18 +71,27 @@ function Exampage() {
         }
 
         const fetchExamData = async () => {
-            const studentId = 1; 
+            const user = (() => { try { return JSON.parse(localStorage.getItem('userInfo') || 'null'); } catch { return null; } })();
+            const studentId = user?.id || user?.studentId || 1;
+            const token = localStorage.getItem('userToken');
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/student/start-exam`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
                     body: JSON.stringify({ studentId: studentId, paperId: paperId }),
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        // Not authenticated: clear local session and redirect to login
+                        localStorage.removeItem('userToken');
+                        localStorage.removeItem('userInfo');
+                        navigate('/student_login');
+                        return;
+                    }
                     throw new Error(data.message || 'Failed to start exam.');
                 }
                 
@@ -97,7 +108,8 @@ function Exampage() {
                 }
 
                 setPaperData(data);
-                setAttemptId(data.attemptId); 
+                setAttemptId(data.attemptId);
+                attemptIdRef.current = data.attemptId;
                 setQuestionsBySubject(groupedQuestions);
                 setActiveSubject(Object.keys(groupedQuestions)[0]);
                 
@@ -127,12 +139,16 @@ function Exampage() {
 
     // Re-implemented Handlers to use Dynamic Data
     const updateQuestionStatus = useCallback((status) => {
-        setQuestionStatus(prev => ({
-            ...prev,
-            [activeSubject]: prev[activeSubject].map((s, i) => 
-                i === currentQuestionIndex ? status : s
-            )
-        }));
+        setQuestionStatus(prev => {
+            const subjectArr = prev[activeSubject] || [];
+            const current = subjectArr[currentQuestionIndex];
+            if (current === status) return prev; // no change
+
+            return {
+                ...prev,
+                [activeSubject]: subjectArr.map((s, i) => i === currentQuestionIndex ? status : s)
+            };
+        });
     }, [activeSubject, currentQuestionIndex]);
 
     const handleAnswerSelect = (optionIndex) => {
@@ -194,26 +210,43 @@ function Exampage() {
     };
 
     const confirmSubmit = async () => {
-        if (!attemptId) {
+        const currentAttemptId = attemptIdRef.current;
+        if (!currentAttemptId) {
             alert("Error: Cannot submit. Attempt ID is missing.");
             return;
         }
         
-        // 🚨 FIX 3: Prevent double submission
+        // clear any pending auto-submit timer
+        if (autoSubmitTimerRef.current) {
+            clearTimeout(autoSubmitTimerRef.current);
+            autoSubmitTimerRef.current = null;
+        }
+
         if (submittingRef.current) return;
         submittingRef.current = true;
         
         const submissionAnswers = prepareAnswersForSubmission();
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/student/submit-attempt`, {
+            try {
+                const token = localStorage.getItem('userToken');
+                console.log('confirmSubmit - submitting', { attemptId: currentAttemptId, answersSample: Object.keys(submissionAnswers).slice(0,20), tokenPresent: !!token });
+                const response = await fetch(`${API_BASE_URL}/api/student/submit-attempt`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
                 body: JSON.stringify({
-                    attemptId: attemptId,
+                    attemptId: currentAttemptId,
                     answers: submissionAnswers,
                 }),
             });
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('userInfo');
+                alert('Session expired. Please login again.');
+                navigate('/student_login');
+                submittingRef.current = false;
+                return;
+            }
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -222,11 +255,30 @@ function Exampage() {
             }
 
             // Successful submission: Clear state and navigate
+            const respData = await response.json();
             setAttemptId(null); // Clear ID to prevent future submissions
+            attemptIdRef.current = null;
             submittingRef.current = false;
-            const studentId = 1;
+            const user = (() => { try { return JSON.parse(localStorage.getItem('userInfo') || 'null'); } catch { return null; } })();
+            const studentId = user?.id || user?.studentId || 1;
             setShowSubmitModal(false);
-           navigate(`/results?paperId=${paperId}&studentId=${studentId}`); 
+            setShowFullscreenWarning(false);
+
+            // Exit fullscreen if active (best-effort)
+            try {
+                if (document.fullscreenElement) {
+                    await document.exitFullscreen();
+                }
+            } catch (e) {
+                console.warn('Failed to exit fullscreen:', e);
+            }
+
+            // Prefer navigating to results with the newly created resultId
+            if (respData?.resultId) {
+                navigate(`/results?resultId=${respData.resultId}&studentId=${studentId}`);
+            } else {
+                navigate(`/results?paperId=${paperId}&studentId=${studentId}`);
+            }
 
         } catch (error) {
             submittingRef.current = false;
@@ -241,43 +293,65 @@ function Exampage() {
     };
     
     // ... (rest of useEffects and fullscreen handlers are UNCHANGED) ...
-     // Request full screen on mount
-    useEffect(() => {
-        const enterFullscreen = async () => {
-            try {
-                await document.documentElement.requestFullscreen();
-            } catch (error) {
-                console.error('Failed to enter full screen:', error);
-            }
-        };
-        enterFullscreen();
+    // NOTE: Do not auto-request fullscreen on mount — must be initiated by a user gesture.
 
-        // Cleanup function to exit full screen on unmount
-        return () => {
-            if (document.fullscreenElement) {
-                document.exitFullscreen().catch(console.error);
-            }
-        };
-    }, []);
-
-    // Listen for full screen changes
+    // Listen for full screen changes — register once and use functional state updates
     useEffect(() => {
         const handleFullscreenChange = () => {
             if (!document.fullscreenElement) {
-                // Full screen exited
-                const newWarnings = fullscreenWarnings + 1;
-                setFullscreenWarnings(newWarnings);
                 setShowFullscreenWarning(true);
 
-                if (newWarnings >= 3) {
-                    handleSubmit();
-                }
+                setFullscreenWarnings(prev => {
+                    const newWarnings = prev + 1;
+
+                    if (newWarnings >= 3) {
+                        console.log('Fullscreen warning 3 reached — starting auto-submit countdown');
+                        // Start immediate visible countdown (only once)
+                        if (!autoSubmitIntervalRef.current && !autoSubmitTimerRef.current) {
+                            setAutoSubmitCountdown(3);
+                            autoSubmitIntervalRef.current = setInterval(() => {
+                                setAutoSubmitCountdown(prevCount => {
+                                    const current = (prevCount === null ? 3 : prevCount);
+                                    if (current <= 1) {
+                                        if (autoSubmitIntervalRef.current) {
+                                            clearInterval(autoSubmitIntervalRef.current);
+                                            autoSubmitIntervalRef.current = null;
+                                        }
+                                        // slight delay to allow UI update
+                                        autoSubmitTimerRef.current = setTimeout(() => {
+                                            autoSubmitTimerRef.current = null;
+                                            console.log('Auto-submit timer firing now');
+                                            if (!submittingRef.current) {
+                                                confirmSubmit().catch(err => console.error('Auto-submit failed', err));
+                                            }
+                                        }, 100);
+                                        return 0;
+                                    }
+                                    return current - 1;
+                                });
+                            }, 1000);
+                        }
+                    }
+
+                    return newWarnings;
+                });
             }
         };
 
         document.addEventListener('fullscreenchange', handleFullscreenChange);
-        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    }, [fullscreenWarnings]);
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            if (autoSubmitTimerRef.current) {
+                clearTimeout(autoSubmitTimerRef.current);
+                autoSubmitTimerRef.current = null;
+            }
+            if (autoSubmitIntervalRef.current) {
+                clearInterval(autoSubmitIntervalRef.current);
+                autoSubmitIntervalRef.current = null;
+            }
+            setAutoSubmitCountdown(null);
+        };
+    }, []);
 
     const reenterFullscreen = async () => {
         try {
@@ -415,7 +489,7 @@ function Exampage() {
                         <h2 className="text-xl font-bold mb-4 text-center text-red-600">Warning!</h2>
                         <p className="text-gray-700 mb-6 text-center">
                             You have exited full screen mode. This is warning {fullscreenWarnings} of 3.
-                            {fullscreenWarnings >= 3 ? ' The test will now be submitted automatically.' : ' Please return to full screen mode to continue the test.'}
+                            {fullscreenWarnings >= 3 ? ` The test will now be submitted automatically in ${autoSubmitCountdown ?? 3} seconds.` : ' Please return to full screen mode to continue the test.'}
                         </p>
                         {fullscreenWarnings < 3 && (
                             <div className="flex justify-center gap-4">

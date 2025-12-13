@@ -1,19 +1,92 @@
-import { useState } from "react"; 
+import { useState, useEffect, useMemo } from "react"; 
 import NavBar from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import Sidebar from "../components/SideBar";
 import { Menu as MenuIcon } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
 
+const API = 'http://localhost:3000';
+
 function StudentDashboard() {
-  // TODO: API call to fetch real data
-  const username = "User_95";
-  const nextMockTest = "Mock_Exam_21";
-  const examsWritten = 20;
-  const passPercentage = "78.2%";
+  const [username, setUsername] = useState('Student');
+  const [nextMockTest, setNextMockTest] = useState(null);
+  const [nextStartSeconds, setNextStartSeconds] = useState(null);
+  const [examsWritten, setExamsWritten] = useState(0);
+  const [passPercentage, setPassPercentage] = useState('N/A');
+  const [history, setHistory] = useState([]);
+
+  // Simple performance points derived from history
+  const performancePoints = useMemo(() => history.map(h => ({
+    score: Number(h.score || 0),
+    total: Number(h.totalMarks || 1)
+  })), [history]);
   const navigate = useNavigate();
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    const user = (() => { try { return JSON.parse(localStorage.getItem('userInfo') || 'null'); } catch { return null; } })();
+    if (user?.fullName) setUsername(user.fullName.split(' ')[0]);
+
+    if (!token) return; // skip when not logged in
+
+    const fetchData = async () => {
+      try {
+        const [examsRes, historyRes] = await Promise.all([
+          fetch(`${API}/api/student/exams`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API}/api/student/results/history?studentId=${user?.id || user?.studentId || 1}`, { headers: { Authorization: `Bearer ${token}` } })
+        ]);
+
+        if (examsRes.ok) {
+          const examsData = await examsRes.json();
+          const exams = examsData.exams || [];
+          if (exams.length > 0) {
+            setNextMockTest(exams[0].title);
+            // simulate start times: first in 3 hours
+            setNextStartSeconds(3 * 3600);
+          }
+        }
+
+        if (historyRes.ok) {
+          const historyData = await historyRes.json();
+          const hist = historyData.history || [];
+          setHistory(hist);
+          setExamsWritten(hist.length);
+          if (hist.length > 0) {
+            const passed = hist.filter(h => Number(h.score) / Number(h.totalMarks) >= 0.5).length;
+            setPassPercentage(((passed / hist.length) * 100).toFixed(1) + '%');
+          } else {
+            setPassPercentage('0%');
+          }
+        }
+      } catch (e) {
+        console.error('Dashboard fetch error', e);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // countdown timer for next test
+  useEffect(() => {
+    if (!nextStartSeconds) return;
+    const t0 = Date.now();
+    const id = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - t0) / 1000);
+      const remaining = Math.max(0, nextStartSeconds - elapsed);
+      setNextStartSeconds(prev => (prev !== null ? Math.max(0, prev - 1) : prev));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [nextStartSeconds]);
+
+  const formatCountdown = (secs) => {
+    if (secs === null) return '00:00:00';
+    const h = Math.floor(secs / 3600).toString().padStart(2,'0');
+    const m = Math.floor((secs % 3600) / 60).toString().padStart(2,'0');
+    const s = (secs % 60).toString().padStart(2,'0');
+    return `${h}:${m}:${s}`;
+  }
 
   return (
     <>
@@ -59,7 +132,7 @@ function StudentDashboard() {
                 </button>
               </div>
               <p className="text-xl font-semibold text-gray-700">
-                {nextMockTest}
+                {nextMockTest || 'No upcoming test'}
               </p>
             </div>
 
@@ -86,9 +159,22 @@ function StudentDashboard() {
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Performance Overview
             </h3>
-            {/* ... your graph svg ... */}
-            <div className="w-full h-80 bg-gradient-to-tr from-blue-100 to-blue-50 border border-gray-200 rounded-lg flex items-center justify-center relative overflow-hidden">
-                {/* ...svg content... */}
+            <div className="w-full h-80 bg-white border border-gray-200 rounded-lg px-4 py-6">
+                {/* Simple bar chart */}
+                <div className="h-full flex items-end gap-3">
+                  {performancePoints.length === 0 && (
+                    <div className="text-gray-500 mx-auto">No performance data yet.</div>
+                  )}
+                  {performancePoints.map((p, idx) => {
+                    const pct = Math.round((p.score / p.total) * 100);
+                    return (
+                      <div key={idx} className="flex flex-col items-center">
+                        <div className="w-8 bg-blue-600" style={{height: `${Math.max(6, pct)}%`, minHeight: 10}}></div>
+                        <div className="text-sm mt-2">{pct}%</div>
+                      </div>
+                    )
+                  })}
+                </div>
             </div>
           </div>
         </main> 

@@ -43,7 +43,8 @@ function Results() {
     () => new URLSearchParams(location.search),
     [location.search]
   ); // Default studentId to 1 (Requires real auth to be replaced)
-  const studentId = queryParams.get("studentId") || "1"; // The specific paperId we *just* submitted (can be null/undefined on direct navigation)
+  const studentId = queryParams.get("studentId") || "1";
+  const resultIdFromUrl = queryParams.get("resultId");
   const currentPaperIdFromUrl = queryParams.get("paperId");
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -84,10 +85,14 @@ function Results() {
       let currentResult = null; // 1. Fetch ALL History for the student
 
       try {
+        const token = localStorage.getItem('userToken');
         const historyResponse = await fetch(
-          `${API_BASE_URL}/api/student/results/history?studentId=${studentId}`
+          `${API_BASE_URL}/api/student/results/history?studentId=${studentId}`,
+          { headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
         );
+
         const historyData = await historyResponse.json();
+
         if (historyResponse.ok) {
           fetchedHistory = historyData.history.map((r) => ({
             ...r,
@@ -95,6 +100,15 @@ function Results() {
             totalMarks: Number(r.totalMarks),
           }));
           setAllResultsHistory(fetchedHistory);
+        } else {
+          if (historyResponse.status === 401 || historyResponse.status === 403) {
+            // Session invalid/expired — clear and redirect to login
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('userInfo');
+            navigate('/student_login');
+            return;
+          }
+          setError(historyData.message || 'Failed to load results history.');
         }
       } catch (err) {
         console.error("History Fetch Error:", err);
@@ -105,9 +119,14 @@ function Results() {
       if (fetchedHistory.length > 0) {
         // Priority A: Try to find the specific result we just submitted (from URL)
         let targetResult = null;
-        if (currentPaperIdFromUrl) {
+        if (resultIdFromUrl) {
           targetResult = fetchedHistory.find(
-            (r) => r.id === parseInt(currentPaperIdFromUrl)
+            (r) => r.id === parseInt(resultIdFromUrl)
+          );
+        } else if (currentPaperIdFromUrl) {
+          // If paperId was provided, try to find a matching exam by name/id fallback
+          targetResult = fetchedHistory.find(
+            (r) => String(r.paperId) === String(currentPaperIdFromUrl) || String(r.examName).includes(currentPaperIdFromUrl)
           );
         }
 
@@ -132,7 +151,7 @@ function Results() {
     };
 
     fetchResults();
-  }, [studentId, currentPaperIdFromUrl]);
+  }, [studentId, currentPaperIdFromUrl, resultIdFromUrl]);
 
   if (isLoading) {
     return <Loader />;

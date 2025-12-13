@@ -16,22 +16,29 @@ export default function InstructionPage() {
     }, [location.search]);
 
     const handleStart = () => {
-        // if (!paperId) {
-        //      alert('Error: Paper ID not found. Please select a test from the list.');
-        //      return;
-        // }
-        // if (!agree) return;
+        if (!paperId) {
+            alert('Error: Paper ID not found. Please select a test from the list.');
+            return;
+        }
+        if (!agree) return;
         setShowConfirmModal(true);
     };
 
-    const confirmStart = () => {
+    const confirmStart = async () => {
         if (!document.fullscreenEnabled) {
             alert('Full screen mode is not supported in your browser. Please use a compatible browser to take the test.');
             return;
         }
         setShowConfirmModal(false);
+        try {
+            // Request fullscreen as part of the user gesture (click)
+            await document.documentElement.requestFullscreen();
+        } catch (e) {
+            // Not fatal — some browsers or contexts may disallow fullscreen
+            console.warn('requestFullscreen failed:', e);
+        }
         // Navigate to /exam, passing the paperId as a query param
-        navigate(`/exam?paperId=${paperId}`); 
+        navigate(`/exam?paperId=${paperId}`);
     };
 
     const cancelStart = () => {
@@ -179,7 +186,7 @@ export default function InstructionPage() {
                             <div className="flex-shrink-0">
                                 <button
                                     onClick={handleStart}
-                                    disabled={agree}
+                                    disabled={!agree}
                                     className={`px-5 py-2 rounded-md text-white font-semibold shadow-sm transition-colors duration-150 ${
                                         agree   
                                             ? "bg-[#003973] hover:bg-blue-800 cursor-pointer"
