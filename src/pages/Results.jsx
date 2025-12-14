@@ -19,9 +19,8 @@ import {
 
 const API_BASE_URL = "http://localhost:3000";
 
-// --- Initial State Structure (Matches expected backend output) ---
 const initialResultState = {
-  id: null, // Unique ID for tracking
+  id: null, 
   examName: "Result Summary",
   date: "N/A",
   totalMarks: 160,
@@ -42,7 +41,7 @@ function Results() {
   const queryParams = useMemo(
     () => new URLSearchParams(location.search),
     [location.search]
-  ); // Default studentId to 1 (Requires real auth to be replaced)
+  ); 
   const studentId = queryParams.get("studentId") || "1";
   const resultIdFromUrl = queryParams.get("resultId");
   const currentPaperIdFromUrl = queryParams.get("paperId");
@@ -50,17 +49,16 @@ function Results() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentExamData, setCurrentExamData] = useState(initialResultState);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null); // 🚨 State to hold ALL fetched results (history)
+  const [error, setError] = useState(null); 
 
-  const [allResultsHistory, setAllResultsHistory] = useState([]); // --- Accordion Logic ---
+  const [allResultsHistory, setAllResultsHistory] = useState([]); 
 
   const [openAccordion, setOpenAccordion] = useState(null);
 
   const handleAccordionToggle = (examId) => {
     setOpenAccordion(openAccordion === examId ? null : examId);
-  }; // Function to view a past report (makes it the main card display)
+  }; 
   const handleViewExamReport = (paperIdToView) => {
-    // Find the data for the selected past exam
     const selectedData = allResultsHistory.find((r) => r.id === paperIdToView);
     if (selectedData) {
       setCurrentExamData({
@@ -71,21 +69,18 @@ function Results() {
     }
   };
 
-  // Filter the history to separate the current displayed exam from the past list
   const pastExamsForAccordion = useMemo(() => {
-    // Filter out the currently displayed exam (using its ID from the data)
     return allResultsHistory.filter((r) => r.id !== currentExamData.id);
-  }, [allResultsHistory, currentExamData.id]); // --- 🚨 Main Data Fetch Effect ---
+  }, [allResultsHistory, currentExamData.id]); 
 
   useEffect(() => {
     const fetchResults = async () => {
       setIsLoading(true);
       setError(null);
       let fetchedHistory = [];
-      let currentResult = null; // 1. Fetch ALL History for the student
-
+      let currentResult = null; 
       try {
-        const token = localStorage.getItem('userToken');
+        const token = localStorage.getItem('token');
         const historyResponse = await fetch(
           `${API_BASE_URL}/api/student/results/history?studentId=${studentId}`,
           { headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
@@ -153,41 +148,32 @@ function Results() {
     fetchResults();
   }, [studentId, currentPaperIdFromUrl, resultIdFromUrl]);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (currentExamData.id === null && !error) {
+  if (currentExamData.id === null && !error && !isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-700 p-10">
-               {" "}
         <h2 className="text-2xl font-bold">No Completed Results Found</h2>     
-         {" "}
         <p className="mt-2">
           Please complete an exam and ensure the administrative scoring is run.
         </p>
-             {" "}
       </div>
     );
   }
 
   return (
     <>
-            <NavBar />     {" "}
+      {isLoading && <Loader />}
+            <NavBar />      
       <div className="flex min-h-screen">
-               {" "}
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
         />
-               {" "}
-        <main className="flex-1 p-6 bg-gray-50 relative">
-                   {" "}
+        <main className="flex-1 p-6 bg-gray-50 relative">          
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="lg:hidden p-2 mb-4 text-gray-600 rounded-lg hover:bg-gray-200"
           >
-                        <MenuIcon size={24} />         {" "}
+                        <MenuIcon size={24} />          
           </button>
           {error && (
             <div
@@ -198,30 +184,28 @@ function Results() {
               <span className="block sm:inline">{error}</span>
             </div>
           )}
-                   {" "}
+                    
           <h1 className="text-4xl font-semibold text-gray-800 mb-6">
-                        Results For {currentExamData.examName}         {" "}
-          </h1>
-                    {/* --- Performance Summary Card (Uses Dynamic Data) --- */}
-                   {" "}
+                        Results For {currentExamData.examName}          
+          </h1>     
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-8">
-                       {" "}
+                        
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                             {" "}
+                              
               <StatItem
                 icon={ClipboardIcon}
                 color="text-blue-600"
                 label="Mock Test:"
                 value={currentExamData.examName}
               />
-                             {" "}
+                              
               <StatItem
                 icon={CalendarIcon}
                 color="text-gray-600"
                 label="Date:"
                 value={currentExamData.date}
               />
-                             {" "}
+                              
               <StatItem
                 icon={CheckCircle}
                 color="text-green-600"
@@ -229,130 +213,126 @@ function Results() {
                 value={currentExamData.score}
                 isBold={true}
               />
-                             {" "}
+                              
               <StatItem
                 icon={Timer}
                 color="text-gray-600"
                 label="Time Taken:"
                 value={currentExamData.timeTaken}
               />
-                             {" "}
+                              
               <StatItem
                 icon={Target}
                 color="text-gray-600"
                 label="Accuracy:"
                 value={currentExamData.accuracy}
               />
-                         {" "}
+                          
             </div>
-                     {" "}
+                      
           </div>
-                    {/* --- Bar Chart Code (Uses Dynamic Scores) --- */}       
-           {" "}
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-8">
-                       {" "}
+                        
             <div className="w-full h-80 flex items-end justify-around px-8 relative">
-                             {" "}
+                              
               <div className="absolute left-0 top-0 bottom-10 flex flex-col justify-between">
-                                 {" "}
-                {/* Labels for Max Score (80 for Math, 40 for P/C) - Simplified for display */}
+                                  
+                
                                   <span className="text-gray-500">80</span>
                 <span className="text-gray-500">40</span>
                 <span className="text-gray-500">20</span>
-                <span className="text-gray-500">0</span>               {" "}
+                <span className="text-gray-500">0</span>                
               </div>
-                             {" "}
+                              
               <div className="absolute left-[-40px] top-1/2 -translate-y-1/2 -rotate-90">
-                                 {" "}
+                                  
                 <span className="text-xl font-semibold text-gray-700">
                   Score
                 </span>
-                               {" "}
+                                
               </div>
-                             {" "}
+                              
               <div className="absolute bottom-10 left-8 right-0 h-0.5 bg-gray-300"></div>
-                             {" "}
-              {/* Bar component calls updated to use maxScore */}               {" "}
               <Bar
                 subject="Maths"
                 score={currentExamData.mathsScore}
                 maxScore={80}
                 color="bg-blue-600"
               />
-                             {" "}
+                              
               <Bar
                 subject="Physics"
                 score={currentExamData.physicsScore}
                 maxScore={40}
                 color="bg-orange-500"
               />
-                             {" "}
+                              
               <Bar
                 subject="Chemistry"
                 score={currentExamData.chemistryScore}
                 maxScore={40}
                 color="bg-green-600"
               />
-                         {" "}
+                          
             </div>
-                     {" "}
+                      
           </div>
                     {/* --- Rank & Insights Code (Uses Dynamic Data) --- */}   
-               {" "}
+                
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                       {" "}
+                        
             <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 space-y-3">
-                             {" "}
+                              
               <p className="text-xl">
-                <span className="font-semibold">Your Rank:</span>{" "}
+                <span className="font-semibold">Your Rank:</span> 
                 {currentExamData.rank}
               </p>
-                             {" "}
+                              
               <p className="text-xl">
-                <span className="font-semibold">Percentile:</span>{" "}
+                <span className="font-semibold">Percentile:</span> 
                 {currentExamData.percentile}
               </p>
-                             {" "}
+                              
               <div className="flex items-center text-lg font-semibold text-gray-800 pt-2">
-                                 {" "}
+                                  
                 <Trophy size={20} className="mr-2 text-yellow-500" />           
-                     {" "}
+                      
                 <span>
                   You performed better than {currentExamData.percentile} of
                   test-takers in this exam.
                 </span>
-                               {" "}
+                                
               </div>
-                         {" "}
+                          
             </div>
-                       {" "}
+                        
             <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                             {" "}
+                              
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 AI Insights:
               </h3>
-                             {" "}
+                              
               <ul className="list-disc list-inside space-y-2 text-gray-700">
-                                 {" "}
+                                  
                 {currentExamData.insights.map((insight, index) => (
                   <li key={index}>{insight}</li>
                 ))}
-                               {" "}
+                                
               </ul>
-                         {" "}
+                          
             </div>
-                     {" "}
+                      
           </div>
-                   {" "}
-          {/* --- Past Results Accordion (Uses Dynamic History) --- */}         {" "}
+                    
+          {/* --- Past Results Accordion (Uses Dynamic History) --- */}          
           <div className="mt-10">
-                       {" "}
+                        
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Past Results
             </h2>
-                       {" "}
+                        
             <div className="space-y-4">
-                             {" "}
+                              
               {pastExamsForAccordion.map((exam) => (
                 <AccordionItem
                   key={exam.id}
@@ -368,15 +348,15 @@ function Results() {
                   No past completed exams found.
                 </p>
               )}
-                         {" "}
+                          
             </div>
-                     {" "}
+                      
           </div>
-                 {" "}
+                  
         </main>
-             {" "}
+              
       </div>
-            <Footer />   {" "}
+            <Footer />    
     </>
   );
 }

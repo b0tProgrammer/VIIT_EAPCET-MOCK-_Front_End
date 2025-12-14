@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import AdminSideBar from "../components/AdminSiderBar";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
@@ -8,16 +8,14 @@ import LazyPreviewList from "../components/LazyPreviewList";
 import { Menu as MenuIcon, Upload, FileText, PlusCircle } from "lucide-react";
 
 const API_BASE_URL = "http://localhost:3000";
-// Use a proper callback to prevent infinite re-renders or performance issues
 
 const simpleCSVParse = (csvText) => {
-  const rows = csvText.trim().split("\n").slice(1); // skip header
+  const rows = csvText.trim().split("\n").slice(1); 
   return rows
     .map((row, index) => {
-      // Simple attempt to split by comma, removing surrounding quotes and trimming
       const cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
       const cleanedCols = cols.map((c) => c.trim().replace(/^"|"$/g, ""));
-      if (cleanedCols.length < 6) return null; // Skip invalid rows
+      if (cleanedCols.length < 6) return null; 
       return {
         id: Date.now() + index,
         question: cleanedCols[0] || "",

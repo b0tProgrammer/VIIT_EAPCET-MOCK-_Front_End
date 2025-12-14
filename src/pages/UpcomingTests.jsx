@@ -4,18 +4,17 @@ import Footer from "../components/Footer";
 import Sidebar from '../components/SideBar'; 
 import { Menu as MenuIcon } from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
 
-// --- Constants ---
-const API_BASE_URL = 'http://localhost:3000'; // Ensure this matches your Express port
+const API_BASE_URL = 'http://localhost:3000'; 
 const LATE_START_WINDOW_MINUTES = 15;
 
 function CountdownTimer({ startTime, durationHours, onStart, examId }) {
     const [timeLeft, setTimeLeft] = useState(null);
-    const [status, setStatus] = useState('upcoming'); // 'upcoming', 'live', 'expired'
+    const [status, setStatus] = useState('upcoming');
     const [canStart, setCanStart] = useState(false);
     
     const examStartTimeMs = new Date(startTime).getTime();
-    // Start window ends 15 minutes after official start time
     const startWindowEndMs = examStartTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000);
 
     useEffect(() => {
@@ -25,18 +24,15 @@ function CountdownTimer({ startTime, durationHours, onStart, examId }) {
             const timeToStartWindowEnd = startWindowEndMs - now;
 
             if (timeToStartWindowEnd <= 0) {
-                // EXPIRED: Start window is closed.
                 setStatus('expired');
                 setTimeLeft(0);
                 setCanStart(false);
                 clearInterval(interval);
             } else if (timeToStart <= 0) {
-                // LIVE: Within the 15-minute grace period
                 setStatus('live');
                 setTimeLeft(Math.floor(timeToStartWindowEnd / 1000));
                 setCanStart(true);
             } else {
-                // UPCOMING
                 setStatus('upcoming');
                 setTimeLeft(Math.floor(timeToStart / 1000));
                 setCanStart(false);
@@ -46,7 +42,6 @@ function CountdownTimer({ startTime, durationHours, onStart, examId }) {
         return () => clearInterval(interval);
     }, [examStartTimeMs, startWindowEndMs]);
 
-    // Format function (Days, Hours, Minutes, Seconds)
     const formatTime = (seconds) => {
         if (seconds === null || seconds <= 0) {
             return status === 'expired' ? 'EXPIRED' : '00:00:00';
@@ -101,7 +96,6 @@ function CountdownTimer({ startTime, durationHours, onStart, examId }) {
     );
 }
 
-// --- TestCard Component (Updated to use CountdownTimer) ---
 function TestCard({ examId, examName, durationHours, totalMarks, startTime, onStart }) {
     return (
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200
@@ -129,28 +123,26 @@ export default function UpcomingTests() {
     
     // State for fetched test data
     const [upcomingTests, setUpcomingTests] = useState([]); 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Fetch data from the backend on component mount
-    useEffect(() => {
-        const fetchExams = async () => {
-            // 🚨 STEP 1: Get the token from local storage
-            const token = localStorage.getItem('userToken');
 
+    useEffect(() => {
+        
+        const fetchExams = async () => {
+            setIsLoading(true);
+            const token = localStorage.getItem('token');
             if (!token) {
-                // Handle case where user is not logged in (though protected by higher-level route likely)
                 setError("Authentication required. Please log in again.");
                 setIsLoading(false);
                 return;
             }
 
             try {
-                // 🚨 STEP 2: Include the Authorization header in the fetch call
                 const response = await fetch(`${API_BASE_URL}/api/student/exams`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`, // <-- CRITICAL FIX
+                        'Authorization': `Bearer ${token}`, 
                         'Content-Type': 'application/json',
                     }
                 });
@@ -158,10 +150,9 @@ export default function UpcomingTests() {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    // Check for the unauthorized error and redirect them
                     if (response.status === 401 || response.status === 403) {
                         localStorage.clear();
-                        navigate('/student_login'); // Redirect to login on failed auth
+                        navigate('/student_login'); 
                         return;
                     }
                     throw new Error(data.message || "Failed to fetch exams.");
@@ -174,18 +165,14 @@ export default function UpcomingTests() {
                         name: exam.title,
                         durationHours: exam.durationHours,
                         totalMarks: exam.totalMarks,
-                        startTime: exam.startTime, // Use the actual start time
+                        startTime: exam.startTime, 
                     }))
-                    // Filter out exams where the 15 min grace period is over
                     .filter(exam => {
                          const examStartTimeMs = new Date(exam.startTime).getTime();
                          const startWindowEnd = examStartTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000);
                          return startWindowEnd > now;
                     })
-                    // Sort by nearest start time
                     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
-
-                // Map and set upcoming tests (UNCHANGED)
                 setUpcomingTests(filteredExams);
 
                 setError(null);
@@ -202,6 +189,7 @@ export default function UpcomingTests() {
     }, [navigate]);
 
     // Handler for starting the exam: navigates to instructions with Paper ID
+
     const handleStartExam = (paperId) => {
         navigate(`/instructions?paperId=${paperId}`);
     };
@@ -214,10 +202,9 @@ export default function UpcomingTests() {
     //     return (index + 2) * 24 * 3600; // later tests
     // };
 
-
-    // --- JSX Rendering ---
     return (
         <>
+            {isLoading && <Loader/>}
             <NavBar />
             <div className="flex min-h-screen">
                 <Sidebar

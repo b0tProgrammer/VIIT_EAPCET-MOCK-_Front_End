@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import Sidebar from "../components/SideBar";
 import { Menu as MenuIcon } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 
 const API = 'http://localhost:3000';
 const LATE_START_WINDOW_MINUTES = 15; // 15-minute grace period
@@ -23,18 +24,14 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
             const now = Date.now();
             const timeToStart = examStartTime - now;
             const timeToStartWindowEnd = startWindowEnd - now;
-
             if (timeToStartWindowEnd <= 0) {
-                // EXPIRED: The 15-minute grace period is over.
                 setStatus('expired');
                 setTimeLeftSeconds(0);
                 clearInterval(interval);
             } else if (timeToStart <= 0) {
-                // LIVE: Within the 15-minute grace period
                 setStatus('live');
                 setTimeLeftSeconds(Math.floor(timeToStartWindowEnd / 1000));
             } else {
-                // UPCOMING
                 setStatus('upcoming');
                 setTimeLeftSeconds(Math.floor(timeToStart / 1000));
             }
@@ -57,7 +54,6 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
     const canStart = status === 'live';
     const countdownText = formatCountdown(timeLeftSeconds);
     
-    // Display logic for the dashboard card
     const getHeaderText = () => {
         if (!nextMockTest) return 'No Upcoming Test';
         if (status === 'live') return 'Start Window Closes In';
@@ -106,8 +102,8 @@ function StudentDashboard() {
   const [examsWritten, setExamsWritten] = useState(0);
   const [passPercentage, setPassPercentage] = useState('N/A');
   const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Simple performance points derived from history
   const performancePoints = useMemo(() => history.map(h => ({
     score: Number(h.score || 0),
     total: Number(h.totalMarks || 1)
@@ -117,12 +113,11 @@ function StudentDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('userToken');
+    const token = localStorage.getItem('token');
+    setLoading(true);
     const user = (() => { try { return JSON.parse(localStorage.getItem('userInfo') || 'null'); } catch { return null; } })();
     if (user?.fullName) setUsername(user.fullName.split(' ')[0]);
-
-    if (!token) return; // skip when not logged in
-
+    if (!token) return; 
     const fetchData = async () => {
       try {
         const [examsRes, historyRes] = await Promise.all([
@@ -142,11 +137,9 @@ function StudentDashboard() {
                             startTime: exam.startTime,
                             startTimeMs: new Date(exam.startTime).getTime(),
                         }))
-                        // Filter out exams where the 15 min grace period has passed
                         .filter(exam => 
                             exam.startTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000) > now
                         )
-                        // Sort by nearest start time
                         .sort((a, b) => a.startTimeMs - b.startTimeMs);
 
                     if (upcomingExams.length > 0) {
@@ -173,13 +166,12 @@ function StudentDashboard() {
         }
       } catch (e) {
         console.error('Dashboard fetch error', e);
-      }
+      } finally {
+        setLoading(false);
+      }
     };
-
     fetchData();
   }, []);
-
-  // Removed the old simplified countdown useEffect
 
   const handleStartExam = () => {
         if(nextMockTest?.id) {
@@ -187,16 +179,11 @@ function StudentDashboard() {
         }
     };
 
-  // Removed the redundant formatCountdown function
-
   return (
     <>
+       {loading && <Loader/>}
       <NavBar />
-
-      {/* 4. Add a main flex container to hold sidebar AND content */}
       <div className="flex min-h-screen"> 
-        
-        {/* 5. Pass the state and setter to your Sidebar */}
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}

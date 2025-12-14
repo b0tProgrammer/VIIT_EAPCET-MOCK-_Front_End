@@ -1,13 +1,12 @@
 import { useState, useMemo } from "react";
-import AdminSideBar from "../components/AdminSiderBar"; // adjust path if needed
+import AdminSideBar from "../components/AdminSiderBar"; 
 import { Menu as MenuIcon, X, Eye, FileText } from "lucide-react";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import {  useNavigate } from "react-router-dom";
 
-// --- Constants ---
-const API_BASE_URL = 'http://localhost:3000'; // Ensure this matches your Express port
-const SUBJECT_TOTALS = { // Total questions required for a standard paper
+const API_BASE_URL = 'http://localhost:3000'; 
+const SUBJECT_TOTALS = { 
     Mathematics: 80,
     Physics: 40,
     Chemistry: 40,
@@ -84,7 +83,6 @@ export default function CreateQuestionPaper() {
     const [previewQuestions, setPreviewQuestions] = useState(null);
     const navigate = useNavigate();
 
-    // --- Handlers ---
     const handleFormChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
@@ -93,7 +91,6 @@ export default function CreateQuestionPaper() {
         setDifficultyPercentage((prev) => ({ ...prev, [subject]: Number(value) }));
     };
 
-    // Derived State: Calculate actual question counts based on percentages
     const calculatedCounts = useMemo(() => {
         let counts = {};
         let totalQuestions = 0;
@@ -103,7 +100,6 @@ export default function CreateQuestionPaper() {
             const mediumPercentage = difficultyPercentage[subject];
             const mediumCount = Math.round(total * (mediumPercentage / 100));
 
-            // Simplified distribution: Split remaining between EASY and HARD
             const remaining = total - mediumCount;
             const easyCount = Math.floor(remaining / 2);
             const hardCount = remaining - easyCount;
@@ -120,21 +116,18 @@ export default function CreateQuestionPaper() {
         return { counts, totalQuestions };
     }, [difficultyPercentage]);
 
-    // --- API Calls ---
 
     const handleGeneratePaper = async () => {
-        const token = localStorage.getItem('userToken');
+        const token = localStorage.getItem('token');
         if (!form.title.trim() || !form.startTime.trim()) { // 🚨 Validate startTime
             setStatus({ type: 'error', message: 'Exam Name and Start Time are required.' });
             return;
         }
         setIsLoading(true);
         setStatus(null);
-        setPreviewQuestions(null); // Clear any old preview
-        // Construct the payload for the backend (using the calculated counts)
+        setPreviewQuestions(null); 
         const distributionPayload = {};
         for (const subject in calculatedCounts.counts) {
-            // Note: Mapping 'Mathematics' to 'MATHS', 'Physics' to 'PHYSICS' etc.
             const subjectKey = subject.toUpperCase(); 
             distributionPayload[subjectKey] = {
                 EASY: calculatedCounts.counts[subject].EASY,
@@ -142,7 +135,6 @@ export default function CreateQuestionPaper() {
                 HARD: calculatedCounts.counts[subject].HARD,
             };
         }
-        // ⚠️ Admin ID should come from context/auth
         const adminId = 1; 
         try {
             const response = await fetch(`${API_BASE_URL}/api/admin/create-paper-custom`, {
@@ -189,14 +181,17 @@ export default function CreateQuestionPaper() {
         setStatus(null);
 
         try {
-            // Use the paperId saved from the generation step
+            const token = localStorage.getItem('token');
             const response = await fetch(`${API_BASE_URL}/api/admin/preview-paper/${paperId}`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+
             });
             
             const data = await response.json();
-            console.log('Preview Data:', data);
             if (!response.ok) {
                 throw new Error(data.message || 'Failed to fetch paper questions.');
             }
@@ -211,12 +206,11 @@ export default function CreateQuestionPaper() {
     };
     const isFormValid = form.title.trim() !== '';
     const totalQuestions = calculatedCounts.totalQuestions;
-    const totalMarks = totalQuestions; // Assuming 4 marks per question
+    const totalMarks = totalQuestions; 
     return (
         <>
             <NavBarMain />
             <div className="flex flex-1 min-h-screen bg-[#f9fcff] font-poppins text-gray-800">
-                {/* Sidebar */}
                 <aside
                     className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
                         transform transition-transform duration-300 ease-in-out z-50
@@ -231,9 +225,7 @@ export default function CreateQuestionPaper() {
                         setIsAdminSideBarOpen={setIsAdminSideBarOpen}
                     />
                 </aside>
-                {/* Main Content */}
                 <main className="flex-1 py-10 px-4 sm:px-8 lg:px-12 flex flex-col items-center overflow-y-auto">
-                    {/* Mobile Sidebar Toggle */}
                     <button
                         className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium self-start"
                         onClick={() => {
@@ -244,13 +236,12 @@ export default function CreateQuestionPaper() {
                         <MenuIcon size={24} />
                     </button>
 
-                    {/* Form Container */}
+                    
                     <div className="w-full max-w-3xl bg-white rounded-2xl shadow-md border border-gray-200 p-8 mx-auto">
                         <h2 className="text-2xl font-semibold text-[#003973] mb-8 text-center">
                             Create Question Paper
                         </h2>
 
-                        {/* Status Message */}
                         {status && (
                             <div className={`p-4 rounded-lg mb-6 text-sm font-medium ${
                                 status.type === 'error' ? 'bg-red-100 text-red-800 border border-red-300' : 'bg-green-100 text-green-800 border border-green-300'
@@ -260,12 +251,10 @@ export default function CreateQuestionPaper() {
                         )}
                         {paperId && (
                             <p className="text-center text-sm font-medium text-blue-600 mb-6">
-                                Paper ID: **{paperId}** is ready. Click Preview or Generate.
+                                Paper ID: {paperId} is ready. Click Preview or Generate.
                             </p>
                         )}
-                        {/* Input Fields */}
                         <div className="grid grid-cols-1 gap-5 mb-8">
-                            {/* Exam Name */}
                             <div>
                                 <label className="block text-sm font-medium mb-2" htmlFor="title">
                                     Exam Name
