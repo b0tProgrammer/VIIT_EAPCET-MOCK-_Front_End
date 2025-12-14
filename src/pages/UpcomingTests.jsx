@@ -7,6 +7,121 @@ import { useNavigate } from 'react-router-dom';
 
 // --- Constants ---
 const API_BASE_URL = 'http://localhost:3000'; // Ensure this matches your Express port
+const LATE_START_WINDOW_MINUTES = 15;
+
+function CountdownTimer({ startTime, durationHours, onStart, examId }) {
+    const [timeLeft, setTimeLeft] = useState(null);
+    const [status, setStatus] = useState('upcoming'); // 'upcoming', 'live', 'expired'
+    const [canStart, setCanStart] = useState(false);
+    
+    const examStartTimeMs = new Date(startTime).getTime();
+    // Start window ends 15 minutes after official start time
+    const startWindowEndMs = examStartTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const timeToStart = examStartTimeMs - now;
+            const timeToStartWindowEnd = startWindowEndMs - now;
+
+            if (timeToStartWindowEnd <= 0) {
+                // EXPIRED: Start window is closed.
+                setStatus('expired');
+                setTimeLeft(0);
+                setCanStart(false);
+                clearInterval(interval);
+            } else if (timeToStart <= 0) {
+                // LIVE: Within the 15-minute grace period
+                setStatus('live');
+                setTimeLeft(Math.floor(timeToStartWindowEnd / 1000));
+                setCanStart(true);
+            } else {
+                // UPCOMING
+                setStatus('upcoming');
+                setTimeLeft(Math.floor(timeToStart / 1000));
+                setCanStart(false);
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [examStartTimeMs, startWindowEndMs]);
+
+    // Format function (Days, Hours, Minutes, Seconds)
+    const formatTime = (seconds) => {
+        if (seconds === null || seconds <= 0) {
+            return status === 'expired' ? 'EXPIRED' : '00:00:00';
+        }
+
+        const secsTotal = Math.max(0, seconds);
+        const days = Math.floor(secsTotal / (3600 * 24));
+        const hours = Math.floor((secsTotal % (3600 * 24)) / 3600);
+        const minutes = Math.floor((secsTotal % 3600) / 60);
+        const secs = secsTotal % 60;
+
+        const d = days > 0 ? `${days}d ` : '';
+        const h = String(hours).padStart(2, '0');
+        const m = String(minutes).padStart(2, '0');
+        const s = String(secs).padStart(2, '0');
+        
+        return `${d}${h}:${m}:${s}`;
+    };
+
+    const getStatusText = () => {
+        const dateOptions = {
+            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        };
+        const dateString = new Date(examStartTimeMs).toLocaleString([], dateOptions);
+        
+        if (status === 'live') return `Start Window Closes in:`;
+        if (status === 'expired') return 'Exam Start Window Closed';
+        
+        return `Starts ${dateString} (in):`;
+    };
+    
+    return (
+        <div className="flex flex-col items-start sm:items-end">
+            <p className={`text-sm mb-1 ${status === 'live' ? 'text-green-600 font-medium' : 'text-gray-500'}`}>
+                {getStatusText()}
+            </p>
+            <div className="text-3xl font-bold text-gray-800 mb-2">
+                {formatTime(timeLeft)}
+            </div>
+            <button
+                onClick={() => onStart(examId)}
+                className={`px-5 py-2 rounded-lg transition font-medium ${
+                    canStart 
+                    ? 'bg-[#003973] text-white hover:bg-[#004c99]' 
+                    : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                }`}
+                disabled={!canStart}
+            >
+                {canStart ? 'Start Exam Now' : 'Start Test'}
+            </button>
+        </div>
+    );
+}
+
+// --- TestCard Component (Updated to use CountdownTimer) ---
+function TestCard({ examId, examName, durationHours, totalMarks, startTime, onStart }) {
+    return (
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200
+                        flex flex-col sm:flex-row justify-between sm:items-center
+                        space-y-4 sm:space-y-0 sm:space-x-4">
+
+            <div>
+                <p className="text-sm text-gray-500 mb-1">Mock Test | {durationHours} Hrs | {totalMarks} Marks</p>
+                <h3 className="text-2xl font-bold text-gray-800">{examName}</h3>
+            </div>
+            
+            <CountdownTimer 
+                examId={examId}
+                startTime={startTime} 
+                durationHours={durationHours}
+                onStart={onStart}
+            />
+        </div>
+    );
+}
 
 export default function UpcomingTests() {
     const navigate = useNavigate();
@@ -52,13 +167,26 @@ export default function UpcomingTests() {
                     throw new Error(data.message || "Failed to fetch exams.");
                 }
                 
+                const now = Date.now();
+                const filteredExams = (data.exams || [])
+                    .map(exam => ({
+                        id: exam.id,
+                        name: exam.title,
+                        durationHours: exam.durationHours,
+                        totalMarks: exam.totalMarks,
+                        startTime: exam.startTime, // Use the actual start time
+                    }))
+                    // Filter out exams where the 15 min grace period is over
+                    .filter(exam => {
+                         const examStartTimeMs = new Date(exam.startTime).getTime();
+                         const startWindowEnd = examStartTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000);
+                         return startWindowEnd > now;
+                    })
+                    // Sort by nearest start time
+                    .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+
                 // Map and set upcoming tests (UNCHANGED)
-                setUpcomingTests(data.exams.map(exam => ({
-                    id: exam.id,
-                    name: exam.title,
-                    duration: `${exam.durationHours} ${exam.durationHours > 1 ? 'Hrs' : 'Hr'}`, 
-                    totalMarks: exam.totalMarks
-                })));
+                setUpcomingTests(filteredExams);
 
                 setError(null);
             } catch (err) {
@@ -79,12 +207,12 @@ export default function UpcomingTests() {
     };
 
     // Create simulated start times (in seconds from now) for display purposes
-    const simulateStartSeconds = (index) => {
-        if (index === 0) return 3 * 3600; // 3 hours
-        if (index === 1) return 24 * 3600; // 1 day
-        if (index === 2) return 4 * 24 * 3600; // 4 days
-        return (index + 2) * 24 * 3600; // later tests
-    };
+    // const simulateStartSeconds = (index) => {
+    //     if (index === 0) return 3 * 3600; // 3 hours
+    //     if (index === 1) return 24 * 3600; // 1 day
+    //     if (index === 2) return 4 * 24 * 3600; // 4 days
+    //     return (index + 2) * 24 * 3600; // later tests
+    // };
 
 
     // --- JSX Rendering ---
@@ -130,7 +258,8 @@ export default function UpcomingTests() {
                                 duration={test.duration} 
                                 totalMarks={test.totalMarks}
                                 onStart={handleStartExam}
-                                startSeconds={simulateStartSeconds(idx)}
+                                startTime={test.startTime}
+                                // startSeconds={simulateStartSeconds(idx)}
                             />
                         ))}
                     </div>
@@ -143,34 +272,3 @@ export default function UpcomingTests() {
 }
 
 // --- TestCard Component (Styling is kept) ---
-function TestCard({ examId, examName, duration, totalMarks, onStart, startSeconds }) {
-    const humanize = (secs) => {
-        if (secs <= 0) return 'Starting now';
-        if (secs < 60) return `in ${secs} sec`;
-        if (secs < 3600) return `in ${Math.ceil(secs/60)} min`;
-        if (secs < 86400) return `in ${Math.ceil(secs/3600)} hrs`;
-        return `in ${Math.ceil(secs/86400)} days`;
-    };
-
-    return (
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200
-                        flex flex-col sm:flex-row justify-between sm:items-center
-                        space-y-4 sm:space-y-0 sm:space-x-4">
-
-            <div>
-                <p className="text-sm text-gray-500 mb-1">Mock Test | {duration} | {totalMarks} Marks</p>
-                <h3 className="text-2xl font-bold text-gray-800">{examName}</h3>
-            </div>
-
-            <div className="flex flex-col items-start sm:items-end">
-                <div className="text-3xl font-bold text-gray-800 mb-2">{humanize(startSeconds)}</div>
-                <button
-                    onClick={() => onStart(examId)}
-                    className="bg-[#003973] text-white px-5 py-2 rounded-lg hover:bg-[#004c99] transition font-medium"
-                >
-                    Start Test
-                </button>
-            </div>
-        </div>
-    );
-}

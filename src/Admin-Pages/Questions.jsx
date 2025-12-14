@@ -25,17 +25,15 @@ const simpleCSVParse = (csvText) => {
         optionB: cleanedCols[2] || "",
         optionC: cleanedCols[3] || "",
         optionD: cleanedCols[4] || "",
-        answer: cleanedCols[5] || "",
+        subject: cleanedCols[5] || "",
+        topic: cleanedCols[6] || "",
+        difficulty: cleanedCols[7] || "",
+        answer: cleanedCols[8] || "",
         questionImage: null,
-        questionImagePreview: null,
         optionAImage: null,
-        optionAImagePreview: null,
         optionBImage: null,
-        optionBImagePreview: null,
         optionCImage: null,
-        optionCImagePreview: null,
         optionDImage: null,
-        optionDImagePreview: null,
       };
     })
     .filter((q) => q !== null);
@@ -56,7 +54,6 @@ function Questions() {
     const file = e.target.files[0];
     if (!file) return;
     setFileName(file.name);
-
     const reader = new FileReader();
     reader.onload = (event) => {
       const text = event.target.result;
@@ -69,16 +66,14 @@ function Questions() {
 
   const handleDownloadTemplate = () => {
     const csvContent =
-      "Question,Option A,Option B,Option C,Option D,Subject,Topic,Answer\n" +
-      '"What is the capital of France?",Paris,London,Rome,Berlin,Social,Capitals,"Option A"\n';
+      "Question,Option A,Option B,Option C,Option D,Subject,Topic,Difficulty,Answer\n" +
+      '"What is the capital of France?",Paris,London,Rome,Berlin,Social,Capitals,Easy,"Option A"\n';
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = "question_template.csv";
     link.click();
   };
-
-  // --- Handlers for Editing ---
 
   const handleAddQuestion = () => {
     const newQuestion = {
@@ -90,29 +85,12 @@ function Questions() {
       optionD: "Option D Text",
       answer: "Option A",
       questionImage: null,
-      questionImagePreview: null,
       optionAImage: null,
-      optionAImagePreview: null,
       optionBImage: null,
-      optionBImagePreview: null,
       optionCImage: null,
-      optionCImagePreview: null,
       optionDImage: null,
-      optionDImagePreview: null,
     };
-    // Show loader briefly while the UI readies the new question
-    setLoading(true);
-    setTimeout(() => {
-      setQuestions((prev) => [...prev, newQuestion]);
-      setLoading(false);
-    }, 250);
-  };
-
-  // Extract ALL base64 images from HTML
-  const extractBase64Images = (html) => {
-    if (!html) return [];
-    const matches = [...html.matchAll(/<img[^>]+src="(data:image\/[^">]+)"/g)];
-    return matches.map((m) => m[1]);
+    setQuestions((prev) => [...prev, newQuestion]);
   };
 
   const handleSaveToBackend = async () => {
@@ -120,61 +98,33 @@ function Questions() {
       alert("No questions to upload.");
       return;
     }
-
-    const processed = questions.map((q) => ({
-      ...q,
-      questionImages: extractBase64Images(q.question),
-      optionAImages: extractBase64Images(q.optionA),
-      optionBImages: extractBase64Images(q.optionB),
-      optionCImages: extractBase64Images(q.optionC),
-      optionDImages: extractBase64Images(q.optionD),
-    }));
-
     setIsUploading(true);
+    setLoading(true);
+    setOpenPreview(false);
     const formData = new FormData();
     const questionsPayload = [];
-    questions.forEach((q, index) => {
+    questions.forEach((q) => {
       const questionData = {
         question: q.question,
         optionA: q.optionA,
         optionB: q.optionB,
         optionC: q.optionC,
         optionD: q.optionD,
+        subject: q.subject,
+        topic: q.topic,
+        difficulty: q.difficulty,
         answer: q.answer,
         id: q.id,
       };
-      const imageFields = [
-        "question",
-        "optionA",
-        "optionB",
-        "optionC",
-        "optionD",
-      ];
-      imageFields.forEach((field) => {
-        if (q[`${field}Image`]) {
-          // Append the actual File object to FormData
-          // The key must be unique, so use index + field name
-          const formKey = `image_${index}_${field}`;
-          formData.append(formKey, q[`${field}Image`], q[`${field}Image`].name);
-          // In the payload, only store the key used in FormData
-          questionData[`${field}ImageKey`] = formKey;
-        }
-      });
       questionsPayload.push(questionData);
     });
-
-    // 2. Append the JSON payload of question text data
+    // console.log("Questions Payload:", questionsPayload);
     formData.append("questions", JSON.stringify(questionsPayload));
-
-    // 3. Send to Backend
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/teacher/save-questions`,
         {
           method: "POST",
-          // Do NOT manually set Content-Type header when using FormData,
-          // the browser sets it correctly (multipart/form-data) with the boundary.
-          // headers: { 'Content-Type': 'multipart/form-data' }, // <--- Important: DO NOT SET THIS MANUALLY!
           body: formData,
         }
       );
@@ -185,6 +135,7 @@ function Questions() {
       }
 
       const result = await response.json();
+      // console.log("Upload Success:", result); 
       alert(`Success: ${result.message || "Questions uploaded successfully!"}`);
 
       // Cleanup state after successful upload
@@ -196,10 +147,6 @@ function Questions() {
           "optionC",
           "optionD",
         ];
-        imageFields.forEach((field) => {
-          if (q[`${field}ImagePreview`])
-            URL.revokeObjectURL(q[`${field}ImagePreview`]);
-        });
       });
       setQuestions([]);
       setFileName("");
@@ -208,6 +155,7 @@ function Questions() {
       alert(`Error during upload: ${error.message}`);
     } finally {
       setIsUploading(false);
+      setLoading(false);
     }
   };
 
@@ -364,5 +312,4 @@ function Questions() {
     </div>
   );
 }
-
 export default Questions;

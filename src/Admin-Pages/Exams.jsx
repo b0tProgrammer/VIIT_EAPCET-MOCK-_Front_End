@@ -13,6 +13,17 @@ const SUBJECT_TOTALS = { // Total questions required for a standard paper
     Chemistry: 40,
 };
 
+const getFutureDateTimeLocal = (hoursAhead = 24) => {
+    const d = new Date(Date.now() + hoursAhead * 3600 * 1000);
+    // Format to 'YYYY-MM-DDTHH:MM' required by datetime-local
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
 // --- Helper Component: Modal for Paper Preview ---
 const PaperPreviewModal = ({ questions, paperTitle, onClose }) => {
     return (
@@ -56,8 +67,8 @@ const PaperPreviewModal = ({ questions, paperTitle, onClose }) => {
 export default function CreateQuestionPaper() {
     const [form, setForm] = useState({
         title: '',
-        date: '',
-        duration: '3 hours',
+        startTime: getFutureDateTimeLocal(18),
+        duration: 3,
     });
     const [difficultyPercentage, setDifficultyPercentage] = useState({
         Mathematics: 50, // Default to 50% Medium
@@ -112,8 +123,9 @@ export default function CreateQuestionPaper() {
     // --- API Calls ---
 
     const handleGeneratePaper = async () => {
-        if (!form.title.trim()) {
-            setStatus({ type: 'error', message: 'Exam Name is required.' });
+        const token = localStorage.getItem('userToken');
+        if (!form.title.trim() || !form.startTime.trim()) { // 🚨 Validate startTime
+            setStatus({ type: 'error', message: 'Exam Name and Start Time are required.' });
             return;
         }
         setIsLoading(true);
@@ -135,10 +147,13 @@ export default function CreateQuestionPaper() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/admin/create-paper-custom`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                 },
                 body: JSON.stringify({
                     adminId: adminId,
                     title: form.title.trim(),
+                    startTime: form.startTime,
                     durationHours: parseInt(form.duration) || 3,
                     distribution: distributionPayload,
                 }),
@@ -259,7 +274,7 @@ export default function CreateQuestionPaper() {
                                     type="text"
                                     id="title"
                                     name="title"
-                                    value={form.title}
+                                    value={form.title || ''}
                                     onChange={handleFormChange}
                                     className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
                                     disabled={isLoading}
@@ -268,15 +283,16 @@ export default function CreateQuestionPaper() {
 
                             {/* Date */}
                             <div>
-                                <label className="block text-sm font-medium mb-2" htmlFor="date">Date</label>
+                                <label className="block text-sm font-medium mb-2" htmlFor="date">Exam Date & Time</label>
                                 <input
-                                    type="date"
-                                    id="date"
-                                    name="date"
-                                    value={form.date}
+                                    type="datetime-local"
+                                    id="startTime"
+                                    name="startTime"
+                                    value={form.startTime || ''}
                                     onChange={handleFormChange}
                                     className="w-full bg-[#F0FEFF] border border-[#0080FF] rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-[#0080FF] focus:outline-none"
                                     disabled={isLoading}
+                                    min={getFutureDateTimeLocal(1)}
                                 />
                             </div>
 
@@ -286,7 +302,10 @@ export default function CreateQuestionPaper() {
                                     Duration (e.g., 3 hours)
                                 </label>
                                 <input
-                                    type="text"
+                                    type="number"
+                                    min="1"
+                                    max="6"
+                                    step="0.5"
                                     id="duration"
                                     name="duration"
                                     value={form.duration}

@@ -20,29 +20,31 @@ export default function LazyPreviewList({
 
   const Row = ({ index, style }) => {
     const q = questions[index];
-
     return (
       <div
         style={{ ...style, zIndex: 9999 }}
         className="border rounded-md p-4 bg-white shadow-sm"
       >
         <p className="font-semibold mb-2 text-lg">Question {index + 1}</p>
-
-        {/* Full width question editor */}
+        <p className="font-semibold mb-2 text-lg">Subject: {q.subject}</p>
+        <p className="font-semibold mb-2 text-lg">Topic: {q.topic}</p>
+        <p className="font-semibold mb-2 text-lg">Difficulty: {q.difficulty}</p>
+        
         <div className="w-full mb-4">
           <JoditEditorWrapper
             value={q.question}
-            onChange={(val) => onUpdate(index, "question", val)}
+            onChange={
+              (val) => {onUpdate(index, "question", val)}
+            }
             height={200}
           />
         </div>
 
-        {/* 2 × 2 grid options */}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {["optionA", "optionB", "optionC", "optionD"].map((opt) => {
             const correctOpt = q.answer.replace("Option ", "").trim();
             const thisOpt = opt.charAt(opt.length - 1);
-
             const isCorrect = correctOpt === thisOpt;
 
             return (
@@ -66,7 +68,7 @@ export default function LazyPreviewList({
           })}
         </div>
 
-        {/* Delete button */}
+        
         <button
           onClick={() => onDelete(index)}
           className="mt-4 p-2 px-3 bg-red-600 text-white rounded flex items-center gap-2"
