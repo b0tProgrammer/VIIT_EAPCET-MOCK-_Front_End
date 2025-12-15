@@ -128,7 +128,6 @@ export default function UpcomingTests() {
 
 
     useEffect(() => {
-        
         const fetchExams = async () => {
             setIsLoading(true);
             const token = localStorage.getItem('token');
@@ -146,13 +145,11 @@ export default function UpcomingTests() {
                         'Content-Type': 'application/json',
                     }
                 });
-                
                 const data = await response.json();
-
                 if (!response.ok) {
                     if (response.status === 401 || response.status === 403) {
                         localStorage.clear();
-                        navigate('/student_login'); 
+                        navigate('/login'); 
                         return;
                     }
                     throw new Error(data.message || "Failed to fetch exams.");
@@ -174,7 +171,6 @@ export default function UpcomingTests() {
                     })
                     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
                 setUpcomingTests(filteredExams);
-
                 setError(null);
             } catch (err) {
                 console.error("Exam Fetch Error:", err);
@@ -238,16 +234,18 @@ export default function UpcomingTests() {
                     {/* List of Test Cards */}
                     <div className="space-y-6">
                         {!isLoading && upcomingTests.map((test, idx) => (
-                            <TestCard 
+                            <>
+                                <TestCard 
                                 key={test.id} 
                                 examId={test.id}
                                 examName={test.name} 
-                                duration={test.duration} 
+                                durationHours={test.durationHours} 
                                 totalMarks={test.totalMarks}
                                 onStart={handleStartExam}
                                 startTime={test.startTime}
                                 // startSeconds={simulateStartSeconds(idx)}
                             />
+                            </>
                         ))}
                     </div>
 

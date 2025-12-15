@@ -8,14 +8,12 @@ import UpcomingTests from "./pages/UpcomingTests";
 import Results from "./pages/Results";
 import Register from "./pages/Register";
 import Exampage from "./pages/Exampage";
-import AdminSideBar from "./components/AdminSiderBar"; // ✅ fixed filename spelling
-import TeacherDashboard from "./Admin-Pages/TeacherDashboard"; // ✅ path fixed (lowercase)
-import Questions from "./Admin-Pages/Questions"; // ✅ added
-import Exams from "./Admin-Pages/Exams"; // ✅ added
-import Students from "./Admin-Pages/Students"; // ✅ added
-import Reports from "./Admin-Pages/Reports"; // ✅ added
-import IndependentLevels from "./Admin-Pages/IndependentLevels"; // ✅ added
-// import Settings from "./admin-pages/Settings"; // ✅ added
+import TeacherDashboard from "./Admin-Pages/TeacherDashboard"; 
+import Questions from "./Admin-Pages/Questions"; 
+import Exams from "./Admin-Pages/Exams"; 
+import Students from "./Admin-Pages/Students"; 
+import Reports from "./Admin-Pages/Reports"; 
+import IndependentLevels from "./Admin-Pages/IndependentLevels"; 
 
 export default function App() {
   return (
@@ -26,7 +24,7 @@ export default function App() {
         <Route path="/exam" element={<Exampage />} />
         <Route path="/instructions" element={<InstructionPage />} />
         <Route path="/faq" element={<FaqPage />} />
-        <Route path="/student_login" element={<StudentLogin />} />
+        <Route path="/login" element={<StudentLogin />} />
         <Route path="/student_dashboard" element={<StudentDashboard />} />
         <Route path="/upcoming_tests" element={<UpcomingTests />} />
         <Route path="/results" element={<Results />} />

@@ -4,12 +4,14 @@ import AdminSideBar from "../components/AdminSiderBar";
 import Footer from "../components/Footer";
 import Loader from "../components/Loader";
 import { Menu as MenuIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function TeacherDashboard() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [, forceTick] = useState(0);
+  const navigate = useNavigate();
 
   const API_BASE_URL = "http://localhost:3000/api/admin/stats";
   const token = localStorage.getItem("token");
@@ -23,8 +25,10 @@ export default function TeacherDashboard() {
           },
         });
 
-        if (!res.ok) throw new Error("Failed to fetch admin stats");
-
+        if (!res.ok) {
+          navigate('/login');
+          throw new Error("Failed to fetch admin stats");
+        }
         const data = await res.json();
         setDetails(data);
       } catch (err) {

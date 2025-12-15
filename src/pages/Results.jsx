@@ -87,20 +87,18 @@ function Results() {
         );
 
         const historyData = await historyResponse.json();
-
+        console.log("Fetched Results History:", historyData);
         if (historyResponse.ok) {
           fetchedHistory = historyData.history.map((r) => ({
             ...r,
-            score: Number(r.score), // Convert score back to number for processing
+            score: Number(r.score), 
             totalMarks: Number(r.totalMarks),
           }));
           setAllResultsHistory(fetchedHistory);
         } else {
           if (historyResponse.status === 401 || historyResponse.status === 403) {
-            // Session invalid/expired — clear and redirect to login
-            localStorage.removeItem('userToken');
-            localStorage.removeItem('userInfo');
-            navigate('/student_login');
+            localStorage.removeItem('token');
+            navigate('/login');
             return;
           }
           setError(historyData.message || 'Failed to load results history.');
@@ -110,37 +108,30 @@ function Results() {
         setError("Failed to load results history.");
       }
 
-      // 2. Determine which result to display on the main card
       if (fetchedHistory.length > 0) {
-        // Priority A: Try to find the specific result we just submitted (from URL)
         let targetResult = null;
         if (resultIdFromUrl) {
           targetResult = fetchedHistory.find(
             (r) => r.id === parseInt(resultIdFromUrl)
           );
         } else if (currentPaperIdFromUrl) {
-          // If paperId was provided, try to find a matching exam by name/id fallback
           targetResult = fetchedHistory.find(
             (r) => String(r.paperId) === String(currentPaperIdFromUrl) || String(r.examName).includes(currentPaperIdFromUrl)
           );
         }
 
-        // Priority B: If specific ID fails or is null, use the newest result (index 0, due to DESC sorting in backend)
         if (!targetResult) {
           targetResult = fetchedHistory[0];
         }
 
-        // Format the final data for the main card display
         currentResult = {
           ...targetResult,
-          // Ensure scores are numbers for the Bar chart
           mathsScore: Number(targetResult.mathsScore),
           physicsScore: Number(targetResult.physicsScore),
           chemistryScore: Number(targetResult.chemistryScore),
           score: `${targetResult.score} / ${targetResult.totalMarks}`,
         };
-      } // 3. Update State
-
+      } 
       setCurrentExamData(currentResult || initialResultState);
       setIsLoading(false);
     };

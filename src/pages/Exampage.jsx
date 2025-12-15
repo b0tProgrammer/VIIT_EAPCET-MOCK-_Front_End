@@ -73,7 +73,7 @@ function Exampage() {
         const fetchExamData = async () => {
             const user = (() => { try { return JSON.parse(localStorage.getItem('userInfo') || 'null'); } catch { return null; } })();
             const studentId = user?.id || user?.studentId || 1;
-            const token = localStorage.getItem('userToken');
+            const token = localStorage.getItem('token');
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/student/start-exam`, {
@@ -127,12 +127,9 @@ function Exampage() {
                 setIsLoading(false);
             }
         };
-
         fetchExamData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [paperId]);
 
-    // Ensure state dependencies are based on dynamic data
     const currentQuestionList = questionsBySubject[activeSubject] || [];
     const currentQuestion = currentQuestionList[currentQuestionIndex];
     const selectedAnswer = answers[activeSubject]?.[currentQuestionIndex];
@@ -243,7 +240,7 @@ function Exampage() {
                 localStorage.removeItem('userToken');
                 localStorage.removeItem('userInfo');
                 alert('Session expired. Please login again.');
-                navigate('/student_login');
+                navigate('/login');
                 submittingRef.current = false;
                 return;
             }

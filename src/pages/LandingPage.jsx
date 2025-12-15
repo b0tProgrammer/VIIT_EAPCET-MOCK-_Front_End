@@ -115,7 +115,7 @@ function LandingPage() {
             </p>
             <div className="mt-6">
               <button
-                onClick={() => navigate("/Student_Login")}
+                onClick={() => navigate("/login")}
                 className="px-6 py-2 bg-[#003973] text-white rounded-lg hover:bg-blue-800 transition-all duration-300 hover:scale-105 shadow-md"
               >
                 Start Your Journey!
