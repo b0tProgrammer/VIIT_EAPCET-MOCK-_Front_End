@@ -225,7 +225,7 @@ function Exampage() {
         const submissionAnswers = prepareAnswersForSubmission();
 
             try {
-                const token = localStorage.getItem('userToken');
+                const token = localStorage.getItem('token');
                 console.log('confirmSubmit - submitting', { attemptId: currentAttemptId, answersSample: Object.keys(submissionAnswers).slice(0,20), tokenPresent: !!token });
                 const response = await fetch(`${API_BASE_URL}/api/student/submit-attempt`, {
                 method: 'POST',
@@ -237,8 +237,7 @@ function Exampage() {
             });
 
             if (response.status === 401 || response.status === 403) {
-                localStorage.removeItem('userToken');
-                localStorage.removeItem('userInfo');
+                localStorage.removeItem('token');
                 alert('Session expired. Please login again.');
                 navigate('/login');
                 submittingRef.current = false;
@@ -289,10 +288,6 @@ function Exampage() {
         setShowSubmitModal(false);
     };
     
-    // ... (rest of useEffects and fullscreen handlers are UNCHANGED) ...
-    // NOTE: Do not auto-request fullscreen on mount — must be initiated by a user gesture.
-
-    // Listen for full screen changes — register once and use functional state updates
     useEffect(() => {
         const handleFullscreenChange = () => {
             if (!document.fullscreenElement) {
@@ -303,7 +298,6 @@ function Exampage() {
 
                     if (newWarnings >= 3) {
                         console.log('Fullscreen warning 3 reached — starting auto-submit countdown');
-                        // Start immediate visible countdown (only once)
                         if (!autoSubmitIntervalRef.current && !autoSubmitTimerRef.current) {
                             setAutoSubmitCountdown(3);
                             autoSubmitIntervalRef.current = setInterval(() => {
@@ -314,7 +308,6 @@ function Exampage() {
                                             clearInterval(autoSubmitIntervalRef.current);
                                             autoSubmitIntervalRef.current = null;
                                         }
-                                        // slight delay to allow UI update
                                         autoSubmitTimerRef.current = setTimeout(() => {
                                             autoSubmitTimerRef.current = null;
                                             console.log('Auto-submit timer firing now');
@@ -408,15 +401,11 @@ function Exampage() {
         </div>;
     }
     
-    // --- Data mapping for QuestionNavigation ---
     const questionsForPanel = currentQuestionList.map((q, index) => ({
         number: calculateQuestionNumber(questionsBySubject, activeSubject, index),
         status: questionStatus[activeSubject][index]
     }));
     
-    // ----------------------------------------------------
-    // 🎨 Render JSX (Styling UNCHANGED)
-    // ----------------------------------------------------
     return (
         <div className="min-h-screen bg-gray-100 relative">
             <Header
