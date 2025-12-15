@@ -7,34 +7,31 @@ import { Menu as MenuIcon, RefreshCw } from "lucide-react";
 export default function Students() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const API_BASE_URL = "http://localhost:3000/api/admin/exam-stats";
+  const token = localStorage.getItem("token");
 
   const [totals, setTotals] = useState({
-    totalUsers: 1234,
-    registered: 103,
-    attempting: 95,
-    topFive: [
-      "John - VCET_123",
-      "Amilly - VCET_123",
-      "Rock - VCET_123",
-      "Stark - VCET_123",
-      "Peter - VCET_123",
-    ],
+    totalStudents: 0,
+    registered: 0,
+    attemptingStudents: 0,
+    topRankers: [],
     alerts: [
-      {
-        id: 1,
-        text: "Exam Terminated for shifting tabs",
-        meta: "Id: VCET_234",
-      },
-      { id: 2, text: "24 Students Completed Exam", meta: null },
+      {},
     ],
   });
 
   async function handleRefresh() {
     setIsRefreshing(true);
     try {
-      await new Promise((r) => setTimeout(r, 800));
-      console.log("Refreshed data successfully!");
-      // In a real app, you’d fetch updated totals here
+      const response = await fetch(API_BASE_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch exam stats");
+      const data = await response.json();
+      console.log("Refresh data:", data);
+      setTotals(data);
     } catch (err) {
       console.error("Refresh failed", err);
     } finally {
@@ -46,7 +43,6 @@ export default function Students() {
     <div className="min-h-screen flex flex-col bg-[#f9fcff] font-poppins text-gray-800">
       {/* === Navbar === */}
       <NavBarMain />
-
       {/* === Page Layout === */}
       <div className="flex flex-1">
         {/* Sidebar (Desktop) */}
@@ -109,7 +105,7 @@ export default function Students() {
                 <div className="flex items-center justify-center">
                   <div className="bg-[#eaf6ff] rounded-lg px-6 py-4 shadow-sm flex flex-col items-center">
                     <div className="text-5xl font-extrabold text-[#003973]">
-                      {totals.totalUsers}
+                      {totals.totalStudents}
                     </div>
                     <div className="text-xl text-gray-700">Total Users</div>
                   </div>
@@ -129,7 +125,7 @@ export default function Students() {
                   <div className="bg-[#eaf6ff] rounded-lg shadow-md p-6 border border-blue-100 flex items-center justify-center space-x-4 w-72">
                     <div className="bg-blue-50 rounded-lg w-20 h-20 flex items-center justify-center">
                       <div className="text-3xl font-bold text-[#003973]">
-                        {totals.registered}
+                        {totals.registered ? totals.registered : 0}
                       </div>
                     </div>
                     <div className="text-left">
@@ -140,17 +136,17 @@ export default function Students() {
                     </div>
                   </div>
 
-                  {/* Attempting */}
+                  {/* attemptingStudents */}
                   <div className="bg-[#eaf6ff] rounded-lg shadow-md p-6 border border-blue-100 flex items-center justify-center space-x-4 w-72">
                     <div className="bg-blue-50 rounded-lg w-20 h-20 flex items-center justify-center">
                       <div className="text-3xl font-bold text-[#003973]">
-                        {totals.attempting}
+                        {totals.attemptingStudents}
                       </div>
                     </div>
                     <div className="text-left">
                       <div className="text-sm text-gray-500">Students</div>
                       <div className="text-base font-medium text-[#003973]">
-                        Attempting
+                        attemptingStudents
                       </div>
                     </div>
                   </div>
@@ -158,10 +154,10 @@ export default function Students() {
                   {/* Top 5 */}
                   <div className="bg-[#eaf6ff] rounded-lg shadow-md p-6 border border-blue-100 w-72">
                     <h4 className="text-base font-semibold text-[#003973] mb-2 text-center">
-                      Top 5 Rankers
+                      Top 5 Rankers of Last Test
                     </h4>
                     <ul className="text-sm text-gray-700 space-y-1 text-center">
-                      {totals.topFive.map((t, i) => (
+                      {totals.topRankers.map((t, i) => (
                         <li key={i} className="truncate">
                           {i + 1}. {t}
                         </li>
@@ -176,7 +172,7 @@ export default function Students() {
             <section className="mt-10 mb-12">
               <h3 className="text-lg font-medium text-gray-700 mb-4">Alerts</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {totals.alerts.map((a) =>
+                {totals.alerts?.map((a) =>
                   a.meta ? (
                     <div
                       key={a.id}
@@ -203,11 +199,7 @@ export default function Students() {
           </div>
         </main>
       </div>
-
-      {/* === Footer === */}
       <Footer />
-
-      {/* === Sidebar Drawer (Mobile) === */}
       {isAdminSideBarOpen && (
         <div className="fixed inset-0 z-40 flex">
           <aside className="bg-white w-64 p-4 shadow-xl border-r border-blue-100">

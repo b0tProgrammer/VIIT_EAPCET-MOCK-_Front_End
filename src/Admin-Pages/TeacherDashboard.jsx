@@ -65,9 +65,14 @@ export default function TeacherDashboard() {
   }
 
   if (loading || !details) {
-    return <Loader />;
+    return (
+      <>
+        <NavBarMain />
+        <Loader />
+        <Footer />
+      </>
+    )
   }
-
   return (
     <>
       <NavBarMain />
