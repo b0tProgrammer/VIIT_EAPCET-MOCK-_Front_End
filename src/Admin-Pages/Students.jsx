@@ -161,13 +161,12 @@ export default function Students() {
                 Alerts
               </h3> 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {totals.alerts? (map((a) =>
+                {totals.alerts? (totals.alerts.map((a) =>
                   a.meta ? (
                     <div
                       key={a.id}
                       className="bg-[#eaf6ff] rounded-lg shadow-sm p-4 border border-blue-100"
-                    >
-                       
+                    >                       
                       <div className="text-sm text-gray-600">{a.meta}</div> 
                       <div className="text-sm text-gray-800 font-medium mt-2">
                          
