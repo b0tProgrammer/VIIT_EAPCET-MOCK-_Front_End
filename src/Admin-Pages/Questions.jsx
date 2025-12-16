@@ -101,6 +101,7 @@ function Questions() {
     setOpenPreview(false);
     const formData = new FormData();
     const questionsPayload = [];
+    const token = localStorage.getItem("token");
     questions.forEach((q) => {
       const questionData = {
         question: q.question,
@@ -124,6 +125,7 @@ function Questions() {
         {
           method: "POST",
           body: formData,
+          headers : {Authorization: `Bearer ${token}`},
         }
       );
 

@@ -87,7 +87,6 @@ function Results() {
         );
 
         const historyData = await historyResponse.json();
-        console.log("Fetched Results History:", historyData);
         if (historyResponse.ok) {
           fetchedHistory = historyData.history.map((r) => ({
             ...r,
@@ -227,9 +226,7 @@ function Results() {
             <div className="w-full h-80 flex items-end justify-around px-8 relative">
                               
               <div className="absolute left-0 top-0 bottom-10 flex flex-col justify-between">
-                                  
-                
-                                  <span className="text-gray-500">80</span>
+                <span className="text-gray-500">80</span>
                 <span className="text-gray-500">40</span>
                 <span className="text-gray-500">20</span>
                 <span className="text-gray-500">0</span>                

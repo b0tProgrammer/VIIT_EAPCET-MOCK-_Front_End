@@ -53,7 +53,6 @@ function Exampage() {
 
     const subjects = useMemo(() => paperData ? Object.keys(questionsBySubject) : [], [paperData, questionsBySubject]);
     
-    // --- Existing Exam State ---
     const [activeSubject, setActiveSubject] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState({});
@@ -62,7 +61,6 @@ function Exampage() {
     const [fullscreenWarnings, setFullscreenWarnings] = useState(0);
     const [showFullscreenWarning, setShowFullscreenWarning] = useState(false);
     
-    // ... (fetchExamData useEffect is UNCHANGED from previous step)
     useEffect(() => {
         if (!paperId) {
             setLoadError("Invalid test link. Paper ID is missing.");
@@ -89,7 +87,7 @@ function Exampage() {
                         // Not authenticated: clear local session and redirect to login
                         localStorage.removeItem('userToken');
                         localStorage.removeItem('userInfo');
-                        navigate('/student_login');
+                        navigate('/login');
                         return;
                     }
                     throw new Error(data.message || 'Failed to start exam.');
@@ -199,6 +197,7 @@ function Exampage() {
                 }
             });
         }
+        console.log(submissionPayload);
         return submissionPayload;
     };
 

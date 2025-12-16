@@ -10,7 +10,7 @@ function NavBarMain() {
 
   const handleLogout = () => {
     setIsDropdownOpen(false);
-    navigate("/Student_Login");
+    navigate("/login");
   };
 
   useEffect(() => {
