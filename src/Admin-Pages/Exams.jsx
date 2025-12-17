@@ -119,7 +119,7 @@ export default function CreateQuestionPaper() {
 
     const handleGeneratePaper = async () => {
         const token = localStorage.getItem('token');
-        if (!form.title.trim() || !form.startTime.trim()) { // 🚨 Validate startTime
+        if (!form.title.trim() || !form.startTime.trim()) {
             setStatus({ type: 'error', message: 'Exam Name and Start Time are required.' });
             return;
         }

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Header from '../components/Header';
 import SubjectTabs from '../components/SubjectTabs';
 import QuestionPanel from '../components/QuestionPanel';
-import Questionnavigation from '../components/Questionsnavigation'; // Note: Renamed to match case convention
+import Questionnavigation from '../components/Questionsnavigation'; 
 import ActionBar from '../components/ActionBar';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -16,7 +16,6 @@ export const QuestionStatus = {
     MARKED_FOR_REVIEW_ANSWERED: 'marked-for-review-answered', 
 };
 
-// Helper to calculate question number across subjects
 const calculateQuestionNumber = (questionsBySubject, activeSubject, currentIndex) => {
     let total = 0;
     for (const subject in questionsBySubject) {
@@ -69,8 +68,7 @@ function Exampage() {
         }
 
         const fetchExamData = async () => {
-            const user = (() => { try { return JSON.parse(localStorage.getItem('userInfo') || 'null'); } catch { return null; } })();
-            const studentId = user?.id || user?.studentId || 1;
+            const studentId = localStorage.getItem("studentId");
             const token = localStorage.getItem('token');
 
             try {
@@ -85,8 +83,7 @@ function Exampage() {
                 if (!response.ok) {
                     if (response.status === 401 || response.status === 403) {
                         // Not authenticated: clear local session and redirect to login
-                        localStorage.removeItem('userToken');
-                        localStorage.removeItem('userInfo');
+                        localStorage.removeItem('token');
                         navigate('/login');
                         return;
                     }

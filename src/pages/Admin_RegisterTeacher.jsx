@@ -18,7 +18,7 @@ function AdminRegisterTeacher() {
     setSuccess("");
     setLoading(true);
 
-    const token = localStorage.getItem('userToken'); 
+    const token = localStorage.getItem('token'); 
 
     if (!token) {
         setError("Admin token missing. Please log in as Admin first.");
@@ -31,7 +31,7 @@ function AdminRegisterTeacher() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, // Send the Admin's JWT token
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ fullName, email, studentId, temporaryPassword }),
       });

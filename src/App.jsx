@@ -14,8 +14,15 @@ import Exams from "./Admin-Pages/Exams";
 import Students from "./Admin-Pages/Students"; 
 import Reports from "./Admin-Pages/Reports"; 
 import IndependentLevels from "./Admin-Pages/IndependentLevels"; 
+import AdminRegisterTeacher from "./pages/Admin_RegisterTeacher";
 
 export default function App() {
+
+  {/*Done by : 
+        Mohith Kumar Sandaka (s.mohithkumar1511@gmail.com)
+        Rahul Vandrangi ()
+        
+    */}
   return (
     <BrowserRouter>
       <Routes>
@@ -29,6 +36,7 @@ export default function App() {
         <Route path="/upcoming_tests" element={<UpcomingTests />} />
         <Route path="/results" element={<Results />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/add_teacher" element={<AdminRegisterTeacher/>}/>
 
         {/* --- Admin Section (Teacher) --- */}
         <Route path="/Admin-Pages/teacherdashboard" element={<TeacherDashboard />} />

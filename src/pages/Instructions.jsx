@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
-import { useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
+import { useNavigate, useLocation } from 'react-router-dom'; 
 
 export default function InstructionPage() {
     const navigate = useNavigate();

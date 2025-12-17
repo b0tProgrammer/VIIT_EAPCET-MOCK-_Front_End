@@ -114,17 +114,15 @@ function StudentDashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    setUsername(localStorage.getItem("name"));
     setLoading(true);
-    const user = (() => { try { return JSON.parse(localStorage.getItem('userInfo') || 'null'); } catch { return null; } })();
-    if (user?.fullName) setUsername(user.fullName.split(' ')[0]);
     if (!token) return; 
     const fetchData = async () => {
       try {
         const [examsRes, historyRes] = await Promise.all([
           fetch(`${API}/api/student/exams`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`${API}/api/student/results/history?studentId=${user?.id || user?.studentId || 1}`, { headers: { Authorization: `Bearer ${token}` } })
+          fetch(`${API}/api/student/results/history?studentId=${localStorage.getItem("studentId")}`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
-
         if (examsRes.ok) {
           const examsData = await examsRes.json();
           const now = Date.now();

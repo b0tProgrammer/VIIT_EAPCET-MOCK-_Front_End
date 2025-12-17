@@ -42,7 +42,7 @@ function Results() {
     () => new URLSearchParams(location.search),
     [location.search]
   ); 
-  const studentId = queryParams.get("studentId") || "1";
+  const studentId = localStorage.getItem("studentId");
   const resultIdFromUrl = queryParams.get("resultId");
   const currentPaperIdFromUrl = queryParams.get("paperId");
 
@@ -85,8 +85,8 @@ function Results() {
           `${API_BASE_URL}/api/student/results/history?studentId=${studentId}`,
           { headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
         );
-
         const historyData = await historyResponse.json();
+        console.log(historyData);
         if (historyResponse.ok) {
           fetchedHistory = historyData.history.map((r) => ({
             ...r,
@@ -122,7 +122,6 @@ function Results() {
         if (!targetResult) {
           targetResult = fetchedHistory[0];
         }
-
         currentResult = {
           ...targetResult,
           mathsScore: Number(targetResult.mathsScore),
@@ -137,7 +136,6 @@ function Results() {
 
     fetchResults();
   }, [studentId, currentPaperIdFromUrl, resultIdFromUrl]);
-
   if (currentExamData.id === null && !error && !isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-700 p-10">

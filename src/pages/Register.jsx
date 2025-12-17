@@ -118,7 +118,6 @@ function RegistrationForm() {
       if (!response.ok) {
         throw new Error("Something went wrong. Please try again.");
       }
-      
       setFormData({
         fullName: "",
         fatherName: "",
@@ -145,8 +144,7 @@ function RegistrationForm() {
         collegeName: "",
         collegeAddress: "",
       });
-
-      navigate("/student_login");
+      navigate("/login");
     } catch (err) {
       setError(err.message);
     } finally {
