@@ -39,6 +39,7 @@ function Student_Login() {
       localStorage.setItem("studentId",result.user.id);
       localStorage.setItem("name",result.user.fullName);
       localStorage.setItem("token", result.token);
+      localStorage.setItem("role", result.user.role);
       if(role === "student") {  
         navigate("/student_dashboard");
       } else {

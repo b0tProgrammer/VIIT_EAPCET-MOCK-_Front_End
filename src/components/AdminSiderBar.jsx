@@ -5,10 +5,13 @@ import {
   User as UserIcon,
   FileText as ReportIcon,
   X as XIcon,
+  UserPlus as UserPlusIcon,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
+    const userRole = localStorage.getItem('role');
+    // console.log(userRole)
   return (
     <>
       {/* --- Mobile close button --- */}
@@ -59,6 +62,15 @@ function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
           to="/admin-pages/reports"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
+        {/* --- CONDITIONALLY RENDERED ITEM --- */}
+        {userRole === 'ADMIN' && (
+          <AdminSideBarItem 
+            icon={UserPlusIcon} 
+            label="Add Teacher" 
+            to="/add_teacher" 
+            onClick={() => setIsAdminSideBarOpen(false)}
+          />
+        )}
       </nav>
     </>
   );

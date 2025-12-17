@@ -30,7 +30,7 @@ function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         <SidebarItem icon={CalendarIcon} label="Upcoming Tests" to="/upcoming_tests" onClick={() => setIsSidebarOpen(false)} />
         <SidebarItem icon={ClipboardIcon} label="Results" to="/results" onClick={() => setIsSidebarOpen(false)} />
         <SidebarItem icon={HelpIcon} label="FAQ's" to="/faq" onClick={() => setIsSidebarOpen(false)} />
-        <SidebarItem icon={HelpIcon} label="Add Teacher" to="/add_teacher" onClick={() => setIsSidebarOpen(false)}/>
+        {/* <SidebarItem icon={HelpIcon} label="Add Teacher" to="/add_teacher" onClick={() => setIsSidebarOpen(false)}/> */}
       </nav>
     </aside>
   );
