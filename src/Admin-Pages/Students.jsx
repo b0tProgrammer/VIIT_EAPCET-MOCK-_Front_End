@@ -22,6 +22,8 @@ export default function Students() {
     alerts: [],
   });
 
+  const[currentExam,setCurrentExam] = useState();
+
   const fetchStats = useCallback(async () => {
     setIsRefreshing(true);
     try {
@@ -34,7 +36,8 @@ export default function Students() {
       if (!response.ok) throw new Error("Failed to fetch exam stats");
 
       const data = await response.json();
-      setTotals(data);
+      setTotals(data);  
+      setCurrentExam(data.currentExam.title)
       setSecondsLeft(REFRESH_INTERVAL);
     } catch (err) {
       console.error("Refresh failed", err);
@@ -139,7 +142,7 @@ export default function Students() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
-              <StatCard label="Registered" value={totals.registered} />
+              <StatCard label="Recent Exam" value={currentExam} />
               <StatCard label="Attempting" value={totals.attemptingStudents} />
               <div className="bg-[#eaf6ff] p-6 rounded-lg shadow-md border border-blue-100">
                 <h4 className="text-center font-semibold text-[#003973] mb-3">

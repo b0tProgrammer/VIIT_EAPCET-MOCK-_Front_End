@@ -112,12 +112,12 @@ function Questions() {
         subject: q.subject,
         topic: q.topic,
         difficulty: q.difficulty,
-        answer: q.answer,
+        answer: q.answer.at(-1),
         id: q.id,
       };
       questionsPayload.push(questionData);
     });
-    // console.log("Questions Payload:", questionsPayload);
+    console.log("Questions Payload:", questionsPayload);
     formData.append("questions", JSON.stringify(questionsPayload));
     try {
       const response = await fetch(

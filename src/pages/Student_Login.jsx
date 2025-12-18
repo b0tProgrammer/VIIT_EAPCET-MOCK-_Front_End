@@ -30,6 +30,7 @@ function Student_Login() {
       });
       console.log(JSON.stringify({ username, password, role }));
       const result = await response.json(); 
+      console.log(response);
       if (!response.ok) {
         throw new Error(
           result.message || "Login failed. Invalid credentials or server error."
@@ -109,7 +110,6 @@ function Student_Login() {
                 value={role}
                 onChange={(e) => {
                   setRole(e.target.value)
-                  console.log(e.target.value);
                 }}
                 className="w-full bg-[#EFF7FF] border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-[#003973] outline-none shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
               >
