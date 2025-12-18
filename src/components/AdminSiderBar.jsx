@@ -40,12 +40,14 @@ function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
         />
 
         {/* Exams Page */}
-        <AdminSideBarItem
+        { userRole === "ADMIN" && (
+          <AdminSideBarItem
           icon={LoveIcon}
           label="Exams"
           to="/admin-pages/exams"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
+        )}
 
         {/* Students Page */}
         <AdminSideBarItem
@@ -62,6 +64,7 @@ function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
           to="/admin-pages/reports"
           onClick={() => setIsAdminSideBarOpen(false)}
         />
+
         {/* --- CONDITIONALLY RENDERED ITEM --- */}
         {userRole === 'ADMIN' && (
           <AdminSideBarItem 

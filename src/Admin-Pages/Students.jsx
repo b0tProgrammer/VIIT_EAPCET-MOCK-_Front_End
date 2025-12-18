@@ -37,8 +37,9 @@ export default function Students() {
 
       const data = await response.json();
       setTotals(data);  
-      setCurrentExam(data.currentExam.title)
+      setCurrentExam(data.currentExam?.title)
       setSecondsLeft(REFRESH_INTERVAL);
+      console.log(data);
     } catch (err) {
       console.error("Refresh failed", err);
     } finally {
@@ -151,7 +152,7 @@ export default function Students() {
                 <ul className="text-sm text-center space-y-1">
                   {totals.topRankers.map((t, i) => (
                     <li key={i}>
-                      {i + 1}. {t}
+                      {i + 1}. {t.name} - {t.score}
                     </li>
                   ))}
                 </ul>
