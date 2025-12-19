@@ -74,14 +74,22 @@ function Questions() {
   };
 
   const handleAddQuestion = () => {
+    const subject = prompt("Name of the subject(MATHEMATICS/PHYSICS/CHEMISTRY): ");
+    const topic = prompt("Name of the topic: ");
+    const difficulty = prompt("What's the difficulty(EASY/MEDIUM/HARD): ")
+    const correctOption = prompt("correct option(A/B/C/D): ")
+    if(!subject || !topic || !difficulty || !correctOption) return;
     const newQuestion = {
       id: Date.now(),
       question: "New Question Text",
+      subject: subject,
+      topic: topic,
+      difficulty: difficulty,
       optionA: "Option A Text",
       optionB: "Option B Text",
       optionC: "Option C Text",
       optionD: "Option D Text",
-      answer: "Option A",
+      answer: `Option ${correctOption}`,
       questionImage: null,
       optionAImage: null,
       optionBImage: null,
