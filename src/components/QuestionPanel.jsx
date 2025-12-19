@@ -5,9 +5,16 @@ const QuestionPanel = ({ question, onAnswerSelect, selectedAnswer }) => {
         <h2 className="text-xl font-semibold text-gray-800 mb-2">
           Question {question.number}
         </h2>
-        <p className="text-gray-700 mb-4">{question.text}</p>
+
+        {/* Question HTML (with images) */}
+        <div className="mb-4 text-gray-700">
+          <HtmlContent html={question.text} />
+        </div>
+
         {question.localLanguageText && (
-          <p className="text-gray-600 mb-4 italic">{question.localLanguageText}</p>
+          <div className="mb-4 italic text-gray-600">
+            <HtmlContent html={question.localLanguageText} />
+          </div>
         )}
       </div>
 
@@ -18,8 +25,8 @@ const QuestionPanel = ({ question, onAnswerSelect, selectedAnswer }) => {
             className={`flex items-start p-4 rounded-lg border-2 cursor-pointer transition-colors
               ${
                 selectedAnswer === index
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:bg-gray-50'
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200 hover:bg-gray-50"
               }`}
           >
             <input
@@ -30,7 +37,11 @@ const QuestionPanel = ({ question, onAnswerSelect, selectedAnswer }) => {
               onChange={() => onAnswerSelect(index)}
               className="mt-1 w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
             />
-            <span className="ml-3 text-gray-700">{option}</span>
+
+            {/* Option HTML (with images) */}
+            <div className="ml-3 text-gray-700">
+              <HtmlContent html={option} />
+            </div>
           </label>
         ))}
       </div>
