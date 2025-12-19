@@ -13,3 +13,21 @@ html {
     @apply antialiased text-gray-900;
   }
 }
+
+/* Image styling for question content */
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.prose img {
+  max-width: 32rem; /* max-w-md */
+  max-height: 24rem; /* max-h-96 */
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  border-radius: 0.375rem;
+  display: block;
+  margin: 1rem auto;
+}

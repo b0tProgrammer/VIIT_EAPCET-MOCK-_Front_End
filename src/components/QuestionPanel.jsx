@@ -1,4 +1,14 @@
 const QuestionPanel = ({ question, onAnswerSelect, selectedAnswer }) => {
+
+  const HtmlContent = ({ html }) => {
+  return (
+    <div
+      className="prose max-w-none prose-img:max-w-md prose-img:max-h-96 prose-img:h-auto prose-img:w-auto prose-img:object-contain prose-img:rounded-md"
+      dangerouslySetInnerHTML={{ __html: html || "" }}
+    />
+  );
+};
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
       <div className="mb-6">
