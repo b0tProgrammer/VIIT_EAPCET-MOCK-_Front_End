@@ -244,7 +244,7 @@ function RegistrationForm() {
             {/* Already have account */}
             <div className="flex flex-col items-center mt-6 space-y-2">
               <span
-                onClick={() => navigate("/student_login")}
+                onClick={() => navigate("/login")}
                 className="text-[#003973] font-medium cursor-pointer hover:text-[#002952] transition-colors duration-300 underline-offset-2 hover:underline"
               >
                 Already have an account?

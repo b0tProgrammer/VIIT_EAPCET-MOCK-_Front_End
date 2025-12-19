@@ -227,10 +227,71 @@ export default function Reports() {
                 {reports.length > 1 && (
                   <div className="space-y-2">
                     {reports.slice(1).map((report) => (
-                      <details key={report.id} className="p-3">
+                      <details key={report.id} className="p-3 border border-gray-200 rounded-lg bg-white shadow-sm hover:border-gray-300 transition">
                         <summary className="cursor-pointer text-gray-800 font-medium">
                           + Results For {report.title}
                         </summary>
+                        <div className="mt-3 border-t border-gray-200 pt-3">
+                          <div className="text-base text-gray-700 space-y-1 mb-4">
+                            <div>
+                              Start Date: <span className="font-medium">{formatDate(report.startDate)}</span>
+                            </div>
+                            <div>
+                              Registered: <span className="font-medium">{report.registered}</span>
+                            </div>
+                            <div>
+                              Attempted: <span className="font-medium">{report.attempted}</span>
+                            </div>
+                            <div>
+                              Completed: <span className="font-medium">{report.completed}</span>
+                            </div>
+                            <div>
+                              Avg Score: <span className="font-medium">{report.avgScore}</span>
+                            </div>
+                            <div>
+                              Status: <span className="font-medium">{report.isActive ? 'Active' : 'Complete'}</span>
+                            </div>
+                          </div>
+
+                          {Array.isArray(report.subjectAnalytics) && report.subjectAnalytics.length > 0 && (
+                            <div className="flex justify-center mb-4">
+                              <div className="bg-[#eaf6ff] rounded-xl border border-gray-800 shadow-sm p-6 w-full max-w-4xl overflow-hidden">
+                                <div className="text-lg font-medium text-gray-700 mb-4">
+                                  Subject-Wise Analytics Report
+                                </div>
+                                <div className="overflow-auto">
+                                  <table className="w-full text-lg text-left border-collapse">
+                                    <thead>
+                                      <tr>
+                                        <th className="py-3 px-4 border border-gray-800">Subject</th>
+                                        <th className="py-3 px-4 border border-gray-800">Avg Score</th>
+                                        <th className="py-3 px-4 border border-gray-800">Total</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {report.subjectAnalytics.map((subject, idx) => (
+                                        <tr key={idx}>
+                                          <td className="py-3 px-4 border border-gray-800 capitalize">{subject.subject.toLowerCase()}</td>
+                                          <td className="py-3 px-4 border border-gray-800">{subject.avgScore}/{subject.maxMarks}</td>
+                                          <td className="py-3 px-4 border border-gray-800">{subject.maxMarks}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="mt-2">
+                            <button 
+                              onClick={() => handleSendMails(report.id)}
+                              className="bg-white text-gray-800 border border-gray-300 rounded-md px-4 py-2 shadow-sm hover:bg-gray-50"
+                            >
+                              + Send Mails
+                            </button>
+                          </div>
+                        </div>
                       </details>
                     ))}
                   </div>
