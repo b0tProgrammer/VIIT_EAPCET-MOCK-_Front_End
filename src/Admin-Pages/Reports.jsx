@@ -11,7 +11,7 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedReports, setExpandedReports] = useState({});
-
+  const API = "http://localhost:3000";
   useEffect(() => {
     fetchReports();
   }, []);
@@ -22,7 +22,7 @@ export default function Reports() {
       setError(null);
 
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:3000/api/admin/reports", {
+      const response = await fetch(`${API}/api/admin/reports`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -61,10 +61,36 @@ export default function Reports() {
     });
   };
 
-  const handleSendMails = async (paperId) => {
-    // Implement send mails functionality
-    alert(`Send mails functionality for paper ${paperId} - to be implemented`);
-  };
+
+ const handleSendMails = async (paperId) => {
+  try {
+    const token = localStorage.getItem("token");
+    const confirmSend = window.confirm("Are you sure you want to send results to all students who completed this exam?");
+    
+    if (!confirmSend) return;
+
+    // Optional: Set a local loading state for this specific button
+    const response = await fetch(`${API}/api/admin/send-results`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ paperId }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert(data.message); // "Successfully sent emails to X students."
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (err) {
+    console.error("Failed to send mails:", err);
+    alert("An error occurred while trying to send emails.");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-poppins">
