@@ -3,6 +3,7 @@ import NavBarMain from "../components/NavBarMain";
 import AdminSideBar from "../components/AdminSiderBar";
 import Footer from "../components/Footer";
 import { Menu as MenuIcon } from "lucide-react";
+import logo from "../assets/Logov1.svg";
 
 export default function Reports() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function Reports() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:3000/api/admin/reports", {
         headers: {
@@ -44,19 +45,19 @@ export default function Reports() {
   };
 
   const toggleReportExpansion = (reportId) => {
-    setExpandedReports(prev => ({
+    setExpandedReports((prev) => ({
       ...prev,
-      [reportId]: !prev[reportId]
+      [reportId]: !prev[reportId],
     }));
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-GB", { 
-      day: "2-digit", 
-      month: "short", 
-      year: "2-digit" 
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
     });
   };
 
@@ -105,7 +106,9 @@ export default function Reports() {
             {/* Loading State */}
             {loading && (
               <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#003973]"></div>
+                <div className="animate-spin rounded-full h-20 w-20">
+                  <img src={logo} alt="Loading..." />
+                </div>
               </div>
             )}
 
@@ -113,7 +116,7 @@ export default function Reports() {
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                 <p className="text-red-800 font-medium">Error: {error}</p>
-                <button 
+                <button
                   onClick={fetchReports}
                   className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
                 >
@@ -125,8 +128,12 @@ export default function Reports() {
             {/* No Reports State */}
             {!loading && !error && reports.length === 0 && (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-                <p className="text-gray-600 text-lg">No reports available yet.</p>
-                <p className="text-gray-500 text-sm mt-2">Reports will appear here once exams are created and attempted.</p>
+                <p className="text-gray-600 text-lg">
+                  No reports available yet.
+                </p>
+                <p className="text-gray-500 text-sm mt-2">
+                  Reports will appear here once exams are created and attempted.
+                </p>
               </div>
             )}
 
@@ -142,19 +149,32 @@ export default function Reports() {
 
                     <div className="text-base text-gray-700 space-y-1 mb-6">
                       <div>
-                        Feedback: <span className="font-medium">{reports[0].feedback} of 10</span>
+                        Feedback:{" "}
+                        <span className="font-medium">
+                          {reports[0].feedback} of 10
+                        </span>
                       </div>
                       <div>
-                        Start Date: <span className="font-medium">{formatDate(reports[0].startDate)}</span>
+                        Start Date:{" "}
+                        <span className="font-medium">
+                          {formatDate(reports[0].startDate)}
+                        </span>
                       </div>
                       <div>
-                        Total Students: <span className="font-medium">{reports[0].totalStudents}</span>
+                        Total Students:{" "}
+                        <span className="font-medium">
+                          {reports[0].totalStudents}
+                        </span>
                       </div>
                       <div>
-                        Avg Score: <span className="font-medium">{reports[0].avgScore}</span>
+                        Avg Score:{" "}
+                        <span className="font-medium">
+                          {reports[0].avgScore}
+                        </span>
                       </div>
                       <div>
-                        Status: <span className="font-medium">{reports[0].status}</span>
+                        Status:{" "}
+                        <span className="font-medium">{reports[0].status}</span>
                       </div>
                     </div>
 
@@ -180,19 +200,22 @@ export default function Reports() {
                               </tr>
                             </thead>
                             <tbody>
-                              {reports[0].subjectAnalytics && reports[0].subjectAnalytics.map((subject, idx) => (
-                                <tr key={idx}>
-                                  <td className="py-3 px-4 border border-gray-800 capitalize">
-                                    {subject.subject.toLowerCase()}
-                                  </td>
-                                  <td className="py-3 px-4 border border-gray-800">
-                                    {subject.avgScore}/{subject.maxMarks}
-                                  </td>
-                                  <td className="py-3 px-4 border border-gray-800">
-                                    {subject.maxMarks}
-                                  </td>
-                                </tr>
-                              ))}
+                              {reports[0].subjectAnalytics &&
+                                reports[0].subjectAnalytics.map(
+                                  (subject, idx) => (
+                                    <tr key={idx}>
+                                      <td className="py-3 px-4 border border-gray-800 capitalize">
+                                        {subject.subject.toLowerCase()}
+                                      </td>
+                                      <td className="py-3 px-4 border border-gray-800">
+                                        {subject.avgScore}/{subject.maxMarks}
+                                      </td>
+                                      <td className="py-3 px-4 border border-gray-800">
+                                        {subject.maxMarks}
+                                      </td>
+                                    </tr>
+                                  )
+                                )}
                             </tbody>
                           </table>
                         </div>
@@ -202,18 +225,27 @@ export default function Reports() {
                     {/* Participation Stats */}
                     <div className="text-base text-gray-700 space-y-1 mb-4">
                       <div>
-                        Registered: <span className="font-medium">{reports[0].registered}</span>
+                        Registered:{" "}
+                        <span className="font-medium">
+                          {reports[0].registered}
+                        </span>
                       </div>
                       <div>
-                        Attempted: <span className="font-medium">{reports[0].attempted}</span>
+                        Attempted:{" "}
+                        <span className="font-medium">
+                          {reports[0].attempted}
+                        </span>
                       </div>
                       <div>
-                        Attempt: <span className="font-medium">{reports[0].attemptPercentage}%</span>
+                        Attempt:{" "}
+                        <span className="font-medium">
+                          {reports[0].attemptPercentage}%
+                        </span>
                       </div>
                     </div>
 
                     <div className="mt-4">
-                      <button 
+                      <button
                         onClick={() => handleSendMails(reports[0].id)}
                         className="bg-white text-gray-800 border border-gray-300 rounded-md px-4 py-2 shadow-sm hover:bg-gray-50"
                       >
@@ -227,64 +259,101 @@ export default function Reports() {
                 {reports.length > 1 && (
                   <div className="space-y-2">
                     {reports.slice(1).map((report) => (
-                      <details key={report.id} className="p-3 border border-gray-200 rounded-lg bg-white shadow-sm hover:border-gray-300 transition">
+                      <details
+                        key={report.id}
+                        className="p-3 border border-gray-200 rounded-lg bg-white shadow-sm hover:border-gray-300 transition"
+                      >
                         <summary className="cursor-pointer text-gray-800 font-medium">
                           + Results For {report.title}
                         </summary>
                         <div className="mt-3 border-t border-gray-200 pt-3">
                           <div className="text-base text-gray-700 space-y-1 mb-4">
                             <div>
-                              Start Date: <span className="font-medium">{formatDate(report.startDate)}</span>
+                              Start Date:{" "}
+                              <span className="font-medium">
+                                {formatDate(report.startDate)}
+                              </span>
                             </div>
                             <div>
-                              Registered: <span className="font-medium">{report.registered}</span>
+                              Registered:{" "}
+                              <span className="font-medium">
+                                {report.registered}
+                              </span>
                             </div>
                             <div>
-                              Attempted: <span className="font-medium">{report.attempted}</span>
+                              Attempted:{" "}
+                              <span className="font-medium">
+                                {report.attempted}
+                              </span>
                             </div>
                             <div>
-                              Completed: <span className="font-medium">{report.completed}</span>
+                              Completed:{" "}
+                              <span className="font-medium">
+                                {report.completed}
+                              </span>
                             </div>
                             <div>
-                              Avg Score: <span className="font-medium">{report.avgScore}</span>
+                              Avg Score:{" "}
+                              <span className="font-medium">
+                                {report.avgScore}
+                              </span>
                             </div>
                             <div>
-                              Status: <span className="font-medium">{report.isActive ? 'Active' : 'Complete'}</span>
+                              Status:{" "}
+                              <span className="font-medium">
+                                {report.isActive ? "Active" : "Complete"}
+                              </span>
                             </div>
                           </div>
 
-                          {Array.isArray(report.subjectAnalytics) && report.subjectAnalytics.length > 0 && (
-                            <div className="flex justify-center mb-4">
-                              <div className="bg-[#eaf6ff] rounded-xl border border-gray-800 shadow-sm p-6 w-full max-w-4xl overflow-hidden">
-                                <div className="text-lg font-medium text-gray-700 mb-4">
-                                  Subject-Wise Analytics Report
-                                </div>
-                                <div className="overflow-auto">
-                                  <table className="w-full text-lg text-left border-collapse">
-                                    <thead>
-                                      <tr>
-                                        <th className="py-3 px-4 border border-gray-800">Subject</th>
-                                        <th className="py-3 px-4 border border-gray-800">Avg Score</th>
-                                        <th className="py-3 px-4 border border-gray-800">Total</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {report.subjectAnalytics.map((subject, idx) => (
-                                        <tr key={idx}>
-                                          <td className="py-3 px-4 border border-gray-800 capitalize">{subject.subject.toLowerCase()}</td>
-                                          <td className="py-3 px-4 border border-gray-800">{subject.avgScore}/{subject.maxMarks}</td>
-                                          <td className="py-3 px-4 border border-gray-800">{subject.maxMarks}</td>
+                          {Array.isArray(report.subjectAnalytics) &&
+                            report.subjectAnalytics.length > 0 && (
+                              <div className="flex justify-center mb-4">
+                                <div className="bg-[#eaf6ff] rounded-xl border border-gray-800 shadow-sm p-6 w-full max-w-4xl overflow-hidden">
+                                  <div className="text-lg font-medium text-gray-700 mb-4">
+                                    Subject-Wise Analytics Report
+                                  </div>
+                                  <div className="overflow-auto">
+                                    <table className="w-full text-lg text-left border-collapse">
+                                      <thead>
+                                        <tr>
+                                          <th className="py-3 px-4 border border-gray-800">
+                                            Subject
+                                          </th>
+                                          <th className="py-3 px-4 border border-gray-800">
+                                            Avg Score
+                                          </th>
+                                          <th className="py-3 px-4 border border-gray-800">
+                                            Total
+                                          </th>
                                         </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
+                                      </thead>
+                                      <tbody>
+                                        {report.subjectAnalytics.map(
+                                          (subject, idx) => (
+                                            <tr key={idx}>
+                                              <td className="py-3 px-4 border border-gray-800 capitalize">
+                                                {subject.subject.toLowerCase()}
+                                              </td>
+                                              <td className="py-3 px-4 border border-gray-800">
+                                                {subject.avgScore}/
+                                                {subject.maxMarks}
+                                              </td>
+                                              <td className="py-3 px-4 border border-gray-800">
+                                                {subject.maxMarks}
+                                              </td>
+                                            </tr>
+                                          )
+                                        )}
+                                      </tbody>
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
+                            )}
 
                           <div className="mt-2">
-                            <button 
+                            <button
                               onClick={() => handleSendMails(report.id)}
                               className="bg-white text-gray-800 border border-gray-300 rounded-md px-4 py-2 shadow-sm hover:bg-gray-50"
                             >

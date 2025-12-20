@@ -8,4 +8,4 @@
 - [x] Results.jsx: Import AnimatedBackground and add to the results content
 - [x] Exampage.jsx: Import AnimatedBackground and add to the exam page containe
 - [x] Error while deleting the question.
-- [x] just parse required feilds ti that type.
+- [x] just parse required feilds to that type.

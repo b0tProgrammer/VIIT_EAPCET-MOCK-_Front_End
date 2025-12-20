@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import NavBarMain from "../components/NavBarMain";
 import AdminSideBar from "../components/AdminSiderBar";
 import Footer from "../components/Footer";
-import Loader from "../components/Loader";
+import logo from "../assets/Logov1.svg";
 import { Menu as MenuIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -26,7 +26,7 @@ export default function TeacherDashboard() {
         });
 
         if (!res.ok) {
-          navigate('/login');
+          navigate("/login");
           throw new Error("Failed to fetch admin stats");
         }
         const data = await res.json();
@@ -72,10 +72,45 @@ export default function TeacherDashboard() {
     return (
       <>
         <NavBarMain />
-        <Loader />
+
+        <div className="flex flex-1 bg-[#f9fcff] font-poppins relative">
+          <aside
+            className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
+          transform transition-transform duration-300 z-50
+          ${
+            isAdminSideBarOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }`}
+          >
+            <AdminSideBar
+              isAdminSideBarOpen={isAdminSideBarOpen}
+              setIsAdminSideBarOpen={setIsAdminSideBarOpen}
+            />
+          </aside>
+
+          <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
+
+            <h1 className="text-2xl font-bold mb-6">Hello Admin, Welcome</h1>
+
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-20 w-20">
+                <img src={logo} alt="Loading..." />
+              </div>
+            </div>
+
+            <button
+              className="lg:hidden mb-4 text-[#003973] flex items-center gap-2"
+              onClick={() => setIsAdminSideBarOpen(!isAdminSideBarOpen)}
+            >
+              <MenuIcon size={24} />
+            </button>
+            
+          </main>
+        </div>
         <Footer />
       </>
-    )
+    );
   }
   return (
     <>
@@ -135,7 +170,9 @@ export default function TeacherDashboard() {
                   </div>
 
                   <div className="text-right">
-                    <h3 className="text-xl font-bold">{getTimeLeft(exam.startTime)}</h3>
+                    <h3 className="text-xl font-bold">
+                      {getTimeLeft(exam.startTime)}
+                    </h3>
                     <span className="text-xs bg-gray-200 px-2 py-1 rounded">
                       Starts in
                     </span>

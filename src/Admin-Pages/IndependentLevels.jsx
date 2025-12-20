@@ -13,16 +13,14 @@ const subjects = [
 export default function IndependentLevels() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
 
-  // Store difficulty levels
   const [difficulties, setDifficulties] = useState(() => {
     const init = {};
     subjects.forEach((subj) => {
-      init[subj.name] = Array(subj.questions).fill(1); // default = Easy (1)
+      init[subj.name] = Array(subj.questions).fill(1); 
     });
     return init;
   });
 
-  // Handle difficulty cycling
   const diff = [1, 2, 3]; // 1: Easy, 2: Medium, 3: Hard
   const handleClick = (subject, index) => {
     setDifficulties((prev) => {
@@ -108,7 +106,7 @@ export default function IndependentLevels() {
                         hover:scale-105 active:scale-95 transition-transform duration-200 
                         font-medium text-sm ${getTextColor(level)}`}
                       title={`Q${idx + 1}: ${
-                        level === 1 ? "Easy" : level === 2 ? "Medium" : "Hard"
+                        level === 1 ? "EASY" : level === 2 ? "MEDIUM" : "HARD"
                       }`}
                     >
                       {level}
