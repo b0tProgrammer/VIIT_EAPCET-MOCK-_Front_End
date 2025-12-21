@@ -40,13 +40,9 @@ const PaperPreviewModal = ({ questions, paperTitle, onClose }) => {
                 <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50 space-y-4">
                     {questions.map((q, index) => (
                         <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                            <p className="font-bold text-gray-900">Q{index + 1}: {q.text} </p>
-                            <p className="text-xs text-gray-500 mt-1 mb-2">({q.subject} | {q.difficulty} | Answer: {q.correctAnswer})</p>
-                            <ul className="list-disc list-inside ml-4 text-sm text-gray-700">
-                                {q.options.map((opt, i) => (
-                                    <li key={i} dangerouslySetInnerHTML={{__html: `Option ${String.fromCharCode(65 + i)}: ${opt}`}} />
-                                ))}
-                            </ul>
+                            <div className="font-bold text-gray-900 mb-2">Q{index + 1}:</div>
+                            <div className="text-xs text-gray-500 mt-1 mb-2">({q.subject} | {q.difficulty} | Answer: {q.correctAnswer})</div>
+                            <div className="prose max-w-full text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: q.html || q.text }} />
                         </div>
                     ))}
                 </div>
