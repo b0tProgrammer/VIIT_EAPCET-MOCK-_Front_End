@@ -136,7 +136,7 @@ function Results() {
 
     fetchResults();
   }, [studentId, currentPaperIdFromUrl, resultIdFromUrl]);
-  if (currentExamData.id === null && !error && !isLoading) {
+  /*if (currentExamData.id === null && !error && !isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-700 p-10">
         <h2 className="text-2xl font-bold">No Completed Results Found</h2>     
@@ -145,7 +145,7 @@ function Results() {
         </p>
       </div>
     );
-  }
+  }*/
 
   return (
     <>
