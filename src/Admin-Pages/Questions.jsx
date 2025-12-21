@@ -65,7 +65,7 @@ function Questions() {
   const handleDownloadTemplate = () => {
     const csvContent =
       "Question,Option A,Option B,Option C,Option D,Subject,Topic,Difficulty,Answer\n" +
-      '"What is the capital of France?",Paris,London,Rome,Berlin,Social,Capitals,Easy,"Option A"\n';
+      '"Sum of 15 and 27",42,20,15,62,MATHEMATICS,Arithmetic,EASY,A\n';
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -277,7 +277,7 @@ function Questions() {
             </button>
             <p className="text-xs text-gray-600 mt-2">
               File must follow the exact order: Question,Option A,Option
-              B,Option C,Option D,Answer
+              B,Option C,Option D,Subject(Uppercase),Topic,Difficulty(Uppercase),Answer
             </p>
           </div>
 
