@@ -2,8 +2,94 @@ import { useState, useEffect } from "react";
 import NavBarMain from "../components/NavBarMain";
 import AdminSideBar from "../components/AdminSiderBar";
 import Footer from "../components/Footer";
-import { Menu as MenuIcon } from "lucide-react";
+import { Menu as MenuIcon, X } from "lucide-react";
 import logo from "../assets/Logov1.svg";
+
+// Voucher Modal Component
+const VoucherModal = ({ paperId, topStudents, onClose, onSubmit }) => {
+  const [vouchers, setVouchers] = useState(
+    topStudents.map((_, index) => ({ rank: index + 1, code: '' }))
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleVoucherChange = (index, value) => {
+    const updated = [...vouchers];
+    updated[index].code = value;
+    setVouchers(updated);
+  };
+
+  const handleSubmit = async () => {
+    // Validate that all codes are non-empty
+    if (vouchers.some(v => !v.code.trim())) {
+      alert('Please enter voucher codes for all students.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await onSubmit(vouchers);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[999] p-4">
+      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl flex flex-col relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[#003973] to-[#005ca0] px-6 py-4 flex justify-between items-center">
+          <h3 className="text-xl font-bold text-white">Amazon Voucher Codes for Top Students</h3>
+          <button
+            className="text-white hover:text-gray-200 transition-colors"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          <p className="text-sm text-gray-600 mb-4">
+            Enter Amazon voucher codes for the top {topStudents.length} students. These will be sent in their result email.
+          </p>
+          <div className="space-y-3">
+            {topStudents.map((student, index) => (
+              <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Rank {index + 1}: {student.name} (Score: {student.score})
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter voucher code (e.g., AMZN-XXXX-XXXX)"
+                  value={vouchers[index].code}
+                  onChange={(e) => handleVoucherChange(index, e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003973] focus:outline-none"
+                  disabled={isSubmitting}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white border-t px-6 py-4 flex justify-end gap-3">
+          <button
+            className="px-5 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors font-medium disabled:opacity-50"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-5 py-2 rounded-lg bg-[#003973] text-white hover:bg-[#005ca0] transition-colors font-medium disabled:opacity-50"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Sending...' : 'Send Results & Vouchers'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Reports() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
@@ -11,6 +97,8 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedReports, setExpandedReports] = useState({});
+  const [voucherModal, setVoucherModal] = useState({ show: false, paperId: null, topStudents: [] });
+  const [isSubmittingMail, setIsSubmittingMail] = useState(false);
   const API = "http://localhost:3000";
   useEffect(() => {
     fetchReports();
@@ -62,35 +150,70 @@ export default function Reports() {
   };
 
 
- const handleSendMails = async (paperId) => {
-  try {
-    const token = localStorage.getItem("token");
-    const confirmSend = window.confirm("Are you sure you want to send results to all students who completed this exam?");
-    
-    if (!confirmSend) return;
+  // Fetch top 10 students and open voucher modal
+  const handleSendMails = async (paperId) => {
+    try {
+      const token = localStorage.getItem("token");
+      
+      // Fetch top 10 students for this paper
+      const response = await fetch(`${API}/api/admin/top-students/${paperId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    // Optional: Set a local loading state for this specific button
-    const response = await fetch(`${API}/api/admin/send-results`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ paperId }),
-    });
+      const data = await response.json();
 
-    const data = await response.json();
+      if (!response.ok) {
+        alert(`Error: ${data.message}`);
+        return;
+      }
 
-    if (response.ok) {
-      alert(data.message); // "Successfully sent emails to X students."
-    } else {
-      alert(`Error: ${data.message}`);
+      // Open voucher modal with top students
+      setVoucherModal({
+        show: true,
+        paperId: paperId,
+        topStudents: data.topStudents || []
+      });
+    } catch (err) {
+      console.error("Failed to fetch top students:", err);
+      alert("An error occurred while fetching top students.");
     }
-  } catch (err) {
-    console.error("Failed to send mails:", err);
-    alert("An error occurred while trying to send emails.");
-  }
-};
+  };
+
+  // Submit vouchers and send results
+  const handleSubmitVouchers = async (vouchers) => {
+    try {
+      setIsSubmittingMail(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API}/api/admin/send-results`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          paperId: voucherModal.paperId,
+          vouchers: vouchers
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        setVoucherModal({ show: false, paperId: null, topStudents: [] });
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (err) {
+      console.error("Failed to send mails with vouchers:", err);
+      alert("An error occurred while sending emails.");
+    } finally {
+      setIsSubmittingMail(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-poppins">
@@ -398,6 +521,15 @@ export default function Reports() {
       </div>
 
       <Footer />
+      
+      {voucherModal.show && (
+        <VoucherModal
+          paperId={voucherModal.paperId}
+          topStudents={voucherModal.topStudents}
+          onClose={() => setVoucherModal({ show: false, paperId: null, topStudents: [] })}
+          onSubmit={handleSubmitVouchers}
+        />
+      )}
     </div>
   );
 }
