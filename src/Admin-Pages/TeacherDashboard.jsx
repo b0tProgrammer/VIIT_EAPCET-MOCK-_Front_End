@@ -149,7 +149,7 @@ export default function TeacherDashboard() {
               label="Active Exam(s)"
               value={details.upcomingExamsCount}
             />
-            <StatCard label="Average Score" value={Number(details.averageScore).toFixed(3)} />
+            <StatCard label="Average Score" value={details.averageScore} />
           </div>
 
           {/* Upcoming Exams */}
