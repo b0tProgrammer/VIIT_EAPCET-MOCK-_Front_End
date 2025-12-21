@@ -208,7 +208,13 @@ function Questions() {
                   setOpenPreview(false);
                 }}
                 onDelete={(index) => {
-                  setQuestions((prev) => prev.filter((_, i) => i !== index));
+                  setQuestions((prev) => {
+                    const newQuestions = prev.filter((_, i) => i !== index);
+                    if (newQuestions.length === 0) {
+                      setOpenPreview(false);
+                    }
+                    return newQuestions;
+                  });
                 }}
                 onSave={handleSaveToBackend}
               />
