@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AdminSideBar from "../components/AdminSiderBar";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
@@ -10,12 +10,12 @@ import { Menu as MenuIcon, Upload, FileText, PlusCircle } from "lucide-react";
 const API_BASE_URL = "http://localhost:3000";
 
 const simpleCSVParse = (csvText) => {
-  const rows = csvText.trim().split("\n").slice(1); 
+  const rows = csvText.trim().split("\n").slice(1);
   return rows
     .map((row, index) => {
       const cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
       const cleanedCols = cols.map((c) => c.trim().replace(/^"|"$/g, ""));
-      if (cleanedCols.length < 6) return null; 
+      if (cleanedCols.length < 6) return null;
       return {
         id: Date.now() + index,
         question: cleanedCols[0] || "",
@@ -45,8 +45,11 @@ function Questions() {
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openPreview, setOpenPreview] = useState(false);
+  const [ques, setQues] = useState({}); // subject wise number of questions
+  const [quesLoading, setQuesLoading] = useState(false);
 
   const handleUploadClick = () => fileInputRef.current.click();
+  const token = localStorage.getItem("token");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -74,11 +77,13 @@ function Questions() {
   };
 
   const handleAddQuestion = () => {
-    const subject = prompt("Name of the subject(MATHEMATICS/PHYSICS/CHEMISTRY): ");
+    const subject = prompt(
+      "Name of the subject(MATHEMATICS/PHYSICS/CHEMISTRY): "
+    );
     const topic = prompt("Name of the topic: ");
-    const difficulty = prompt("What's the difficulty(EASY/MEDIUM/HARD): ")
-    const correctOption = prompt("correct option(A/B/C/D): ")
-    if(!subject || !topic || !difficulty || !correctOption) return;
+    const difficulty = prompt("What's the difficulty(EASY/MEDIUM/HARD): ");
+    const correctOption = prompt("correct option(A/B/C/D): ");
+    if (!subject || !topic || !difficulty || !correctOption) return;
     const newQuestion = {
       id: Date.now(),
       question: "New Question Text",
@@ -99,6 +104,28 @@ function Questions() {
     setQuestions((prev) => [...prev, newQuestion]);
   };
 
+  useEffect(() => {
+    async function getQuestions() {
+      try {
+        setQuesLoading(true);
+        const response = await fetch(
+          "http://localhost:3000/api/admin/total-questions",
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const res = await response.json();
+        setQues(res);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setQuesLoading(false);
+      }
+    }
+    getQuestions();
+  }, [token]);
+
   const handleSaveToBackend = async () => {
     if (questions.length === 0) {
       alert("No questions to upload.");
@@ -109,7 +136,6 @@ function Questions() {
     setOpenPreview(false);
     const formData = new FormData();
     const questionsPayload = [];
-    const token = localStorage.getItem("token");
     questions.forEach((q) => {
       const questionData = {
         question: q.question,
@@ -125,7 +151,6 @@ function Questions() {
       };
       questionsPayload.push(questionData);
     });
-    console.log("Questions Payload:", questionsPayload);
     formData.append("questions", JSON.stringify(questionsPayload));
     try {
       const response = await fetch(
@@ -133,7 +158,7 @@ function Questions() {
         {
           method: "POST",
           body: formData,
-          headers : {Authorization: `Bearer ${token}`},
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -143,7 +168,7 @@ function Questions() {
       }
 
       const result = await response.json();
-      // console.log("Upload Success:", result); 
+      // console.log("Upload Success:", result);
       alert(`Success: ${result.message || "Questions uploaded successfully!"}`);
 
       // Cleanup state after successful upload
@@ -245,6 +270,7 @@ function Questions() {
                 Add New Question
               </button>
             </div>
+
             <input
               type="file"
               accept=".csv"
@@ -283,8 +309,58 @@ function Questions() {
             </button>
             <p className="text-xs text-gray-600 mt-2">
               File must follow the exact order: Question,Option A,Option
-              B,Option C,Option D,Subject(Uppercase),Topic,Difficulty(Uppercase),Answer
+              B,Option C,Option
+              D,Subject(Uppercase),Topic,Difficulty(Uppercase),Answer
             </p>
+          </div>
+          
+          {/* Questions by Topic (per Subject) */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              Available Questions by Topic
+            </h3>
+            {quesLoading ? (
+              <div className="text-sm text-gray-500">Loading...</div>
+            ) : (              
+              <div className="space-y-8">
+                {Object.entries(ques.topicCounts||{}).map(
+                  ([subject, topics]) => ( 
+                    <div
+                      key={subject}
+                      className="bg-white shadow rounded-md p-4"
+                    >
+                      <h3 className="text-lg font-semibold mb-3">{subject}</h3>
+                      <table className="min-w-full border border-gray-300">
+                        <thead>
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-2 text-left">
+                              Topic
+                            </th>
+                            <th className="border px-4 py-2 text-left">
+                              Questions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(topics).map(([topic, count]) => (
+                            <tr key={topic}>
+                              <td className="border px-4 py-2">{topic}</td>
+                              <td className="border px-4 py-2">{count}</td>
+                            </tr>
+                          ))}
+                          <tr>
+                            <td className="border px-4 py-2 font-bold">Total</td>
+                            <td className="border px-4 py-2">
+                              {Object.values(topics).reduce((sum, curr) => sum + Number(curr), 0)}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-4">
