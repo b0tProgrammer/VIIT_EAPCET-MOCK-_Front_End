@@ -117,7 +117,7 @@ export default function Reports() {
       });
 
       const data = await response.json();
-
+      console.log("Fetch reports response:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch reports");
       }
@@ -131,14 +131,14 @@ export default function Reports() {
       setLoading(false);
     }
   };
-
+/*
   const toggleReportExpansion = (reportId) => {
     setExpandedReports((prev) => ({
       ...prev,
       [reportId]: !prev[reportId],
     }));
   };
-
+*/
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -297,12 +297,7 @@ export default function Reports() {
                     </h3>
 
                     <div className="text-base text-gray-700 space-y-1 mb-6">
-                      <div>
-                        Feedback:{" "}
-                        <span className="font-medium">
-                          {reports[0].feedback} of 10
-                        </span>
-                      </div>
+                      
                       <div>
                         Start Date:{" "}
                         <span className="font-medium">
@@ -312,7 +307,7 @@ export default function Reports() {
                       <div>
                         Total Students:{" "}
                         <span className="font-medium">
-                          {reports[0].totalStudents}
+                          {reports[0].completed}
                         </span>
                       </div>
                       <div>
@@ -421,6 +416,12 @@ export default function Reports() {
                               Start Date:{" "}
                               <span className="font-medium">
                                 {formatDate(report.startDate)}
+                              </span>
+                            </div>
+                            <div>
+                              Total Students:{" "}
+                              <span className="font-medium">
+                                {report.totalStudents}
                               </span>
                             </div>
                             <div>
