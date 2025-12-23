@@ -110,7 +110,6 @@ function RegistrationForm() {
       for (const key in formData) {
         dataToSend.append(key, formData[key]);
       }
-      console.log(dataToSend);
       const response = await fetch(`${API}/api/auth/register`, {
         method: "POST",
         body: dataToSend,

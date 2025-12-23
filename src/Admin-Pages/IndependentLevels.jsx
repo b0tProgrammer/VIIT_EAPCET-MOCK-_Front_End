@@ -3,6 +3,7 @@ import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import AdminSideBar from "../components/AdminSiderBar";
 import { Menu as MenuIcon } from "lucide-react";
+import { body, header } from "framer-motion/client";
 
 const subjects = [
   { name: "Mathematics", questions: 80 },
@@ -12,7 +13,9 @@ const subjects = [
 
 export default function IndependentLevels() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
-
+  const [loading,setLoading] = useState(false);
+  const API_BASE_URL = "http://localhost:3000"
+  const token = localStorage.getItem("token");
   const [difficulties, setDifficulties] = useState(() => {
     const init = {};
     subjects.forEach((subj) => {
@@ -20,7 +23,31 @@ export default function IndependentLevels() {
     });
     return init;
   });
-
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      const dataToSend = difficulties;
+      console.log(dataToSend);
+      const resp = await fetch(
+        `${API_BASE_URL}/api/admin/create-paper`,
+        {
+          method : "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(dataToSend),
+        }
+      )
+      const result = await resp.json().catch(() => null);
+      console.log("create-paper resp", resp.status, result);
+      if (!resp.ok) throw new Error(result?.message || `Request failed: ${resp.status}`);
+    } catch(error) {
+      console.error(error)
+    } finally {
+      setLoading(false);
+    }
+  }
   const diff = [1, 2, 3]; // 1: Easy, 2: Medium, 3: Hard
   const handleClick = (subject, index) => {
     setDifficulties((prev) => {
@@ -132,7 +159,10 @@ export default function IndependentLevels() {
             </div>
 
             <div className="flex justify-center mt-6">
-              <button className="px-6 py-2 bg-white border-2 border-[#0080FF] rounded-xl shadow-md font-semibold text-[#0080FF] hover:bg-[#F0FEFF] transition">
+              <button 
+              className="px-6 py-2 bg-white border-2 border-[#0080FF] rounded-xl shadow-md font-semibold text-[#0080FF] hover:bg-[#F0FEFF] transition"
+              onClick={handleSubmit}
+              >
                 + Generate Question Paper
               </button>
             </div>
