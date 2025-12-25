@@ -331,7 +331,7 @@ export default function CreateQuestionPaper() {
                                 </p>
                             </div>
                             <div className="flex-1 bg-[#F0FEFF] border border-[#0080FF] rounded-[30px] shadow py-4 text-center cursor-pointer hover:scale-105 transition"
-                                onClick={() => navigate("/independentLevels")}
+                                onClick={() => navigate("/independentLevels", { state: { title: form.title, startTime: form.startTime, duration: form.duration } })}
                             >
                                 <p className="text-lg font-semibold text-[#003973]">Custom</p>
                                 <p className="text-sm text-gray-600">
