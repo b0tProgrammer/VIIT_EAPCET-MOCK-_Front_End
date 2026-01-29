@@ -16,7 +16,7 @@ const subjects = [
 
 export default function IndependentLevels() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);
-  const [paperTitle, setPaperTitle] = useState("Custom Difficulty Exam");
+  const [paperTitle, setPaperTitle] = useState("");
   const [startTime, setStartTime] = useState("");
   const [durationHours, setDurationHours] = useState(3);
   const [isSaving, setIsSaving] = useState(false);
@@ -76,14 +76,13 @@ export default function IndependentLevels() {
       const currentKey = diffKeyMap[currentLevel];
       const nextKey = diffKeyMap[nextLevel];
 
-      // Compute prospective subject demand after this change
+
       const subjCounts = { EASY: 0, MEDIUM: 0, HARD: 0 };
       next[subject].forEach((lvl, i) => {
         const key = diffKeyMap[i === index ? nextLevel : lvl];
         subjCounts[key] = (subjCounts[key] || 0) + 1;
       });
 
-      // Match subject name to backend format (e.g., "Mathematics" → "MATHEMATICS")
       const backendSubject = subject.toUpperCase();
       const subjAvail = availabilityBySubject[backendSubject] || {};
       
@@ -91,7 +90,6 @@ export default function IndependentLevels() {
         const msg = `${subject}: not enough ${nextKey} questions. Need ${subjCounts[nextKey]}, have ${subjAvail[nextKey] || 0}.`;
         setErrorMsg(msg);
         console.warn(msg);
-        // Clear error after 3 seconds
         setTimeout(() => setErrorMsg(""), 3000);
         return prev;
       }
@@ -158,9 +156,7 @@ export default function IndependentLevels() {
     return result;
   }, [availabilityBySubject, demandBySubject, subjects]);
 
-  // Real-time shortage detection
   const shortageWarnings = useMemo(() => {
-    // Don't show warnings if availability data hasn't loaded yet
     if (!availability.EASY && !availability.MEDIUM && !availability.HARD) {
       return [];
     }
