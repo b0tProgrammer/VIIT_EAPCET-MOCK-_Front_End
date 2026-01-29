@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node node_modules/vite/dist/node/cli.js",
-    "build": "node node_modules/vite/dist/node/cli.js build",
-    "preview": "node node_modules/vite/dist/node/cli.js preview",
-    "postinstall": "chmod +x ./node_modules/.bin/vite || true"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@tsparticles/react": "^3.0.0",

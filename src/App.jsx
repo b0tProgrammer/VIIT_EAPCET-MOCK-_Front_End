@@ -21,7 +21,6 @@ export default function App() {
   {/*Done by : 
         Mohith Kumar Sandaka (s.mohithkumar1511@gmail.com)
         Rahul Vandrangi ()
-        
     */}
   return (
     <BrowserRouter>
