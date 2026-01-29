@@ -6,7 +6,7 @@ import { Menu as MenuIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../components/Loader';
 
-const API_BASE_URL = 'http://localhost:3000'; 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://viiteapcet-backend.onrender.com'; 
 const LATE_START_WINDOW_MINUTES = 15;
 
 function CountdownTimer({ startTime, durationHours, onStart, examId }) {

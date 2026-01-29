@@ -6,7 +6,7 @@ import { Menu as MenuIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 
-const API = 'http://localhost:3000';
+const API = import.meta.env.VITE_API_URL || 'https://viiteapcet-backend.onrender.com';
 const LATE_START_WINDOW_MINUTES = 15; // 15-minute grace period
 
 // --- Helper component to handle countdown on dashboard ---

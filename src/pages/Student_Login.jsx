@@ -5,7 +5,7 @@ import Loader from "../components/Loader";
 
 function Student_Login() {
   const navigate = useNavigate();
-  const API = "http://localhost:3000";
+  const API = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
