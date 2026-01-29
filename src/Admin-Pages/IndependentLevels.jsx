@@ -5,7 +5,7 @@ import AdminSideBar from "../components/AdminSiderBar";
 import { Menu as MenuIcon } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
 import { body, header } from "framer-motion/client";
 
 const subjects = [

@@ -4,7 +4,7 @@ import AdminSideBar from "../components/AdminSiderBar";
 import Footer from "../components/Footer";
 import { Menu as MenuIcon, RefreshCw } from "lucide-react";
 
-const API_BASE_URL = "http://localhost:3000/api/admin/exam-stats";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
 const REFRESH_INTERVAL = 300;
 
 export default function Students() {
@@ -27,7 +27,7 @@ export default function Students() {
   const fetchStats = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const response = await fetch(API_BASE_URL, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/exam-stats`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

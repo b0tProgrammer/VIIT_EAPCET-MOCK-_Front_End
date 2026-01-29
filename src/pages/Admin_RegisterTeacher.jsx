@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AdminSideBar from "../components/AdminSiderBar"; // Adjust path as needed
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
-const API = "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
 
 function AdminRegisterTeacher() {
   const [isAdminSideBarOpen, setIsAdminSideBarOpen] = useState(false);

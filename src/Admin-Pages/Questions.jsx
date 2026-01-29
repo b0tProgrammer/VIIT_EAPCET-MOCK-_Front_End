@@ -7,7 +7,7 @@ import LazyPreviewList from "../components/LazyPreviewList";
 
 import { Menu as MenuIcon, Upload, FileText, PlusCircle } from "lucide-react";
 
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
 
 const simpleCSVParse = (csvText) => {
   const rows = csvText.trim().split("\n").slice(1);
@@ -108,13 +108,10 @@ function Questions() {
     async function getQuestions() {
       try {
         setQuesLoading(true);
-        const response = await fetch(
-          "http://localhost:3000/api/admin/total-questions",
-          {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/api/admin/total-questions`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const res = await response.json();
         setQues(res);
       } catch (e) {

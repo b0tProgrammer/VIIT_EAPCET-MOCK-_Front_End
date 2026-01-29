@@ -13,13 +13,13 @@ export default function TeacherDashboard() {
   const [, forceTick] = useState(0);
   const navigate = useNavigate();
 
-  const API_BASE_URL = "http://localhost:3000/api/admin/stats";
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     async function fetchDetails() {
       try {
-        const res = await fetch(API_BASE_URL, {
+        const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

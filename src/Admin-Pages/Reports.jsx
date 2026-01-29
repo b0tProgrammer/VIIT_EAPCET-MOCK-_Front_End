@@ -99,7 +99,7 @@ export default function Reports() {
   const [expandedReports, setExpandedReports] = useState({});
   const [voucherModal, setVoucherModal] = useState({ show: false, paperId: null, topStudents: [] });
   const [isSubmittingMail, setIsSubmittingMail] = useState(false);
-  const API = "http://localhost:3000";
+  const API = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
   useEffect(() => {
     fetchReports();
   }, []);
