@@ -1,4 +1,4 @@
-import logo from "../assets/Logov1.svg";
+import logo from "../assets/LogoV1.svg";
 import { Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
