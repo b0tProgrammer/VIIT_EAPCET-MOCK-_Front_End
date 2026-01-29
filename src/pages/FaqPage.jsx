@@ -1,6 +1,6 @@
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
-import SideBar from "../components/SideBar";
+import SideBar from "../components/Sidebar";
 import FAQ from "../components/FAQ";
 import { useState } from "react";
 import { Menu as MenuIcon } from "lucide-react"; // <-- 2. Import Menu icon

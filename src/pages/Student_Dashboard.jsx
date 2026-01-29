@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react"; 
 import NavBar from "../components/NavBarMain";
 import Footer from "../components/Footer";
-import Sidebar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { Menu as MenuIcon } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
