@@ -4,8 +4,8 @@ import { X } from "lucide-react"; // You might need to install lucide-react: npm
 // Placeholder links - replace with your actual nav links
 const navLinks = [
   { title: "Home", href: "/" },
-  { title: "Student Login", href: "/Student_Login" },
-  { title: "Admin Login", href: "/Student_Login" },
+  { title: "Login", href: "/login" },
+  { title: "Register", href: "/register" },
   { title: "About", href: "#about" }, // Example for an anchor link
 ];
 
