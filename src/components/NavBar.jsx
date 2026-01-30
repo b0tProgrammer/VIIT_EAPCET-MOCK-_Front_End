@@ -1,6 +1,6 @@
 import logo from "../assets/LogoV1.svg";
 import { Menu } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function NavBar({ onMenuToggle }) {
 
@@ -26,7 +26,7 @@ function NavBar({ onMenuToggle }) {
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#stats" className="hover:text-gray-200 cursor-pointer">Stats</a> </li>
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#programs" className="hover:text-gray-200 cursor-pointer">Programs</a> </li>
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#placements" className="hover:text-gray-200 cursor-pointer">Placements</a> </li>
-          <li className="hover:text-gray-200 cursor-pointer" onClick={() => navigate("/register")} >Register</li>
+          <li className="hover:text-gray-200 cursor-pointer"> <Link to="/register" className="hover:text-gray-200 cursor-pointer">Register</Link> </li>
         </ul>
 
         {/* Mobile Menu Button (visible only on small screens) */}

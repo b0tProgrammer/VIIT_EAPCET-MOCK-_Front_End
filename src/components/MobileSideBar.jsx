@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react"; // You might need to install lucide-react: npm install lucide-react
+import { Link } from "react-router-dom";
 
 // Placeholder links - replace with your actual nav links
 const navLinks = [
@@ -42,13 +43,23 @@ function MobileSideBar({ isOpen, onClose }) {
               <ul className="space-y-4">
                 {navLinks.map((link) => (
                   <li key={link.title}>
-                    <a
-                      href={link.href}
-                      onClick={onClose} // Close sidebar on link click
-                      className="text-lg text-gray-700 hover:text-[#003973] font-medium"
-                    >
-                      {link.title}
-                    </a>
+                    {link.href.startsWith("#") ? (
+                      <a
+                        href={link.href}
+                        onClick={onClose}
+                        className="text-lg text-gray-700 hover:text-[#003973] font-medium"
+                      >
+                        {link.title}
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.href}
+                        onClick={onClose}
+                        className="text-lg text-gray-700 hover:text-[#003973] font-medium block"
+                      >
+                        {link.title}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
