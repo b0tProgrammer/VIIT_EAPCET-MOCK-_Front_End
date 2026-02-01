@@ -32,12 +32,12 @@ const Counter = ({ value, trigger }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (!trigger) return; 
+    if (!trigger) return;
 
     const end = parseInt(value.replace(/\D/g, ""));
     let start = 0;
-    const duration = 1000; 
-    const steps = 60; 
+    const duration = 1000;
+    const steps = 60;
     const increment = end / steps;
 
     const timer = setInterval(() => {
@@ -63,7 +63,7 @@ const Counter = ({ value, trigger }) => {
 
 function LandingPage() {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [visible, setVisible] = useState(false);
   const sectionRef = useRef(null);
@@ -85,20 +85,20 @@ function LandingPage() {
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
-      
+
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
-      
+
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUp}
-      
+
           className="mt-6 mb-8 md:mt-10 md:mb-12 bg-white rounded-2xl p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 hover:shadow-lg transition-shadow duration-300"
         >
           <div className="max-w-xl text-center md:text-left">
             <h1 className="text-4xl sm:text-5xl font-bold mt-3 text-[#003973]">
-              V I I T  C E T 
+              V I I T  C E T
             </h1>
             <h3 className="text-base sm:text-lg font-medium text-gray-700">
               Vignan’s Institute of Information Technology Common Entrance Test
@@ -116,23 +116,23 @@ function LandingPage() {
               </button>
             </div>
           </div>
-          <div>
+          <div className="flex flex-col items-center md:items-start">
             <AutoCarousel
-              items = {[
+              items={[
                 { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/7415a3d9-2fc7-4e0d-83aa-71444b973aa0-07_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/15019a1b-5cdc-4cf4-be7a-966dba41a84b-infoblox.svg", package: "13 LPA", name: "B Gayatri" },
                 { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/431bf7d5-7e8b-4c6d-9983-9342e830dbbb-03_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/9bb27556-80f4-4d79-9c7e-13c5494c73c5-Amazon_logo.webp", package: "27 LPA", name: "Umakanth" },
-                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/75775462-41e0-4f87-9053-ae8fc8ce78a2-02_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/654a47b1-e426-47c2-8c07-08f2ed0a0ab8-Meesho_logo.png", package: "37 LPA", name: "Vasu Surisetty" },
-                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/dffc6229-d9bf-4d95-9875-0b8711965534-04_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/4c385863-5652-4880-b37b-101756e2f311-Cisco_logo.png", package: "23 LPA", name: "K Seshu"},
-                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/cb71223f-59d3-444e-8643-1eaf4e60aaae-05_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/988acd0b-14b5-4d06-ba98-2a273bbdda0d-SAP_logo.png", package: "18 LPA", name: "Alla Pooja"},
+                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/75775462-41e0-4f87-9053-ae8fc8ce88a2-02_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/654a47b1-e426-47c2-8c07-08f2ed0a0ab8-Meesho_logo.png", package: "37 LPA", name: "Vasu Surisetty" },
+                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/dffc6229-d9bf-4d95-9875-0b8711965534-04_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/4c385863-5652-4880-b37b-101756e2f311-Cisco_logo.png", package: "23 LPA", name: "K Seshu" },
+                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/cb71223f-59d3-444e-8643-1eaf4e60aaae-05_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/988acd0b-14b5-4d06-ba98-2a273bbdda0d-SAP_logo.png", package: "18 LPA", name: "Alla Pooja" },
               ]}
             />
-            <div className="w-[520px] mt-6 mb-6">
-            <img
-              src={Banner}
-              alt="Admission Banner"
-              className="w-full h-auto rounded-lg shadow-md object-cover"
-            />
-          </div>
+            <div className="w-full max-w-[520px] mt-6 mb-6">
+              <img
+                src={Banner}
+                alt="Admission Banner"
+                className="w-full h-auto rounded-lg shadow-md object-cover transition-shadow duration-300 hover:shadow-xl"
+              />
+            </div>
           </div>
         </motion.div>
         {/* ABOUT VIITCET */}
@@ -142,7 +142,7 @@ function LandingPage() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.25 }}
           variants={fadeInUp}
-          className="mb-8 md:mb-12" 
+          className="mb-8 md:mb-12"
         >
           <div className="flex justify-center">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2 mb-8 md:mb-10">
@@ -238,44 +238,44 @@ function LandingPage() {
 
         {/* OUR ACHIEVEMENTS */}
         <motion.section
-      ref={sectionRef}
-      id="stats"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-      variants={fadeInUp}
-      className="py-10 rounded-xl px-4 sm:px-8 mb-8 md:mb-12 shadow-sm hover:shadow-md transition-shadow duration-300"
-    >
-      <div className="flex justify-center mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">
-          Our Achievements
-        </h2>
-      </div>
-      <p className="text-gray-600 text-center text-sm md:text-base mb-8">
-        A snapshot of our achievements and community
-      </p>
+          ref={sectionRef}
+          id="stats"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUp}
+          className="py-10 rounded-xl px-4 sm:px-8 mb-8 md:mb-12 shadow-sm hover:shadow-md transition-shadow duration-300"
+        >
+          <div className="flex justify-center mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">
+              Our Achievements
+            </h2>
+          </div>
+          <p className="text-gray-600 text-center text-sm md:text-base mb-8">
+            A snapshot of our achievements and community
+          </p>
 
-      <div className="flex flex-wrap justify-center gap-6 mt-6">
-        {[
-          ["15,000+", "New Student Registrations Every Month"],
-          ["400+", "Faculty Members (30% PhDs)"],
-          ["150+", "Recruiting Companies"],
-          ["7000+", "Students from 4+ Countries"],
-        ].map(([num, text], i) => (
-          <motion.div
-            key={i}
-            whileHover={{ scale: 1.06 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="bg-[#f9fbff] shadow-md p-6 rounded-xl text-center w-full max-w-xs sm:w-64"
-          >
-            <h3 className="text-xl sm:text-2xl font-bold text-[#003973]">
-              <Counter value={num} trigger={visible} />
-            </h3>
-            <p className="text-gray-600 text-sm mt-1">{text}</p>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
+          <div className="flex flex-wrap justify-center gap-6 mt-6">
+            {[
+              ["15,000+", "New Student Registrations Every Month"],
+              ["400+", "Faculty Members (30% PhDs)"],
+              ["150+", "Recruiting Companies"],
+              ["7000+", "Students from 4+ Countries"],
+            ].map(([num, text], i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.06 }}
+                transition={{ type: "spring", stiffness: 200 }}
+                className="bg-[#f9fbff] shadow-md p-6 rounded-xl text-center w-full max-w-xs sm:w-64"
+              >
+                <h3 className="text-xl sm:text-2xl font-bold text-[#003973]">
+                  <Counter value={num} trigger={visible} />
+                </h3>
+                <p className="text-gray-600 text-sm mt-1">{text}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
 
         <motion.section
           id="programs"
@@ -381,7 +381,7 @@ function LandingPage() {
           variants={fadeInUp}
           className="py-10 mb-12 md:mb-20 text-center relative"
         >
-         
+
           <div className="flex justify-center mb-4">
             {/* Reduced heading size and underline width for mobile */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2">
