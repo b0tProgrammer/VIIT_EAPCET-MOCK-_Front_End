@@ -146,7 +146,7 @@ export default function CreateQuestionPaper() {
                     distribution: distributionPayload,
                 }),
             });
-
+            console.log('Time sent to server:', form.startTime);
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.message || 'Failed to generate question paper.');
