@@ -44,7 +44,6 @@ function Exampage() {
     const [autoSubmitCountdown, setAutoSubmitCountdown] = useState(null);
     const attemptIdRef = useRef(null);
 
-    // Get paperId from URL
     const paperId = useMemo(() => {
         const params = new URLSearchParams(location.search);
         return params.get('paperId');
@@ -113,7 +112,7 @@ function Exampage() {
                     return acc;
                 }, {});
                 setQuestionStatus(initialStatus);
-                setAnswers({}); // Reset answers state on new load
+                setAnswers({}); 
                 
             } catch (err) {
                 console.error("Exam Start Error:", err);
@@ -129,7 +128,6 @@ function Exampage() {
     const currentQuestion = currentQuestionList[currentQuestionIndex];
     const selectedAnswer = answers[activeSubject]?.[currentQuestionIndex];
 
-    // Re-implemented Handlers to use Dynamic Data
     const updateQuestionStatus = useCallback((status) => {
         setQuestionStatus(prev => {
             const subjectArr = prev[activeSubject] || [];
@@ -256,7 +254,6 @@ function Exampage() {
             setShowSubmitModal(false);
             setShowFullscreenWarning(false);
 
-            // Exit fullscreen if active (best-effort)
             try {
                 if (document.fullscreenElement) {
                     await document.exitFullscreen();
@@ -265,7 +262,6 @@ function Exampage() {
                 console.warn('Failed to exit fullscreen:', e);
             }
 
-            // Prefer navigating to results with the newly created resultId
             if (respData?.resultId) {
                 navigate(`/results?resultId=${respData.resultId}&studentId=${studentId}`);
             } else {
@@ -349,7 +345,6 @@ function Exampage() {
         }
     };
 
-    // Mark a question as visited (NOT_ANSWERED) when the user views it if it was NOT_VISITED
     useEffect(() => {
         if (!activeSubject || !questionStatus[activeSubject]) return;
 
@@ -359,7 +354,6 @@ function Exampage() {
         }
     }, [activeSubject, currentQuestionIndex, questionStatus, updateQuestionStatus]);
 
-    // Ensure selecting an answer updates statuses correctly
     useEffect(() => {
         if (!activeSubject || !questionStatus[activeSubject]) return;
 
@@ -375,8 +369,6 @@ function Exampage() {
         }
     }, [activeSubject, currentQuestionIndex, selectedAnswer, questionStatus, updateQuestionStatus]);
 
-
-    // Calculate summary statistics
     const allStatuses = useMemo(() => Object.values(questionStatus).flat(), [questionStatus]);
     const totalQuestions = allStatuses.length;
     const answered = allStatuses.filter(status => status === QuestionStatus.ANSWERED || status === QuestionStatus.MARKED_FOR_REVIEW_ANSWERED).length;
@@ -384,8 +376,6 @@ function Exampage() {
     const markedForReview = allStatuses.filter(status => status === QuestionStatus.MARKED_FOR_REVIEW || status === QuestionStatus.MARKED_FOR_REVIEW_ANSWERED).length;
     const notVisited = allStatuses.filter(status => status === QuestionStatus.NOT_VISITED).length;
 
-
-    // --- Loading & Error Display ---
     if (isLoading) {
         return <div className="min-h-screen flex items-center justify-center text-xl font-medium">Loading Exam Data...</div>;
     }

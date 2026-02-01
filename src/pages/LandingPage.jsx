@@ -1,17 +1,18 @@
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
-import MockExam from "../assets/MockExam.jpg";
+import AutoCarousel from "../components/AutoCarousel";
 import NBA from "../assets/NBA.png";
 import NAAC from "../assets/NAAC.png";
 import NIRF from "../assets/NIRF.png";
 import UGC from "../assets/UGC.png";
 import PencilPaper from "../assets/PencilPaper.jpg";
 import { useNavigate } from "react-router-dom";
-import Logo from "../assets/LogoV1.svg";
+import Logo from "../assets/LogoV1.png";
 import OurRecruiters from "../components/OurRecruiters";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef, useMemo } from "react";
 import MobileSideBar from "../components/MobileSideBar";
+import Banner from "../assets/AdmissionBanner.png";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
@@ -31,12 +32,12 @@ const Counter = ({ value, trigger }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (!trigger) return; // start only when section is visible
+    if (!trigger) return; 
 
     const end = parseInt(value.replace(/\D/g, ""));
     let start = 0;
-    const duration = 1000; // total duration (1s)
-    const steps = 60; // smooth 60 FPS
+    const duration = 1000; 
+    const steps = 60; 
     const increment = end / steps;
 
     const timer = setInterval(() => {
@@ -62,7 +63,7 @@ const Counter = ({ value, trigger }) => {
 
 function LandingPage() {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // <-- Add state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
   const [visible, setVisible] = useState(false);
   const sectionRef = useRef(null);
@@ -77,38 +78,31 @@ function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
-
-
-
   return (
-    <div className="font-poppins text-gray-900 relative overflow-hidden">
-      {/* Pass the toggle function to NavBar */}
+    <div className="font-poppins text-gray-900 relative">
       <NavBar onMenuToggle={() => setIsSidebarOpen(true)} />
-      {/* Render the SideBar component */}
       <MobileSideBar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
-      {/* Global Container */}
-      {/* Adjusted base padding for mobile */}
+      
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
-        {/* HERO SECTION */}
+      
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeInUp}
-          // Reduced margins and padding for mobile
+      
           className="mt-6 mb-8 md:mt-10 md:mb-12 bg-white rounded-2xl p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 hover:shadow-lg transition-shadow duration-300"
         >
           <div className="max-w-xl text-center md:text-left">
-            <h2 className="text-base sm:text-lg font-medium text-gray-700">
-              Vignan’s Institute of Information Technology
-            </h2>
-            {/* Reduced h1 font size for mobile */}
             <h1 className="text-4xl sm:text-5xl font-bold mt-3 text-[#003973]">
-              Mock EAPCET Portal
+              V I I T  C E T 
             </h1>
+            <h3 className="text-base sm:text-lg font-medium text-gray-700">
+              Vignan’s Institute of Information Technology Common Entrance Test
+            </h3>
             <p className="mt-4 text-gray-700 text-sm sm:text-base">
               Secure. Seamless. Smart. Take your exams online with confidence
               and ease.
@@ -122,33 +116,40 @@ function LandingPage() {
               </button>
             </div>
           </div>
-          {/* Adjusted image height for mobile */}
-          <div className="w-full h-[250px] sm:h-[360px] md:w-[520px] rounded-2xl overflow-hidden shadow-lg">
+          <div>
+            <AutoCarousel
+              items = {[
+                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/7415a3d9-2fc7-4e0d-83aa-71444b973aa0-07_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/15019a1b-5cdc-4cf4-be7a-966dba41a84b-infoblox.svg", package: "13 LPA", name: "B Gayatri" },
+                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/431bf7d5-7e8b-4c6d-9983-9342e830dbbb-03_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/9bb27556-80f4-4d79-9c7e-13c5494c73c5-Amazon_logo.webp", package: "27 LPA", name: "Umakanth" },
+                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/75775462-41e0-4f87-9053-ae8fc8ce78a2-02_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/654a47b1-e426-47c2-8c07-08f2ed0a0ab8-Meesho_logo.png", package: "37 LPA", name: "Vasu Surisetty" },
+                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/dffc6229-d9bf-4d95-9875-0b8711965534-04_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/4c385863-5652-4880-b37b-101756e2f311-Cisco_logo.png", package: "23 LPA", name: "K Seshu"},
+                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/cb71223f-59d3-444e-8643-1eaf4e60aaae-05_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/988acd0b-14b5-4d06-ba98-2a273bbdda0d-SAP_logo.png", package: "18 LPA", name: "Alla Pooja"},
+              ]}
+            />
+            <div className="w-[520px] mt-6 mb-6">
             <img
-              src={MockExam}
-              alt="exam photo"
-              className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+              src={Banner}
+              alt="Admission Banner"
+              className="w-full h-auto rounded-lg shadow-md object-cover"
             />
           </div>
+          </div>
         </motion.div>
-
-        {/* ABOUT SECTION */}
+        {/* ABOUT VIITCET */}
         <motion.section
           id="about"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.25 }}
           variants={fadeInUp}
-          className="mb-8 md:mb-12" // Reduced margin
+          className="mb-8 md:mb-12" 
         >
           <div className="flex justify-center">
-            {/* Reduced heading size and underline width for mobile */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center relative after:content-[''] after:block after:w-[80px] sm:after:w-[120px] after:h-[2px] after:bg-[#003973] after:mx-auto after:mt-2 mb-8 md:mb-10">
-              About VMEAPCET
+              About VIITCET
             </h2>
           </div>
 
-          {/* Reduced gap and image size for mobile */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
             <motion.div
               whileHover={{ scale: 1.04 }}
@@ -156,20 +157,18 @@ function LandingPage() {
             >
               <img
                 src={PencilPaper}
-                alt="About VCET"
-                // Image is responsive: full-width, capped, and auto-height on mobile
+                alt="About VIITCET"
                 className="rounded-xl w-full max-w-[300px] h-auto sm:w-[320px] sm:h-[240px] object-cover shadow-md"
               />
             </motion.div>
 
-            {/* Centered text on mobile, justify on desktop */}
             <div className="max-w-xl text-center md:text-justify text-gray-800 leading-relaxed px-2 text-sm sm:text-base">
               <p className="font-medium">
-                Vignan’s College of Engineering and Technology (VCET) is a
+                Vignan’s Institute of Information Technology Common Entrance Test (VIITCET) is a
                 premier institution dedicated to excellence in technical
                 education, innovation, and research. Established with a vision
                 to empower students with knowledge and skills for a dynamic
-                future, VCET provides a vibrant academic environment supported
+                future, VIITCET provides a vibrant academic environment supported
                 by experienced faculty and modern infrastructure. The college
                 emphasizes holistic development through a blend of academics,
                 hands-on learning, and extracurricular activities.

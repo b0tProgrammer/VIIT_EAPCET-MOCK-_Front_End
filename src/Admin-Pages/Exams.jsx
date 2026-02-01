@@ -14,6 +14,7 @@ const SUBJECT_TOTALS = {
 
 const getFutureDateTimeLocal = (hoursAhead = 24) => {
     const d = new Date(Date.now() + hoursAhead * 3600 * 1000);
+    console.log('Generated future date:', d);
     // Format to 'YYYY-MM-DDTHH:MM' required by datetime-local
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -23,7 +24,6 @@ const getFutureDateTimeLocal = (hoursAhead = 24) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-// --- Helper Component: Modal for Paper Preview ---
 const PaperPreviewModal = ({ questions, paperTitle, onClose }) => {
     return (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[999] p-4">
@@ -141,7 +141,7 @@ export default function CreateQuestionPaper() {
                 body: JSON.stringify({
                     adminId: adminId,
                     title: form.title.trim(),
-                    startTime: form.startTime,
+                    startTime: form.startTime+":00+05:30",
                     durationHours: parseInt(form.duration) || 3,
                     distribution: distributionPayload,
                 }),

@@ -3,7 +3,7 @@ import NavBarMain from "../components/NavBarMain";
 import AdminSideBar from "../components/AdminSiderBar";
 import Footer from "../components/Footer";
 import { Menu as MenuIcon, X } from "lucide-react";
-import logo from "../assets/LogoV1.svg";
+import logo from "../assets/LogoV1.png";
 
 // Voucher Modal Component
 const VoucherModal = ({ paperId, topStudents, onClose, onSubmit }) => {

@@ -1,4 +1,4 @@
-import logo from "../assets/LogoV1.svg";
+import logo from "../assets/viit.png";
 import { User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -20,9 +20,9 @@ function NavBarMain() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -33,17 +33,27 @@ function NavBarMain() {
           {/* left: thin red accent + logo + wordmark */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="VIGNAN logo" className="h-10 w-10 object-contain" />
+              <div className="h-10 w-10 rounded-full overflow-hidden bg-white flex items-center justify-center p-1">
+                <img
+                  src={logo}
+                  alt="VIITCET Logo"
+                  className="h-full w-full object-contain"
+                />
+              </div>
               <div className="leading-tight">
                 <div className="text-base font-semibold">VIGNAN's</div>
-                <div className="text-xs text-white/80">Institute of Information Technology</div>
+                <div className="text-xs text-white/80">
+                  Institute of Information Technology
+                </div>
               </div>
             </div>
           </div>
 
           {/* center: main title */}
           <div className="text-center">
-            <div className="text-lg md:text-2xl lg:text-3xl font-bold">Mock EAPCET Portal</div>
+            <div className="text-lg md:text-2xl lg:text-3xl font-bold">
+              Mock EAPCET Portal
+            </div>
           </div>
 
           {/* right: profile icon with dropdown */}

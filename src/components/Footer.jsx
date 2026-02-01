@@ -1,4 +1,4 @@
-import Logo from "../assets/LogoV1.svg";
+import Logo from "../assets/LogoV1.png";
 import { MapPin, Mail, Phone } from "lucide-react";
 function Footer() {
     return (

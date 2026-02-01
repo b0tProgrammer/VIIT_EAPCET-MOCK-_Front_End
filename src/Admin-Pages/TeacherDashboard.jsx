@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import NavBarMain from "../components/NavBarMain";
 import AdminSideBar from "../components/AdminSiderBar";
 import Footer from "../components/Footer";
-import logo from "../assets/LogoV1.svg";
+import logo from "../assets/LogoV1.png";
 import { Menu as MenuIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
