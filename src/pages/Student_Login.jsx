@@ -15,7 +15,6 @@ function Student_Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(role);
     if(role !== "student" && role !== "admin" && role !== "teacher") {
       setError("Please select a valid role.");
       setLoading(false);
@@ -28,15 +27,12 @@ function Student_Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, role }),
       });
-      console.log(JSON.stringify({ username, password, role }));
       const result = await response.json(); 
-      console.log(response);
       if (!response.ok) {
         throw new Error(
           result.message || "Login failed. Invalid credentials or server error."
         );
       }
-      console.log("Login successful:", result);
       localStorage.setItem("studentId",result.user.id);
       localStorage.setItem("name",result.user.fullName);
       localStorage.setItem("token", result.token);

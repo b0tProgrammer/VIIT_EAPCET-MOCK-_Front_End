@@ -117,12 +117,9 @@ export default function Reports() {
       });
 
       const data = await response.json();
-      console.log("Fetch reports response:", data);
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch reports");
       }
-
-      console.log("Reports data received:", data.reports);
       setReports(data.reports);
     } catch (err) {
       setError(err.message);

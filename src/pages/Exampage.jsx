@@ -192,7 +192,6 @@ function Exampage() {
                 }
             });
         }
-        console.log(submissionPayload);
         return submissionPayload;
     };
 
@@ -220,7 +219,6 @@ function Exampage() {
 
             try {
                 const token = localStorage.getItem('token');
-                console.log('confirmSubmit - submitting', { attemptId: currentAttemptId, answersSample: Object.keys(submissionAnswers).slice(0,20), tokenPresent: !!token });
                 const response = await fetch(`${API_BASE_URL}/api/student/submit-attempt`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
@@ -289,7 +287,6 @@ function Exampage() {
                     const newWarnings = prev + 1;
 
                     if (newWarnings >= 3) {
-                        console.log('Fullscreen warning 3 reached — starting auto-submit countdown');
                         if (!autoSubmitIntervalRef.current && !autoSubmitTimerRef.current) {
                             setAutoSubmitCountdown(3);
                             autoSubmitIntervalRef.current = setInterval(() => {
@@ -302,7 +299,6 @@ function Exampage() {
                                         }
                                         autoSubmitTimerRef.current = setTimeout(() => {
                                             autoSubmitTimerRef.current = null;
-                                            console.log('Auto-submit timer firing now');
                                             if (!submittingRef.current) {
                                                 confirmSubmit().catch(err => console.error('Auto-submit failed', err));
                                             }

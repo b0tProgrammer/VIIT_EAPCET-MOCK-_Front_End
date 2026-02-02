@@ -14,7 +14,6 @@ const SUBJECT_TOTALS = {
 
 const getFutureDateTimeLocal = (hoursAhead = 24) => {
     const d = new Date(Date.now() + hoursAhead * 3600 * 1000);
-    console.log('Generated future date:', d);
     // Format to 'YYYY-MM-DDTHH:MM' required by datetime-local
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -146,7 +145,6 @@ export default function CreateQuestionPaper() {
                     distribution: distributionPayload,
                 }),
             });
-            console.log('Time sent to server:', form.startTime);
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.message || 'Failed to generate question paper.');

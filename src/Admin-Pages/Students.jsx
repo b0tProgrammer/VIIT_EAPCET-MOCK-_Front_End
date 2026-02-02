@@ -39,7 +39,6 @@ export default function Students() {
       setTotals(data);  
       setCurrentExam(data.currentExam?.title)
       setSecondsLeft(REFRESH_INTERVAL);
-      console.log(data);
     } catch (err) {
       console.error("Refresh failed", err);
     } finally {

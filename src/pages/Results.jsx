@@ -86,7 +86,6 @@ function Results() {
           { headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
         );
         const historyData = await historyResponse.json();
-        console.log(historyData);
         if (historyResponse.ok) {
           fetchedHistory = historyData.history.map((r) => ({
             ...r,

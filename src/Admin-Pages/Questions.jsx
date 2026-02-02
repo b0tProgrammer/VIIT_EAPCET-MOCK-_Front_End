@@ -165,7 +165,6 @@ function Questions() {
       }
 
       const result = await response.json();
-      // console.log("Upload Success:", result);
       alert(`Success: ${result.message || "Questions uploaded successfully!"}`);
 
       // Cleanup state after successful upload

@@ -11,7 +11,6 @@ import { NavLink } from "react-router-dom";
 
 function AdminSideBar({ isAdminSideBarOpen, setIsAdminSideBarOpen }) {
     const userRole = localStorage.getItem('role');
-    // console.log(userRole)
   return (
     <>
       {/* --- Mobile close button --- */}
