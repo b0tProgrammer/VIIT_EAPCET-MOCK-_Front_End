@@ -1,4 +1,6 @@
 import { useRef, useEffect, useState } from "react";
+import CiscoImg from "../assets/CiscoLogo.png";
+import MockExam from "../assets/AdmissionBanner.png";
 
 function AutoCarousel({
   images,
@@ -69,7 +71,7 @@ function AutoCarousel({
   }, [isPaused, direction, speed]);
 
   return (
-    <div className="w-[320px] h-[450px] sm:h-[360px] md:w-[520px] rounded-2xl overflow-hidden shadow-lg relative">
+    <div className="w-full md:w-[520px] h-[450px] sm:h-[360px] rounded-2xl overflow-hidden shadow-lg relative bg-white mx-auto md:mx-0">
       <div
         ref={containerRef}
         className="flex gap-4 items-stretch w-full h-full whitespace-nowrap overflow-x-hidden"
