@@ -52,6 +52,7 @@ export default function TeacherDashboard() {
   function getTimeLeft(startTime) {
     const startDate = new Date(startTime);
     const now = new Date();
+    console.log("Start Time:", startDate, "Current Time:", now);
     const diff = startDate - now;
 
     if (diff <= 0) return "Started";

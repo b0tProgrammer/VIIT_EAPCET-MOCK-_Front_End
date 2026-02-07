@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import { useNavigate, useLocation } from 'react-router-dom'; 
@@ -8,12 +8,55 @@ export default function InstructionPage() {
     const location = useLocation();
     const [agree, setAgree] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [enteredOtp, setEnteredOtp] = useState("");
+    const [sentOtp, setSentOtp] = useState(() => {
+        const params = new URLSearchParams(location.search);
+        return params.get('otp') || "";
+    });
+    const [otpLoading, setOtpLoading] = useState(false);
+    const [otpError, setOtpError] = useState('');
 
-    // Get paperId from URL (e.g., /instructions?paperId=123)
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+
+    // Request OTP from backend via GET. Expects JSON { otp?: string, message?: string }
+    const requestOtp = async () => {
+        if (!API_BASE) {
+            setOtpError('API base URL not configured (VITE_API_BASE_URL).');
+            return;
+        }
+        if (!paperId) {
+            setOtpError('Paper ID missing.');
+            return;
+        }
+        setOtpError('');
+        setOtpLoading(true);
+        try {
+            const url = `${API_BASE.replace(/\/$/, '')}/otp?paperId=${encodeURIComponent(paperId)}`;
+            const res = await fetch(url, { method: 'GET' });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.message || 'Failed to request OTP');
+            if (data?.otp) {
+                setSentOtp(String(data.otp));
+            } else {
+                // If API doesn't return otp, backend likely sent it to user; keep sentOtp empty
+            }
+        } catch (e) {
+            setOtpError(e.message || 'Failed to request OTP');
+        } finally {
+            setOtpLoading(false);
+        }
+    };
+
     const paperId = useMemo(() => {
         const params = new URLSearchParams(location.search);
         return params.get('paperId');
     }, [location.search]);
+
+    const isOtpValid = useMemo(() => {
+        // require sentOtp to be present and match enteredOtp
+        if (!sentOtp) return false;
+        return enteredOtp.trim() !== "" && enteredOtp.trim() === sentOtp.trim();
+    }, [enteredOtp, sentOtp]);
 
     const handleStart = () => {
         if (!paperId) {
@@ -21,6 +64,10 @@ export default function InstructionPage() {
             return;
         }
         if (!agree) return;
+        if (!isOtpValid) {
+            alert('otp entered is wrong');
+            return;
+        }
         setShowConfirmModal(true);
     };
 
@@ -31,13 +78,10 @@ export default function InstructionPage() {
         }
         setShowConfirmModal(false);
         try {
-            // Request fullscreen as part of the user gesture (click)
             await document.documentElement.requestFullscreen();
         } catch (e) {
-            // Not fatal — some browsers or contexts may disallow fullscreen
             console.warn('requestFullscreen failed:', e);
         }
-        // Navigate to /exam, passing the paperId as a query param
         navigate(`/exam?paperId=${paperId}`);
     };
 
@@ -168,6 +212,37 @@ export default function InstructionPage() {
                         </div>
 
                         <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="w-full sm:w-auto">
+                                <label className="text-sm text-gray-700 block mb-1">Enter OTP</label>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={enteredOtp}
+                                    onChange={(e) => setEnteredOtp(e.target.value)}
+                                    placeholder="Enter OTP"
+                                    className="px-3 py-2 border rounded-md w-full max-w-xs"
+                                />
+                                {sentOtp ? (
+                                    <p className={`mt-1 text-xs ${isOtpValid ? 'text-green-600' : 'text-red-600'}`}>
+                                        {isOtpValid ? 'OTP verified' : 'Enter the OTP sent to your registered contact.'}
+                                    </p>
+                                ) : (
+                                    <div className="mt-2">
+                                        <button
+                                            onClick={requestOtp}
+                                            disabled={otpLoading || !paperId}
+                                            className={`px-3 py-1 rounded-md text-white text-sm ${otpLoading ? 'bg-gray-400 cursor-wait' : 'bg-[#003973] hover:bg-blue-800'}`}
+                                        >
+                                            {otpLoading ? 'Sending...' : 'Send OTP'}
+                                        </button>
+                                        {otpError && <p className="mt-1 text-xs text-red-600">{otpError}</p>}
+                                        {!otpError && (
+                                            <p className="mt-1 text-xs text-gray-500">Click to receive OTP on your registered contact.</p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
                             <label className="inline-flex items-start sm:items-center space-x-3">
                                 <input
                                     type="checkbox"
@@ -186,9 +261,9 @@ export default function InstructionPage() {
                             <div className="flex-shrink-0">
                                 <button
                                     onClick={handleStart}
-                                    disabled={!agree}
+                                    disabled={!(agree && isOtpValid)}
                                     className={`px-5 py-2 rounded-md text-white font-semibold shadow-sm transition-colors duration-150 ${
-                                        agree   
+                                        agree && isOtpValid
                                             ? "bg-[#003973] hover:bg-blue-800 cursor-pointer"
                                             : "bg-blue-400 cursor-not-allowed"
                                     }`}
