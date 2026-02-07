@@ -50,10 +50,13 @@ export default function TeacherDashboard() {
   }, []);
 
   function getTimeLeft(startTime) {
-    const startDate = new Date(startTime);
-    const now = new Date();
-    console.log("Start Time:", startDate, "Current Time:", now);
-    const diff = startDate - now;
+    const startMs = typeof startTime === 'number' ? startTime : Date.parse(startTime);
+    const nowMs = Date.now();
+    // Subtract IST offset (UTC+5:30) from the computed difference per option B:
+    // diff = startMs - nowMs - offsetMs
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+    console.log("Start Time (raw):", startTime, "StartMs:", startMs, "NowMs:", nowMs, "IST_OFFSET_MS:", IST_OFFSET_MS);
+    const diff = startMs - nowMs - IST_OFFSET_MS;
 
     if (diff <= 0) return "Started";
 
