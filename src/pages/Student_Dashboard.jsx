@@ -12,8 +12,7 @@ const LATE_START_WINDOW_MINUTES = 15;
 function getTimeLeft(startTime) {
     const startMs = typeof startTime === 'number' ? startTime : Date.parse(startTime);
     const nowMs = Date.now();
-    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
-    const diff = startMs - nowMs - IST_OFFSET_MS;
+    const diff = startMs - nowMs;
 
         if (diff <= 0) {
             return { seconds: 0, text: '0h 0m 0s' };
@@ -34,8 +33,8 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
 
     useEffect(() => {
         if (!nextExamStartTime) return;
-
-        const examStartTime = new Date(nextExamStartTime).getTime() - (5.5 * 60 * 60 * 1000); // Convert to IST
+        const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+        const examStartTime = new Date(nextExamStartTime).getTime() - IST_OFFSET_MS; // apply -5.5h
         const startWindowEnd = examStartTime + (LATE_START_WINDOW_MINUTES * 60 * 1000);
         
         const interval = setInterval(() => {
@@ -62,10 +61,12 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
 
     let countdownText = 'N/A';
     if (nextMockTest) {
+        const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+        const startAdj = new Date(nextMockTest.startTime).getTime() - IST_OFFSET_MS;
         if (status === 'upcoming') {
-            countdownText = getTimeLeft(nextMockTest.startTime).text;
+            countdownText = getTimeLeft(startAdj).text;
         } else if (status === 'live') {
-            const windowEndMs = new Date(nextMockTest.startTime).getTime() + (LATE_START_WINDOW_MINUTES * 60 * 1000);
+            const windowEndMs = startAdj + (LATE_START_WINDOW_MINUTES * 60 * 1000);
             countdownText = getTimeLeft(windowEndMs).text;
         } else if (status === 'expired') {
             countdownText = 'Missed';
@@ -73,7 +74,7 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
     }
     
     const getHeaderText = () => {
-        if (!nextMockTest) return 'No Upcoming Test';
+        if (!nextMockTest) return 'No Active Test';
         if (status === 'live') return 'Start Window Closes In';
         if (status === 'expired') return 'Missed Start Window';
         return 'Next Mock Test Starts In';
@@ -101,13 +102,24 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
             <p className="text-xl font-semibold text-gray-700">
                 {nextMockTest?.title || 'Check Upcoming Tests'}
             </p>
-                {nextMockTest?.startTime && (
-                    <p className="text-xs text-gray-500 mt-1">
-                        Scheduled: {new Date(new Date(nextMockTest.startTime).getTime() - (5.5 * 60 * 60 * 1000)).toLocaleString([], {
-                            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                        })}
-                    </p>
-                )}
+                <div className="mt-2 text-sm text-gray-600">
+                    {nextMockTest?.durationHours && (
+                        <div>Duration: {nextMockTest.durationHours} hour{nextMockTest.durationHours > 1 ? 's' : ''}</div>
+                    )}
+                    {nextMockTest?.totalMarks && (
+                        <div>Total Marks: {nextMockTest.totalMarks}</div>
+                    )}
+                    {nextMockTest?.startTime && (
+                        <div className="text-xs text-gray-500 mt-1">
+                            Scheduled: {new Date(new Date(nextMockTest.startTime).getTime() - (5.5 * 60 * 60 * 1000)).toLocaleString([], {
+                                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                            })}
+                        </div>
+                    )}
+                    {status === 'live' && (
+                        <div className="inline-block mt-2 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Active</div>
+                    )}
+                </div>
         </div>
     );
 }
@@ -144,28 +156,36 @@ function StudentDashboard() {
         if (examsRes.ok) {
           const examsData = await examsRes.json();
           const now = Date.now();
-          
-          const upcomingExams = (examsData.exams || [])
-                        .map(exam => ({
-                            id: exam.id,
-                            title: exam.title,
-                            durationHours: exam.durationHours,
-                            startTime: exam.startTime,
-                            startTimeMs: new Date(exam.startTime).getTime(),
-                        }))
-                        .filter(exam => 
-                            exam.startTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000) > now
-                        )
-                        .sort((a, b) => a.startTimeMs - b.startTimeMs);
+          
+          // Identify active exams (start <= now < start + late-start-window)
+          const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+          const examsList = (examsData.exams || []).map(exam => ({
+                            id: exam.id,
+                            title: exam.title,
+                            durationHours: exam.durationHours,
+                            totalMarks: exam.totalMarks,
+                            startTime: exam.startTime,
+                            startTimeMs: new Date(exam.startTime).getTime(),
+                            startTimeMsAdj: new Date(exam.startTime).getTime() - IST_OFFSET_MS,
+                        }));
 
-                    if (upcomingExams.length > 0) {
-                        const nearestExam = upcomingExams[0];
-                        setNextMockTest(nearestExam);
-                        setNextExamStartTime(nearestExam.startTime);
-                    } else {
-                        setNextMockTest(null);
-                        setNextExamStartTime(null);
-                    }
+          const activeExams = examsList
+                        .filter(exam => {
+                            const startMs = exam.startTimeMsAdj;
+                            const windowEnd = startMs + (LATE_START_WINDOW_MINUTES * 60 * 1000);
+                            return startMs <= now && windowEnd > now;
+                        })
+                        .sort((a, b) => a.startTimeMsAdj - b.startTimeMsAdj);
+
+          if (activeExams.length > 0) {
+              const active = activeExams[0];
+              setNextMockTest(active);
+              setNextExamStartTime(active.startTime);
+          } else {
+              // No active tests — clear dashboard card
+              setNextMockTest(null);
+              setNextExamStartTime(null);
+          }
         }
 
         if (historyRes.ok) {

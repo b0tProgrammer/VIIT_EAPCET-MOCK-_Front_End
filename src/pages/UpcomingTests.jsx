@@ -13,8 +13,7 @@ const LATE_START_WINDOW_MINUTES = 15;
 function getTimeLeft(startTime) {
     const startMs = typeof startTime === 'number' ? startTime : Date.parse(startTime);
     const nowMs = Date.now();
-    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
-    const diff = startMs - nowMs - IST_OFFSET_MS;
+    const diff = startMs - nowMs;
 
     if (diff <= 0) {
         return { seconds: 0, text: '0h 0m 0s' };
@@ -35,7 +34,8 @@ function CountdownTimer({ startTime, durationHours, onStart, examId }) {
     const [status, setStatus] = useState('upcoming');
     const [canStart, setCanStart] = useState(false);
 
-    const examStartTimeMs = new Date(startTime).getTime();
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+    const examStartTimeMs = new Date(startTime).getTime() - IST_OFFSET_MS;
     const startWindowEndMs = examStartTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000);
 
     useEffect(() => {
@@ -73,15 +73,14 @@ function CountdownTimer({ startTime, durationHours, onStart, examId }) {
             const windowEndMs = startWindowEndMs;
             return getTimeLeft(windowEndMs).text;
         }
-        return getTimeLeft(startTime).text;
+        return getTimeLeft(examStartTimeMs).text;
     };
 
     const getStatusText = () => {
         const dateOptions = {
             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         };
-        const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
-        const dateString = new Date(examStartTimeMs + IST_OFFSET_MS).toLocaleString([], dateOptions);
+        const dateString = new Date(examStartTimeMs).toLocaleString([], dateOptions);
         
         if (status === 'live') return `Start Window Closes in:`;
         if (status === 'expired') return 'Exam Start Window Closed';
@@ -177,6 +176,7 @@ export default function UpcomingTests() {
                 }
                 
                 const now = Date.now();
+                const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
                 const filteredExams = (data.exams || [])
                     .map(exam => ({
                         id: exam.id,
@@ -184,13 +184,14 @@ export default function UpcomingTests() {
                         durationHours: exam.durationHours,
                         totalMarks: exam.totalMarks,
                         startTime: exam.startTime, 
+                        startTimeMsAdj: new Date(exam.startTime).getTime() - IST_OFFSET_MS,
                     }))
                     .filter(exam => {
-                         const examStartTimeMs = new Date(exam.startTime).getTime();
+                         const examStartTimeMs = exam.startTimeMsAdj;
                          const startWindowEnd = examStartTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000);
                          return startWindowEnd > now;
                     })
-                    .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+                    .sort((a, b) => a.startTimeMsAdj - b.startTimeMsAdj);
                 setUpcomingTests(filteredExams);
                 setError(null);
             } catch (err) {

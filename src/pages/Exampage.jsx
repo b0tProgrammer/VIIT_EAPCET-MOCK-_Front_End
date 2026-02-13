@@ -82,7 +82,7 @@ function Exampage() {
 
                 if (!response.ok) {
                     if (response.status === 401 || response.status === 403) {
-                        // Not authenticated: clear local session and redirect to login
+
                         localStorage.removeItem('token');
                         navigate('/login');
                         return;
