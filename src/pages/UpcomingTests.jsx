@@ -9,11 +9,32 @@ import Loader from '../components/Loader';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://viiteapcet-backend.onrender.com'; 
 const LATE_START_WINDOW_MINUTES = 15;
 
+// Utility: compute remaining time to a start timestamp (accepts number or parsable string)
+function getTimeLeft(startTime) {
+    const startMs = typeof startTime === 'number' ? startTime : Date.parse(startTime);
+    const nowMs = Date.now();
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+    const diff = startMs - nowMs - IST_OFFSET_MS;
+
+    if (diff <= 0) {
+        return { seconds: 0, text: '0h 0m 0s' };
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const text = days > 0 ? `${days}d ${hours}h ${minutes}m ${seconds}s` : `${hours}h ${minutes}m ${seconds}s`;
+    return { seconds: totalSeconds, text };
+}
+
 function CountdownTimer({ startTime, durationHours, onStart, examId }) {
     const [timeLeft, setTimeLeft] = useState(null);
     const [status, setStatus] = useState('upcoming');
     const [canStart, setCanStart] = useState(false);
-    
+
     const examStartTimeMs = new Date(startTime).getTime();
     const startWindowEndMs = examStartTimeMs + (LATE_START_WINDOW_MINUTES * 60 * 1000);
 
@@ -29,10 +50,12 @@ function CountdownTimer({ startTime, durationHours, onStart, examId }) {
                 setCanStart(false);
                 clearInterval(interval);
             } else if (timeToStart <= 0) {
+                // we're within the live start window
                 setStatus('live');
                 setTimeLeft(Math.floor(timeToStartWindowEnd / 1000));
                 setCanStart(true);
             } else {
+                // upcoming: not yet started
                 setStatus('upcoming');
                 setTimeLeft(Math.floor(timeToStart / 1000));
                 setCanStart(false);
@@ -42,30 +65,23 @@ function CountdownTimer({ startTime, durationHours, onStart, examId }) {
         return () => clearInterval(interval);
     }, [examStartTimeMs, startWindowEndMs]);
 
-    const formatTime = (seconds) => {
-        if (seconds === null || seconds <= 0) {
-            return status === 'expired' ? 'EXPIRED' : '00:00:00';
+    // derive display text using getTimeLeft to match Student_Dashboard
+    const computeDisplayText = () => {
+        if (!startTime) return 'N/A';
+        if (status === 'expired') return 'EXPIRED';
+        if (status === 'live') {
+            const windowEndMs = startWindowEndMs;
+            return getTimeLeft(windowEndMs).text;
         }
-
-        const secsTotal = Math.max(0, seconds);
-        const days = Math.floor(secsTotal / (3600 * 24));
-        const hours = Math.floor((secsTotal % (3600 * 24)) / 3600);
-        const minutes = Math.floor((secsTotal % 3600) / 60);
-        const secs = secsTotal % 60;
-
-        const d = days > 0 ? `${days}d ` : '';
-        const h = String(hours).padStart(2, '0');
-        const m = String(minutes).padStart(2, '0');
-        const s = String(secs).padStart(2, '0');
-        
-        return `${d}${h}:${m}:${s}`;
+        return getTimeLeft(startTime).text;
     };
 
     const getStatusText = () => {
         const dateOptions = {
             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         };
-        const dateString = new Date(examStartTimeMs).toLocaleString([], dateOptions);
+        const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+        const dateString = new Date(examStartTimeMs + IST_OFFSET_MS).toLocaleString([], dateOptions);
         
         if (status === 'live') return `Start Window Closes in:`;
         if (status === 'expired') return 'Exam Start Window Closed';
@@ -79,16 +95,16 @@ function CountdownTimer({ startTime, durationHours, onStart, examId }) {
                 {getStatusText()}
             </p>
             <div className="text-3xl font-bold text-gray-800 mb-2">
-                {formatTime(timeLeft)}
+                {computeDisplayText()}
             </div>
             <button
                 onClick={() => onStart(examId)}
                 className={`px-5 py-2 rounded-lg transition font-medium ${
-                    canStart 
-                    ? 'bg-[#003973] text-white hover:bg-[#004c99]' 
+                    canStart
+                    ? 'bg-[#003973] text-white hover:bg-[#004c99]'
                     : 'bg-gray-300 text-gray-600 cursor-not-allowed'
                 }`}
-                disabled={!canStart}
+                disabled={!canStart || status === 'expired'}
             >
                 {canStart ? 'Start Exam Now' : 'Start Test'}
             </button>
@@ -103,8 +119,13 @@ function TestCard({ examId, examName, durationHours, totalMarks, startTime, onSt
                         space-y-4 sm:space-y-0 sm:space-x-4">
 
             <div>
-                <p className="text-sm text-gray-500 mb-1">Mock Test | {durationHours} Hrs | {totalMarks} Marks</p>
-                <h3 className="text-2xl font-bold text-gray-800">{examName}</h3>
+                        <p className="text-sm text-gray-500 mb-1">Mock Test | {durationHours} Hrs | {totalMarks} Marks</p>
+                        <h3 className="text-2xl font-bold text-gray-800">{examName}</h3>
+                        {startTime && (
+                            <p className="text-xs text-gray-500 mt-1">
+                                Scheduled : {new Date(new Date(startTime).getTime() - (5.5 * 60 * 60 * 1000)).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                        )}
             </div>
             
             <CountdownTimer 

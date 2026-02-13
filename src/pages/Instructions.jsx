@@ -18,6 +18,7 @@ export default function InstructionPage() {
 
 
     const handleStart = () => {
+        console.log("Start button clicked. Paper ID:", paperId, "Agree:", agree);
         if (!paperId) {
             alert('Error: Paper ID not found. Please select a test from the list.');
             return;
@@ -171,8 +172,12 @@ export default function InstructionPage() {
                                 <input
                                     type="checkbox"
                                     className="w-5 h-5 rounded border-gray-300 accent-[#003973] cursor-pointer transition-colors duration-200"
-                                    checked={!agree}
-                                    onChange={(e) => setAgree(!e.target.checked)}
+                                    checked={agree}
+                                    onChange={
+                                        (e) => {
+                                            setAgree(e.target.checked);
+                                        }
+                                    }
                                     aria-label="Agree to instructions"
                                 />
                                 <span className="text-sm text-gray-700">
@@ -186,7 +191,7 @@ export default function InstructionPage() {
                                     onClick={handleStart}
                                     disabled={!agree}
                                     className={`px-5 py-2 rounded-md text-white font-semibold shadow-sm transition-colors duration-150 ${
-                                        !agree
+                                        agree
                                             ? "bg-[#003973] hover:bg-blue-800 cursor-pointer"
                                             : "bg-blue-400 cursor-not-allowed"
                                     }`}

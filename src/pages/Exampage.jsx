@@ -69,15 +69,16 @@ function Exampage() {
         const fetchExamData = async () => {
             const studentId = localStorage.getItem("studentId");
             const token = localStorage.getItem('token');
-
             try {
                 const response = await fetch(`${API_BASE_URL}/api/student/start-exam`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
                     body: JSON.stringify({ studentId: studentId, paperId: paperId }),
                 });
-
+                
                 const data = await response.json();
+                
+                console.log("Exam Data Response:", { status: response.status, data });
 
                 if (!response.ok) {
                     if (response.status === 401 || response.status === 403) {

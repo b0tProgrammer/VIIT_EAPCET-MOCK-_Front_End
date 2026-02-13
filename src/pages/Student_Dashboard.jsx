@@ -7,17 +7,35 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 
 const API = import.meta.env.VITE_API_URL || 'https://viiteapcet-backend.onrender.com';
-const LATE_START_WINDOW_MINUTES = 15; // 15-minute grace period
+const LATE_START_WINDOW_MINUTES = 15; 
 
-// --- Helper component to handle countdown on dashboard ---
+function getTimeLeft(startTime) {
+    const startMs = typeof startTime === 'number' ? startTime : Date.parse(startTime);
+    const nowMs = Date.now();
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+    const diff = startMs - nowMs - IST_OFFSET_MS;
+
+        if (diff <= 0) {
+            return { seconds: 0, text: '0h 0m 0s' };
+        }
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const text = days > 0 ? `${days}d ${hours}h ${minutes}m ${seconds}s` : `${hours}h ${minutes}m ${seconds}s`;
+        return { seconds: totalSeconds, text };
+}
+
 function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
     const [timeLeftSeconds, setTimeLeftSeconds] = useState(null);
-    const [status, setStatus] = useState('upcoming'); // 'upcoming', 'live', 'expired'
+    const [status, setStatus] = useState('upcoming'); 
 
     useEffect(() => {
         if (!nextExamStartTime) return;
 
-        const examStartTime = new Date(nextExamStartTime).getTime();
+        const examStartTime = new Date(nextExamStartTime).getTime() - (5.5 * 60 * 60 * 1000); // Convert to IST
         const startWindowEnd = examStartTime + (LATE_START_WINDOW_MINUTES * 60 * 1000);
         
         const interval = setInterval(() => {
@@ -40,19 +58,19 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
         return () => clearInterval(interval);
     }, [nextExamStartTime]);
 
-    const formatCountdown = (secs) => {
-        if (secs === null || secs <= 0) return '00:00:00';
-        const secsTotal = Math.max(0, secs);
-        const days = Math.floor(secsTotal / (3600 * 24));
-        const h = Math.floor((secsTotal % (3600 * 24)) / 3600).toString().padStart(2,'0');
-        const m = Math.floor((secsTotal % 3600) / 60).toString().padStart(2,'0');
-        const s = (secsTotal % 60).toString().padStart(2,'0');
-        
-        return days > 0 ? `${days}d ${h}:${m}:${s}` : `${h}:${m}:${s}`;
-    }
-
     const canStart = status === 'live';
-    const countdownText = formatCountdown(timeLeftSeconds);
+
+    let countdownText = 'N/A';
+    if (nextMockTest) {
+        if (status === 'upcoming') {
+            countdownText = getTimeLeft(nextMockTest.startTime).text;
+        } else if (status === 'live') {
+            const windowEndMs = new Date(nextMockTest.startTime).getTime() + (LATE_START_WINDOW_MINUTES * 60 * 1000);
+            countdownText = getTimeLeft(windowEndMs).text;
+        } else if (status === 'expired') {
+            countdownText = 'Missed';
+        }
+    }
     
     const getHeaderText = () => {
         if (!nextMockTest) return 'No Upcoming Test';
@@ -68,14 +86,14 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
                 <span className="text-3xl font-bold text-gray-800">
                     {nextMockTest ? countdownText : 'N/A'}
                 </span>
-                <button 
+                    <button 
                     className={`px-5 py-2 rounded-lg transition duration-150 ease-in-out ${
                         canStart 
                         ? 'bg-red-600 text-white hover:bg-red-700' 
                         : 'bg-gray-200 text-gray-700 cursor-not-allowed'
                     }`} 
                     onClick={onStart} 
-                    disabled={!canStart || !nextMockTest?.id}
+                    disabled={!canStart || status === 'expired' || !nextMockTest?.id}
                 >
                     Start
                 </button>
@@ -83,13 +101,13 @@ function DashboardCountdown({ nextMockTest, nextExamStartTime, onStart }) {
             <p className="text-xl font-semibold text-gray-700">
                 {nextMockTest?.title || 'Check Upcoming Tests'}
             </p>
-            {nextMockTest?.startTime && (
-                <p className="text-xs text-gray-500 mt-1">
-                    Scheduled: {new Date(nextMockTest.startTime).toLocaleString([], {
-                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                    })}
-                </p>
-            )}
+                {nextMockTest?.startTime && (
+                    <p className="text-xs text-gray-500 mt-1">
+                        Scheduled: {new Date(new Date(nextMockTest.startTime).getTime() - (5.5 * 60 * 60 * 1000)).toLocaleString([], {
+                            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                        })}
+                    </p>
+                )}
         </div>
     );
 }
