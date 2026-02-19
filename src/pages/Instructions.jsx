@@ -1,13 +1,16 @@
 import { useState, useMemo, useEffect } from "react";
+const API = import.meta.env.VITE_API_URL || 'https://viiteapcet-backend.onrender.com';
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
-import { useNavigate, useLocation } from 'react-router-dom'; 
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function InstructionPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const [agree, setAgree] = useState(false);
+    const [otp, setOtp] = useState("");
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [verifying, setVerifying] = useState(false);
 
 
     const paperId = useMemo(() => {
@@ -17,14 +20,50 @@ export default function InstructionPage() {
 
 
 
-    const handleStart = () => {
-        console.log("Start button clicked. Paper ID:", paperId, "Agree:", agree);
+    const handleStart = async () => {
+        console.log("Start button clicked. Paper ID:", paperId, "Agree:", agree, "OTP:", otp);
         if (!paperId) {
             alert('Error: Paper ID not found. Please select a test from the list.');
             return;
         }
-        if (!agree) return;
-        setShowConfirmModal(true);
+        if (!agree) {
+            alert("Please agree to the instructions first.");
+            return;
+        }
+        if (!otp.trim()) {
+            alert("Please enter the OTP/Access Code.");
+            return;
+        }
+
+        setVerifying(true);
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${API}/api/student/verify-code`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    paperId: paperId,
+                    accessCode: otp
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.valid) {
+                setShowConfirmModal(true);
+            } else {
+                alert(data.message || "Invalid OTP/Access Code. Please try again.");
+            }
+        } catch (error) {
+            console.error("OTP Verification Error:", error);
+            alert("Failed to verify OTP. Please check your connection.");
+        } finally {
+            setVerifying(false);
+        }
     };
 
     const confirmStart = async () => {
@@ -167,6 +206,19 @@ export default function InstructionPage() {
                             </p>
                         </div>
 
+                        <div className="mt-6 mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Enter Exam Access Code (OTP):
+                            </label>
+                            <input
+                                type="text"
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value)}
+                                placeholder="Enter Code"
+                                className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#003973] focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
                         <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <label className="inline-flex items-start sm:items-center space-x-3">
                                 <input
@@ -189,14 +241,13 @@ export default function InstructionPage() {
                             <div className="flex-shrink-0">
                                 <button
                                     onClick={handleStart}
-                                    disabled={!agree}
-                                    className={`px-5 py-2 rounded-md text-white font-semibold shadow-sm transition-colors duration-150 ${
-                                        agree
-                                            ? "bg-[#003973] hover:bg-blue-800 cursor-pointer"
-                                            : "bg-blue-400 cursor-not-allowed"
-                                    }`}
+                                    disabled={!agree || verifying}
+                                    className={`px-5 py-2 rounded-md text-white font-semibold shadow-sm transition-colors duration-150 ${agree && !verifying
+                                        ? "bg-[#003973] hover:bg-blue-800 cursor-pointer"
+                                        : "bg-blue-400 cursor-not-allowed"
+                                        }`}
                                 >
-                                    Take the Test
+                                    {verifying ? "Verifying..." : "Take the Test"}
                                 </button>
                             </div>
                         </div>
