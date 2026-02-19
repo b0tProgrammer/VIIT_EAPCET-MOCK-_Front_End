@@ -5,7 +5,7 @@ import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import {  useNavigate } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://viiteapcet-backend.onrender.com'; 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 const SUBJECT_TOTALS = { 
     Mathematics: 80,
     Physics: 40,

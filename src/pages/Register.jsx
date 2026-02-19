@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function RegistrationForm() {
 
-  const API = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com"
+  const API = import.meta.env.VITE_API_URL || ""
   const [formData, setFormData] = useState({
     fullName: "",
     fatherName: "",

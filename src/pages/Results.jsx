@@ -17,7 +17,7 @@ import {
   Menu as MenuIcon,
 } from "lucide-react";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const initialResultState = {
   id: null, 

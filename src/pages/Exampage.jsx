@@ -6,7 +6,7 @@ import Questionnavigation from '../components/Questionsnavigation';
 import ActionBar from '../components/ActionBar';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://viiteapcet-backend.onrender.com'; 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export const QuestionStatus = {
     NOT_VISITED: 'not-visited', 

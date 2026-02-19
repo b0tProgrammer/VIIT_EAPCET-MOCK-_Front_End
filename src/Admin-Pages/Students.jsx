@@ -4,7 +4,7 @@ import AdminSideBar from "../components/AdminSiderBar";
 import Footer from "../components/Footer";
 import { Menu as MenuIcon, RefreshCw } from "lucide-react";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 const REFRESH_INTERVAL = 300;
 
 export default function Students() {

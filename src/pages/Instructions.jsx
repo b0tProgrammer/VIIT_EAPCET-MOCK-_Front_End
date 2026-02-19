@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-const API = import.meta.env.VITE_API_URL || 'https://viiteapcet-backend.onrender.com';
+const API = import.meta.env.VITE_API_URL || '';
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
 import { useNavigate, useLocation } from 'react-router-dom';

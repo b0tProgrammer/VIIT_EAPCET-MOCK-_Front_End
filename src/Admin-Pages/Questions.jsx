@@ -7,7 +7,7 @@ import LazyPreviewList from "../components/LazyPreviewList";
 
 import { Menu as MenuIcon, Upload, FileText, PlusCircle } from "lucide-react";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
 const simpleCSVParse = (csvText) => {
   const rows = csvText.trim().split("\n").slice(1);

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL || "https://viiteapcet-backend.onrender.com"; 
+const API = import.meta.env.VITE_API_URL || "";
 
 function AdminChangePassword() {
   const navigate = useNavigate();
