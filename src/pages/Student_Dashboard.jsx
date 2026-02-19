@@ -156,8 +156,6 @@ function StudentDashboard() {
         if (examsRes.ok) {
           const examsData = await examsRes.json();
           const now = Date.now();
-          
-          // Identify active exams (start <= now < start + late-start-window)
           const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
           const examsList = (examsData.exams || []).map(exam => ({
                             id: exam.id,
@@ -176,16 +174,9 @@ function StudentDashboard() {
                             return startMs <= now && windowEnd > now;
                         })
                         .sort((a, b) => a.startTimeMsAdj - b.startTimeMsAdj);
-
-          if (activeExams.length > 0) {
-              const active = activeExams[0];
-              setNextMockTest(active);
-              setNextExamStartTime(active.startTime);
-          } else {
-              // No active tests — clear dashboard card
-              setNextMockTest(null);
-              setNextExamStartTime(null);
-          }
+            const active = activeExams[0];
+            setNextMockTest(active);
+            setNextExamStartTime(active.startTime);
         }
 
         if (historyRes.ok) {

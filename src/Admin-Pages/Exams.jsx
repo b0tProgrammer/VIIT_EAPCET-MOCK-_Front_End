@@ -14,7 +14,6 @@ const SUBJECT_TOTALS = {
 
 const getFutureDateTimeLocal = (hoursAhead = 24) => {
     const d = new Date(Date.now() + hoursAhead * 3600 * 1000);
-    // Format to 'YYYY-MM-DDTHH:MM' required by datetime-local
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
@@ -140,7 +139,7 @@ export default function CreateQuestionPaper() {
                 body: JSON.stringify({
                     adminId: adminId,
                     title: form.title.trim(),
-                    startTime: form.startTime+":00+05:30",
+                    startTime: form.startTime,
                     durationHours: parseInt(form.duration) || 3,
                     distribution: distributionPayload,
                 }),
