@@ -79,11 +79,10 @@ export default function TeacherDashboard() {
           <aside
             className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
           transform transition-transform duration-300 z-50
-          ${
-            isAdminSideBarOpen
-              ? "translate-x-0"
-              : "-translate-x-full lg:translate-x-0"
-          }`}
+          ${isAdminSideBarOpen
+                ? "translate-x-0"
+                : "-translate-x-full lg:translate-x-0"
+              }`}
           >
             <AdminSideBar
               isAdminSideBarOpen={isAdminSideBarOpen}
@@ -107,7 +106,7 @@ export default function TeacherDashboard() {
             >
               <MenuIcon size={24} />
             </button>
-            
+
           </main>
         </div>
         <Footer />
@@ -122,11 +121,10 @@ export default function TeacherDashboard() {
         <aside
           className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
           transform transition-transform duration-300 z-50
-          ${
-            isAdminSideBarOpen
+          ${isAdminSideBarOpen
               ? "translate-x-0"
               : "-translate-x-full lg:translate-x-0"
-          }`}
+            }`}
         >
           <AdminSideBar
             isAdminSideBarOpen={isAdminSideBarOpen}
@@ -168,7 +166,12 @@ export default function TeacherDashboard() {
                     <p className="text-sm text-gray-600">
                       {exam.durationHours} hrs | {exam.totalMarks} marks
                     </p>
-                    <h3 className="text-lg font-semibold">{exam.title}</h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-lg font-semibold">{exam.title}</h3>
+                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">
+                        Code: {exam.accessCode}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="text-right">
