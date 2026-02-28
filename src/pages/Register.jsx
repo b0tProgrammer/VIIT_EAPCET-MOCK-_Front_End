@@ -156,7 +156,7 @@ function RegistrationForm() {
     <>
       <section className="min-h-screen flex flex-col items-center justify-center bg-white px-4 sm:px-6 py-12 font-poppins relative">
         <h1 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center">
-          VIIT's (Mock EAPCET) Registration Form
+          VIITCET Registration Form
         </h1>
 
         <form
