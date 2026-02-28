@@ -305,13 +305,30 @@ function StudentDashboard() {
                   const pct = Math.max(0, Math.min(100, Math.round(rawPct)));
                   return (
                     <div key={idx} className="flex flex-col items-center">
-                      <div className="w-8 h-40 bg-gray-200 rounded-md overflow-hidden relative">
+                      <div
+                        className="w-8 h-40 bg-gray-200 rounded-md overflow-visible relative"
+                        aria-label={p.label}
+                        onMouseEnter={() => setHoveredBar(idx)}
+                        onMouseLeave={() => setHoveredBar(null)}
+                      >
+                        {hoveredBar === idx && (
+                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-md whitespace-nowrap z-10">
+                            {p.label}
+                          </div>
+                        )}
                         <div
                           className="absolute left-0 right-0 bottom-0 bg-blue-600 transition-all"
                           style={{ height: `${pct}%` }}
                         />
                       </div>
-                      <div className="text-sm mt-2">{pct}%</div>
+                      <div
+                        className="text-sm mt-2 cursor-help"
+                        onMouseEnter={() => setHoveredBar(idx)}
+                        onMouseLeave={() => setHoveredBar(null)}
+                        title={p.label}
+                      >
+                        {pct}%
+                      </div>
                     </div>
                   );
                 })}

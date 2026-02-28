@@ -47,12 +47,12 @@ function NavBarMain() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> 
 
           {/* center: main title */}
           <div className="text-center">
             <div className="text-lg md:text-2xl lg:text-3xl font-bold">
-              Mock EAPCET Portal
+              VIITCET Portal
             </div>
           </div>
 
