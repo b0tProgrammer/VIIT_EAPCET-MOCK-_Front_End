@@ -34,35 +34,48 @@ const VoucherModal = ({ paperId, topStudents, onClose, onSubmit }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[999] p-4">
-      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl flex flex-col relative overflow-hidden">
-        <div className="bg-gradient-to-r from-[#003973] to-[#005ca0] px-6 py-4 flex justify-between items-center">
-          <h3 className="text-xl font-bold text-white">Amazon Voucher Codes for Top Students</h3>
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity"
+        onClick={onClose}
+      />
+
+      {/* Modal Container */}
+      <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300 max-h-[90vh]">
+        {/* Header */}
+        <div className="bg-[#003973] px-6 py-4 flex justify-between items-center border-b border-blue-800 shrink-0">
+          <h3 className="text-lg font-bold text-white uppercase tracking-tight">Send Results & Vouchers</h3>
           <button
-            className="text-white hover:text-gray-200 transition-colors"
+            className="text-white hover:bg-white/10 p-1 rounded-full transition-colors"
             onClick={onClose}
             disabled={isSubmitting}
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-          <p className="text-sm text-gray-600 mb-4">
-            Enter Amazon voucher codes for the top {topStudents.length} students. These will be sent in their result email.
-          </p>
-          <div className="space-y-3">
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg">
+            <p className="text-xs text-blue-800 leading-relaxed font-medium">
+              Enter Amazon voucher codes for the top 5 students. These will be sent automatically in their result emails.
+            </p>
+          </div>
+
+          <div className="space-y-4">
             {topStudents.map((student, index) => (
-              <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Rank {index + 1}: {student.name} (Score: {student.score})
-                </label>
+              <div key={index} className="space-y-2 group">
+                <div className="flex justify-between items-center px-1">
+                  <span className="text-sm font-bold text-gray-800">Rank {index + 1}</span>
+                  <span className="text-xs font-medium text-gray-500">{student.name} • {student.score} pts</span>
+                </div>
                 <input
                   type="text"
-                  placeholder="Enter voucher code (e.g., AMZN-XXXX-XXXX)"
+                  placeholder="Enter code (e.g., AMZN-1234-5678)"
                   value={vouchers[index].code}
                   onChange={(e) => handleVoucherChange(index, e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003973] focus:outline-none"
+                  className="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#003973] focus:border-transparent outline-none transition-all group-hover:border-gray-400"
                   disabled={isSubmitting}
                 />
               </div>
@@ -70,20 +83,26 @@ const VoucherModal = ({ paperId, topStudents, onClose, onSubmit }) => {
           </div>
         </div>
 
-        <div className="bg-white border-t px-6 py-4 flex justify-end gap-3">
+        {/* Footer */}
+        <div className="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row gap-3 border-t shrink-0">
           <button
-            className="px-5 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors font-medium disabled:opacity-50"
+            className="w-full sm:w-auto px-6 py-2 rounded-xl bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors font-semibold text-sm disabled:opacity-50"
             onClick={onClose}
             disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
-            className="px-5 py-2 rounded-lg bg-[#003973] text-white hover:bg-[#005ca0] transition-colors font-medium disabled:opacity-50"
+            className="w-full flex-1 px-6 py-2 rounded-xl bg-[#003973] text-white hover:bg-[#002d5a] transition-all transform hover:scale-[1.02] active:scale-95 font-semibold text-sm disabled:opacity-50 shadow-lg shadow-blue-900/20"
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Sending...' : 'Send Results & Vouchers'}
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                Processing...
+              </span>
+            ) : 'Send Results & Vouchers'}
           </button>
         </div>
       </div>
@@ -128,14 +147,14 @@ export default function Reports() {
       setLoading(false);
     }
   };
-/*
-  const toggleReportExpansion = (reportId) => {
-    setExpandedReports((prev) => ({
-      ...prev,
-      [reportId]: !prev[reportId],
-    }));
-  };
-*/
+  /*
+    const toggleReportExpansion = (reportId) => {
+      setExpandedReports((prev) => ({
+        ...prev,
+        [reportId]: !prev[reportId],
+      }));
+    };
+  */
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -151,7 +170,7 @@ export default function Reports() {
   const handleSendMails = async (paperId) => {
     try {
       const token = localStorage.getItem("token");
-      
+
       // Fetch top 10 students for this paper
       const response = await fetch(`${API}/api/admin/top-students/${paperId}`, {
         headers: {
@@ -166,11 +185,11 @@ export default function Reports() {
         return;
       }
 
-      // Open voucher modal with top students
+      // Open voucher modal with top 5 students only
       setVoucherModal({
         show: true,
         paperId: paperId,
-        topStudents: data.topStudents || []
+        topStudents: (data.topStudents || []).slice(0, 5)
       });
     } catch (err) {
       console.error("Failed to fetch top students:", err);
@@ -222,11 +241,10 @@ export default function Reports() {
         <aside
           className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
     transform transition-transform duration-300 ease-in-out z-50
-    ${
-      isAdminSideBarOpen
-        ? "translate-x-0"
-        : "-translate-x-full lg:translate-x-0"
-    }`}
+    ${isAdminSideBarOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+            }`}
         >
           <AdminSideBar
             isAdminSideBarOpen={isAdminSideBarOpen}
@@ -294,7 +312,7 @@ export default function Reports() {
                     </h3>
 
                     <div className="text-base text-gray-700 space-y-1 mb-6">
-                      
+
                       <div>
                         Start Date:{" "}
                         <span className="font-medium">
@@ -519,7 +537,7 @@ export default function Reports() {
       </div>
 
       <Footer />
-      
+
       {voucherModal.show && (
         <VoucherModal
           paperId={voucherModal.paperId}
