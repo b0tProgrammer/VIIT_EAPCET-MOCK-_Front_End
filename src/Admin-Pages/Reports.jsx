@@ -139,6 +139,7 @@ export default function Reports() {
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch reports");
       }
+      console.log(data.reports);
       setReports(data.reports);
     } catch (err) {
       setError(err.message);
@@ -166,26 +167,19 @@ export default function Reports() {
   };
 
 
-  // Fetch top 10 students and open voucher modal
   const handleSendMails = async (paperId) => {
     try {
       const token = localStorage.getItem("token");
-
-      // Fetch top 10 students for this paper
       const response = await fetch(`${API}/api/admin/top-students/${paperId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       const data = await response.json();
-
       if (!response.ok) {
         alert(`Error: ${data.message}`);
         return;
       }
-
-      // Open voucher modal with top 5 students only
       setVoucherModal({
         show: true,
         paperId: paperId,
@@ -196,13 +190,10 @@ export default function Reports() {
       alert("An error occurred while fetching top students.");
     }
   };
-
-  // Submit vouchers and send results
   const handleSubmitVouchers = async (vouchers) => {
     try {
       setIsSubmittingMail(true);
       const token = localStorage.getItem("token");
-
       const response = await fetch(`${API}/api/admin/send-results`, {
         method: "POST",
         headers: {
@@ -236,8 +227,6 @@ export default function Reports() {
       <NavBarMain />
 
       <div className="flex flex-1">
-        {/* ✅ Sidebar inside <aside> and fixed font */}
-        {/* Sidebar */}
         <aside
           className={`fixed lg:static top-0 left-0 h-full w-64 bg-white
     transform transition-transform duration-300 ease-in-out z-50
@@ -406,9 +395,10 @@ export default function Reports() {
                     <div className="mt-4">
                       <button
                         onClick={() => handleSendMails(reports[0].id)}
-                        className="bg-white text-gray-800 border border-gray-300 rounded-md px-4 py-2 shadow-sm hover:bg-gray-50"
+                        disabled={reports[0].mailSent}
+                        className={`bg-white text-gray-800 border border-gray-300 rounded-md px-4 py-2 shadow-sm ${reports[0].mailSent ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'hover:bg-gray-50'}`}
                       >
-                        + Send Mails
+                        {reports[0].mailSent ? 'Mails Sent' : '+ Send Mails'}
                       </button>
                     </div>
                   </div>
@@ -520,9 +510,10 @@ export default function Reports() {
                           <div className="mt-2">
                             <button
                               onClick={() => handleSendMails(report.id)}
-                              className="bg-white text-gray-800 border border-gray-300 rounded-md px-4 py-2 shadow-sm hover:bg-gray-50"
+                              disabled={report.mailSent}
+                              className={`bg-white text-gray-800 border border-gray-300 rounded-md px-4 py-2 shadow-sm ${report.mailSent ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'hover:bg-gray-50'}`}
                             >
-                              + Send Mails
+                              {report.mailSent ? 'Mails Sent' : '+ Send Mails'}
                             </button>
                           </div>
                         </div>
