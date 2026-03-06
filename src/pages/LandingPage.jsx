@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import AutoCarousel from "../components/AutoCarousel";
 import NBA from "../assets/NBA.png";
 import NAAC from "../assets/NAAC.png";
+import Vasu from "../assets/vasu_ai&ds.png";
 import NIRF from "../assets/NIRF.png";
 import UGC from "../assets/UGC.png";
 import PencilPaper from "../assets/PencilPaper.jpg";
@@ -121,7 +122,7 @@ function LandingPage() {
               items={[
                 { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/7415a3d9-2fc7-4e0d-83aa-71444b973aa0-07_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/15019a1b-5cdc-4cf4-be7a-966dba41a84b-infoblox.svg", package: "13 LPA", name: "B Gayatri" },
                 { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/431bf7d5-7e8b-4c6d-9983-9342e830dbbb-03_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/9bb27556-80f4-4d79-9c7e-13c5494c73c5-Amazon_logo.webp", package: "27 LPA", name: "Umakanth" },
-                { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/75775462-41e0-4f87-9053-ae8fc8ce88a2-02_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/654a47b1-e426-47c2-8c07-08f2ed0a0ab8-Meesho_logo.png", package: "37 LPA", name: "Vasu Surisetty" },
+                { image: Vasu, companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/654a47b1-e426-47c2-8c07-08f2ed0a0ab8-Meesho_logo.png", package: "37 LPA", name: "Vasu Surisetty" },
                 { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/dffc6229-d9bf-4d95-9875-0b8711965534-04_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/4c385863-5652-4880-b37b-101756e2f311-Cisco_logo.png", package: "23 LPA", name: "K Seshu" },
                 { image: "https://blr1.digitaloceanspaces.com/vignan/placements/studentImages/cb71223f-59d3-444e-8643-1eaf4e60aaae-05_copy.png", companyLogo: "https://blr1.digitaloceanspaces.com/vignan/placements/companyLogos/988acd0b-14b5-4d06-ba98-2a273bbdda0d-SAP_logo.png", package: "18 LPA", name: "Alla Pooja" },
               ]}
