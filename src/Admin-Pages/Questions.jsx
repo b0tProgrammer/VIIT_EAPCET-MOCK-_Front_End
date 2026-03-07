@@ -310,6 +310,29 @@ function Questions() {
             </p>
           </div>
           
+          <div className="flex flex-wrap gap-4">
+            {questions.length > 0 && (
+              <button
+                onClick={() => {
+                  setOpenPreview(true);
+                }}
+                className="px-5 py-2 border border-gray-300 rounded-md hover:bg-blue-50 transition duration-200 bg-white text-gray-700 font-medium"
+              >
+                Preview & Edit Questions ({questions.length})
+              </button>
+            )}
+            {questions.length > 0 && (
+              <button
+                onClick={handleSaveToBackend}
+                disabled={isUploading}
+                className="px-6 py-2 rounded-md bg-[#003973] text-white hover:bg-blue-800 transition-colors font-medium shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <FileText size={18} />
+                {isUploading ? "Uploading..." : "Quick Save & Upload"}
+              </button>
+            )}
+          </div>
+          
           {/* Questions by Topic (per Subject) */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">
@@ -356,29 +379,6 @@ function Questions() {
                   )
                 )}
               </div>
-            )}
-          </div>
-
-          <div className="flex flex-wrap gap-4">
-            {questions.length > 0 && (
-              <button
-                onClick={() => {
-                  setOpenPreview(true);
-                }}
-                className="px-5 py-2 border border-gray-300 rounded-md hover:bg-blue-50 transition duration-200 bg-white text-gray-700 font-medium"
-              >
-                Preview & Edit Questions ({questions.length})
-              </button>
-            )}
-            {questions.length > 0 && (
-              <button
-                onClick={handleSaveToBackend}
-                disabled={isUploading}
-                className="px-6 py-2 rounded-md bg-[#003973] text-white hover:bg-blue-800 transition-colors font-medium shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <FileText size={18} />
-                {isUploading ? "Uploading..." : "Quick Save & Upload"}
-              </button>
             )}
           </div>
         </main>
