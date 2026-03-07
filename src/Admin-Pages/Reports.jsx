@@ -139,7 +139,6 @@ export default function Reports() {
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch reports");
       }
-      console.log(data.reports);
       setReports(data.reports);
     } catch (err) {
       setError(err.message);

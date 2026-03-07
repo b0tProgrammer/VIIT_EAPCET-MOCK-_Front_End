@@ -209,7 +209,6 @@ function StudentDashboard() {
 
         if (historyRes.ok) {
           const historyData = await historyRes.json();
-          console.log("History data:", historyData);
           const hist = historyData.history || [];
           setHistory(hist);
           setExamsWritten(hist.length);

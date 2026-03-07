@@ -26,7 +26,7 @@ function NavBar({ onMenuToggle }) {
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#stats" className="hover:text-gray-200 cursor-pointer">Statistics</a> </li>
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#programs" className="hover:text-gray-200 cursor-pointer">Programs</a> </li>
           <li className="hover:text-gray-200 cursor-pointer"> <a href="#placements" className="hover:text-gray-200 cursor-pointer">Placements</a> </li>
-          <li className="hover:text-gray-200 cursor-pointer"> <Link to="/register" className="hover:text-gray-200 cursor-pointer">Register</Link> </li>
+          <li className="hover:text-gray-200 cursor-pointer"> <Link to="/login" className="hover:text-gray-200 cursor-pointer">Login</Link> </li>
         </ul>
 
         {/* Mobile Menu Button (visible only on small screens) */}

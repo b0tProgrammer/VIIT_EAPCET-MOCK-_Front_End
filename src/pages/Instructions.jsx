@@ -21,7 +21,6 @@ export default function InstructionPage() {
 
 
     const handleStart = async () => {
-        console.log("Start button clicked. Paper ID:", paperId, "Agree:", agree, "OTP:", otp);
         if (!paperId) {
             alert('Error: Paper ID not found. Please select a test from the list.');
             return;

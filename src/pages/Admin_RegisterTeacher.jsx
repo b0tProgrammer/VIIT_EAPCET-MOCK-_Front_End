@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import AdminSideBar from "../components/AdminSiderBar"; // Adjust path as needed
+import AdminSideBar from "../components/AdminSiderBar";
 import NavBarMain from "../components/NavBarMain";
 import Footer from "../components/Footer";
+import { Menu as MenuIcon } from "lucide-react";
 const API = import.meta.env.VITE_API_URL || "";
 
 function AdminRegisterTeacher() {
@@ -45,7 +46,7 @@ function AdminRegisterTeacher() {
       }
 
       setSuccess(
-        `✅ ${fullName} registered successfully! Login ID: ${studentId}`
+        `✅ ${fullName} registered successfully! Login ID: ${studentId}`,
       );
       setFullName("");
       setEmail("");
@@ -60,10 +61,8 @@ function AdminRegisterTeacher() {
 
   return (
     <>
-      <NavBarMain/>
+      <NavBarMain />
       <div className="flex min-h-screen bg-gray-100 font-[poppins]">
-        {/* --- SIDEBAR --- */}
-
         <aside
           className={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-30 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-auto ${
             isAdminSideBarOpen ? "translate-x-0" : "-translate-x-full"
@@ -74,13 +73,16 @@ function AdminRegisterTeacher() {
             setIsAdminSideBarOpen={setIsAdminSideBarOpen}
           />
         </aside>
-
-        {/* --- MAIN CONTENT --- */}
         <div className="flex-1 flex flex-col">
-          {/* --- NAVBAR --- */}
-
-          {/* --- FORM CONTENT --- */}
           <main className="p-6 md:p-12">
+            <button
+              className="lg:hidden mb-4 text-[#003973] flex items-center gap-2 font-medium self-start"
+              onClick={() => {
+                setIsAdminSideBarOpen(!isAdminSideBarOpen);
+              }}
+            >
+              <MenuIcon size={24} />
+            </button>
             <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
               <div className="bg-[#003973] p-4">
                 <h2 className="text-2xl font-bold text-white text-center font-[poppins]">
@@ -173,8 +175,6 @@ function AdminRegisterTeacher() {
             </div>
           </main>
         </div>
-
-        {/* Mobile Overlay */}
         {isAdminSideBarOpen && (
           <div
             className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
@@ -182,7 +182,7 @@ function AdminRegisterTeacher() {
           ></div>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }

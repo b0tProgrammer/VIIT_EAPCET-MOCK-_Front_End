@@ -30,7 +30,6 @@ function NavBarMain() {
     <header className="bg-[#003973] text-white font-poppins">
       <div className="max-w-7xl mx-auto px-6 py-3">
         <div className="grid grid-cols-3 items-center">
-          {/* left: thin red accent + logo + wordmark */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full overflow-hidden bg-white flex items-center justify-center p-1">

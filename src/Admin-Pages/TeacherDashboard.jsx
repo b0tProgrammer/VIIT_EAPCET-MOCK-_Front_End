@@ -53,7 +53,6 @@ export default function TeacherDashboard() {
     const startMs = typeof startTime === 'number' ? startTime : Date.parse(startTime);
     const nowMs = Date.now();
     const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
-    console.log("Start Time (raw):", startTime, "StartMs:", startMs, "NowMs:", nowMs, "IST_OFFSET_MS:", IST_OFFSET_MS);
     const diff = startMs - nowMs - IST_OFFSET_MS;
 
     if (diff <= 0) return "Started";

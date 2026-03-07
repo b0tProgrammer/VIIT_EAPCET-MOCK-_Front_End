@@ -2,12 +2,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react"; // You might need to install lucide-react: npm install lucide-react
 import { Link } from "react-router-dom";
 
-// Placeholder links - replace with your actual nav links
 const navLinks = [
   { title: "Home", href: "/" },
   { title: "Login", href: "/login" },
   { title: "Register", href: "/register" },
-  { title: "About", href: "#about" }, // Example for an anchor link
+  { title: "About", href: "#about" }, 
 ];
 
 function MobileSideBar({ isOpen, onClose }) {

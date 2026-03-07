@@ -77,8 +77,6 @@ function Exampage() {
                 });
                 
                 const data = await response.json();
-                
-                console.log("Exam Data Response:", { status: response.status, data });
 
                 if (!response.ok) {
                     if (response.status === 401 || response.status === 403) {

@@ -35,7 +35,6 @@ export default function Students() {
       if (!response.ok) throw new Error("Failed to fetch exam stats");
 
       const data = await response.json();
-      console.log("Fetched stats:", data);
       setTotals(data);  
       setCurrentExam(data.currentExam?.title)
       setSecondsLeft(REFRESH_INTERVAL);
